@@ -30,7 +30,7 @@ public class Answer extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Answer(String title, String content) {
+    private Answer(String title, String content) {
         this.title = title;
         this.content = content;
     }

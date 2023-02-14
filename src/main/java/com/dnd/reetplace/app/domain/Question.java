@@ -10,8 +10,6 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,7 +43,7 @@ public class Question extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Question(Member writer, String title, String content) {
+    private Question(Member writer, String title, String content) {
         this.writer = writer;
         this.title = title;
         this.content = content;

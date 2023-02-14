@@ -30,7 +30,7 @@ public class Survey extends BaseTimeEntity {
     private String description;
 
     @Builder
-    public Survey(Member member, SurveyType surveyType, String description) {
+    private Survey(Member member, SurveyType surveyType, String description) {
         this.member = member;
         this.surveyType = surveyType;
         this.description = surveyType.equals(SurveyType.OTHER) ? description : surveyType.getDescription();

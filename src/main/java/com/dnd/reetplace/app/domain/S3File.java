@@ -40,7 +40,7 @@ public class S3File extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public S3File(Question question, String uploaderIp, String originalFileName, String storedFileName, String url) {
+    private S3File(Question question, String uploaderIp, String originalFileName, String storedFileName, String url) {
         this.question = question;
         this.uploaderIp = uploaderIp;
         this.originalFileName = originalFileName;
