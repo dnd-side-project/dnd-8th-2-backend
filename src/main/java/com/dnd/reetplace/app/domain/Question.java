@@ -10,7 +10,6 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
