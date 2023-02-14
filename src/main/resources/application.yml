@@ -1,0 +1,64 @@
+reet-place.application.version: v.0.0.1
+
+logging:
+  level:
+    com.dnd.reetplace: debug
+    org.hibernate.SQL: debug
+
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+
+---
+# Settings for local(dev)
+management.endpoints.web.exposure.include: "*"
+
+spring:
+  config.activate.on-profile: local
+  datasource:
+    url: ${REET_PLACE_LOCAL_DB_URL}
+    username: ${REET_PLACE_LOCAL_DB_USERNAME}
+    password: ${REET_PLACE_LOCAL_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate.ddl-auto: create
+    defer-datasource-initialization: true
+  sql.init.mode: always
+
+---
+# Settings for production(dev-server)
+logging:
+  level:
+    com.dnd.reetplace: info
+
+spring:
+  config.activate.on-profile: prod
+  datasource:
+    url: ${REET_PLACE_PROD_DB_URL}
+    username: ${REET_PLACE_PROD_DB_USERNAME}
+    password: ${REET_PLACE_PROD_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate.ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+  sql.init.mode: never
+
+---
+# Settings for test
+spring:
+  config.activate.on-profile: test
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate.ddl-auto: create
+    defer-datasource-initialization: true
+  sql.init.mode: always
