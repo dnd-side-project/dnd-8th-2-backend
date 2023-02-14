@@ -10,6 +10,9 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -37,7 +40,7 @@ public class Question extends BaseTimeEntity {
     private String content;
 
     @OneToMany(mappedBy = "question")
-    private LinkedHashSet<S3File> s3Files = new LinkedHashSet<>();
+    private Set<S3File> s3Files = new LinkedHashSet<>();
 
     private LocalDateTime deletedAt;
 
