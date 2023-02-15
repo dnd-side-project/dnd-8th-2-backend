@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @SQLDelete(sql = "UPDATE s3_file SET deleted_at = CURRENT_TIMESTAMP WHERE s3_file_id = ?")
+@Table(name = "s3_file")
 @Entity
 public class S3File extends BaseTimeEntity {
 
