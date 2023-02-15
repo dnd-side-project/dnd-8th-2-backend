@@ -23,6 +23,7 @@ public class Survey extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SurveyType surveyType;
 

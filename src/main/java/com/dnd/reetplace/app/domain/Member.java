@@ -25,6 +25,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String uid;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
