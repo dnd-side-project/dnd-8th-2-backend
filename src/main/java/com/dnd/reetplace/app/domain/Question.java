@@ -37,6 +37,7 @@ public class Question extends BaseTimeEntity {
     @Column(length = 500, nullable = false)
     private String content;
 
+    @OrderBy("createdAt ASC")
     @OneToMany(mappedBy = "question")
     private Set<S3File> s3Files = new LinkedHashSet<>();
 
