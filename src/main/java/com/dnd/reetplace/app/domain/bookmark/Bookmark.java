@@ -5,6 +5,7 @@ import com.dnd.reetplace.app.domain.common.BaseTimeEntity;
 import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.app.type.BookmarkType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,7 +41,8 @@ public class Bookmark extends BaseTimeEntity {
     @Embedded
     private BookMarkRelLink relLinks;
 
-    public Bookmark(
+    @Builder
+    private Bookmark(
             Member member,
             Place place,
             BookmarkType type,
