@@ -14,7 +14,7 @@ else
     echo "> 현재 실행중인 WAS가 존재하지 않습니다."
 fi
 
-echo "set \$service_url https://3.35.120.26:${TARGET_PORT};" | tee /home/ubuntu/service_url.inc
+echo "set \$service_url http://3.35.120.26:${TARGET_PORT};" | tee /home/ubuntu/service_url.inc
 
 echo "> 스위칭 후 Nginx가 프록싱하는 포트 : ${TARGET_PORT}"
 
