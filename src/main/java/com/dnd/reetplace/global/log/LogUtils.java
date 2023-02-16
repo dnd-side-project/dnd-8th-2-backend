@@ -15,4 +15,8 @@ public class LogUtils {
     public static void setLogTraceId() {
         MDC.put(LOG_TRACE_ID, UUID.randomUUID().toString().substring(0, 8));
     }
+
+    public static void removeLogTraceId() {
+        MDC.remove(LOG_TRACE_ID);
+    }
 }

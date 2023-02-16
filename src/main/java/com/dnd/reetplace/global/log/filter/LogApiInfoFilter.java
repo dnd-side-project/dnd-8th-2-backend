@@ -1,7 +1,6 @@
 package com.dnd.reetplace.global.log.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -18,8 +17,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
-import static com.dnd.reetplace.global.log.LogUtils.setLogTraceId;
+import static com.dnd.reetplace.global.log.LogUtils.*;
 
 @Slf4j
 @Component
@@ -49,7 +47,7 @@ public class LogApiInfoFilter extends OncePerRequestFilter {
             doFilterWrapped(new RequestWrapper(request), new ResponseWrapper(response), filterChain);
         }
 
-        MDC.clear();
+        removeLogTraceId();
     }
 
     private void doFilterWrapped(
