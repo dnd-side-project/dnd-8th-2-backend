@@ -30,13 +30,39 @@ spring:
   sql.init.mode: always
 
 ---
-# Settings for production(dev-server)
+# Settings for production1(dev-server)
 logging:
   level:
     com.dnd.reetplace: info
 
+server:
+  port: 8081
+
 spring:
-  config.activate.on-profile: prod
+  config.activate.on-profile: prod1
+  datasource:
+    url: ${REET_PLACE_PROD_DB_URL}
+    username: ${REET_PLACE_PROD_DB_USERNAME}
+    password: ${REET_PLACE_PROD_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate.ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+  sql.init.mode: never
+
+---
+# Settings for production2(dev-server)
+logging:
+  level:
+    com.dnd.reetplace: info
+
+server:
+  port: 8082
+
+spring:
+  config.activate.on-profile: prod2
   datasource:
     url: ${REET_PLACE_PROD_DB_URL}
     username: ${REET_PLACE_PROD_DB_USERNAME}
