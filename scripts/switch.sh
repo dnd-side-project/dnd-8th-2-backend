@@ -1,7 +1,6 @@
 #!/bin/bash
 
 CURRENT_PORT=$(cat /home/ubuntu/service_url.inc | grep -Po '[0-9]+' | tail -1)
-TARGET_PROFILE=prod1
 TARGET_PORT=0
 
 echo "> 현재 Nginx가 프록싱하는 포트 : ${CURRENT_PORT}"
