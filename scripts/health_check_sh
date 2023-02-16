@@ -15,7 +15,7 @@ else
 fi
 
 echo "> 스위칭 될 $TARGET_PROFILE 프로필에 대해 WAS health check을 시작합니다."
-echo "> 'http://reet-place.shop:${TARGET_PORT}' ..."
+echo "> 'http://3.35.120.26:${TARGET_PORT}' ..."
 
 for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10
 do

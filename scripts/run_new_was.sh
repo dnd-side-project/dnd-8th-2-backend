@@ -20,6 +20,9 @@ if [ ! -z ${TARGET_PID} ]; then
   sudo kill ${TARGET_PID}
 fi
 
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/reetplace/build/libs/* > /home/ubuntu/nohup.out 2>&1 &
+nohup java -jar \
+    -Dspring.profiles.active=prod \
+    -Dserver.port=${TARGET_PORT} \
+    /home/ubuntu/reetplace/build/libs/* > /home/ubuntu/nohup.out 2>&1 &
 echo "> ${TARGET_PORT} 포트에 해당하는 WAS가 새로 실행됩니다."
 exit 0
