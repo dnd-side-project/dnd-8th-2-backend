@@ -20,6 +20,7 @@ if [ ! -z ${TARGET_PID} ]; then
   sudo kill ${TARGET_PID}
 fi
 
+source ~/.bashrc
 nohup java -jar \
     -Dspring.profiles.active=prod \
     -Dserver.port=${TARGET_PORT} \
