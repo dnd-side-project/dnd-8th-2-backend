@@ -2,7 +2,7 @@ name: Reet-Place main CI/CD
 
 on:
   push:
-    branches: [ feature/#5-infra-setting ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
