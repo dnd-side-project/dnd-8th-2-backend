@@ -17,6 +17,6 @@ public class HealthController {
 
     @GetMapping("/health")
     public String healthCheck() {
-        return "health check v1 : " + Arrays.stream(env.getActiveProfiles()).findFirst().orElse("");
+        return Arrays.stream(env.getActiveProfiles()).findFirst().orElse("");
     }
 }
