@@ -11,6 +11,7 @@ elif [ ${CURRENT_PORT} -eq 8082 ]; then
     TARGET_PORT=8081
 else
     echo "> 현재 실행중인 WAS가 존재하지 않습니다."
+    exit 1
 fi
 
 echo "set \$service_url http://3.35.120.26:${TARGET_PORT};" | tee /home/ubuntu/service_url.inc

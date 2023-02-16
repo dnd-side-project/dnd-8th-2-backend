@@ -12,6 +12,7 @@ elif [ ${CURRENT_PORT} -eq 8082 ]; then
   TARGET_PORT=8081
 else
   echo "> 현재 실행중인 WAS가 존재하지 않습니다."
+  exit 1
 fi
 
 echo "> 스위칭 될 $TARGET_PROFILE 프로필에 대해 WAS health check을 시작합니다."
