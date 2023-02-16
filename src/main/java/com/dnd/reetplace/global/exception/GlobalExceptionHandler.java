@@ -55,7 +55,8 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException.class,
             HttpRequestMethodNotSupportedException.class,
             HttpMediaTypeNotAcceptableException.class,
-            HttpMediaTypeNotSupportedException.class
+            HttpMediaTypeNotSupportedException.class,
+            MissingServletRequestParameterException.class
     })
     public ResponseEntity<ErrorResponse> globalExceptionHandle(Exception e) {
         log.error("[Global Exception] {}", getExceptionStackTrace(e));

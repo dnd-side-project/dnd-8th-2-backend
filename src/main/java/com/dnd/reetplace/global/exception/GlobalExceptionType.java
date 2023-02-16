@@ -8,6 +8,7 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ public enum GlobalExceptionType {
     HTTP_REQUEST_METHOD_NOT_SUPPORTED(NOT_ACCEPTABLE, 1301, "지원하지 않는 요청 방식입니다.", HttpRequestMethodNotSupportedException.class),
     HTTP_MEDIA_TYPE_NOT_ACCEPTABLE(NOT_ACCEPTABLE, 1302, "Client에서 허용된 응답을 만들어 낼 수 없습니다.", HttpMediaTypeNotAcceptableException.class),
     HTTP_MEDIA_TYPE_NOT_SUPPORTED(UNSUPPORTED_MEDIA_TYPE, 1303, "허용되지 않는 요청 데이터 타입입니다.", HttpMediaTypeNotSupportedException.class),
+    MISSING_SERVLET_REQUEST_PARAMETER(BAD_REQUEST, 1304, "필요한 request parameter가 없습니다.", MissingServletRequestParameterException.class),
     ;
 
     private final HttpStatus httpStatus;
