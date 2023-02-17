@@ -2,7 +2,7 @@ name: Reet-Place main CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/#10-domain-https-setting ]
   pull_request:
     branches: [ main ]
 

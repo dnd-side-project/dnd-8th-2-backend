@@ -1,27 +1,24 @@
 #!/bin/bash
 
 CURRENT_PORT=$(cat /home/ubuntu/service_url.inc | grep -Po '[0-9]+' | tail -1)
-TARGET_PROFILE=prod1
 TARGET_PORT=0
 
 if [ ${CURRENT_PORT} -eq 8081 ]; then
-  TARGET_PROFILE=prod2
   TARGET_PORT=8082
 elif [ ${CURRENT_PORT} -eq 8082 ]; then
-  TARGET_PROFILE=prod1
   TARGET_PORT=8081
 else
   echo "> 현재 실행중인 WAS가 존재하지 않습니다."
   exit 1
 fi
 
-echo "> 스위칭 될 $TARGET_PROFILE 프로필에 대해 WAS health check을 시작합니다."
-echo "> 'http://3.35.120.26:${TARGET_PORT}' ..."
+echo "> 스위칭 될 $TARGET_PORT 포트에 대해 WAS health check을 시작합니다."
+echo "> 'http://reet-place.shop:${TARGET_PORT}' ..."
 
 for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10
 do
     echo "> #${RETRY_COUNT} trying..."
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://3.35.120.26:${TARGET_PORT}/api/health)
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://reet-place.shop:${TARGET_PORT}/api/health)
 
     if [ ${RESPONSE_CODE} -eq 200 ]; then
         echo "> WAS가 정상적으로 동작합니다."
