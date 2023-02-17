@@ -9,6 +9,7 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,13 +18,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Objects;
 
+import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> customExceptionHandle(CustomException e) {
-        log.error("[CustomException] {}", getExceptionStackTrace(e));
+        log.error("[{}] CustomException {}:", getLogTraceId(), getExceptionStackTrace(e));
 
         return ResponseEntity
                 .status(e.getHttpStatus())
@@ -35,7 +38,7 @@ public class GlobalExceptionHandler {
             ConstraintViolationException.class,
     })
     public ResponseEntity<ErrorResponse> validationExceptionHandle(Exception e) {
-        log.error("[Validation Exception] {}", getExceptionStackTrace(e));
+        log.error("[{}] Validation Exception: {}", getLogTraceId(), getExceptionStackTrace(e));
 
         GlobalExceptionType exceptionType = GlobalExceptionType.from(e.getClass());
 
@@ -55,10 +58,11 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException.class,
             HttpRequestMethodNotSupportedException.class,
             HttpMediaTypeNotAcceptableException.class,
-            HttpMediaTypeNotSupportedException.class
+            HttpMediaTypeNotSupportedException.class,
+            MissingServletRequestParameterException.class
     })
     public ResponseEntity<ErrorResponse> globalExceptionHandle(Exception e) {
-        log.error("[Global Exception] {}", getExceptionStackTrace(e));
+        log.error("[{}] Global Exception: {}", getLogTraceId(), getExceptionStackTrace(e));
 
         GlobalExceptionType exceptionType = GlobalExceptionType.from(e.getClass());
 
@@ -69,7 +73,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exceptionHandle(Exception e) {
-        log.error("[UnHandled Exception] {}", getExceptionStackTrace(e));
+        log.error("[{}] UnHandled Exception: {}", getLogTraceId(), getExceptionStackTrace(e));
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
