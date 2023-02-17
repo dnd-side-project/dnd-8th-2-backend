@@ -14,7 +14,7 @@ else
     exit 1
 fi
 
-echo "set \$service_url http://reet-place.shop:${TARGET_PORT};" | tee /home/ubuntu/service_url.inc
+echo "set \$service_url http://3.35.120.26:${TARGET_PORT};" | tee /home/ubuntu/service_url.inc
 
 echo "> 스위칭 후 Nginx가 프록싱하는 포트 : ${TARGET_PORT}"
 
