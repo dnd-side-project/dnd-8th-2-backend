@@ -16,7 +16,7 @@ public class SecurityConfig {
 
     private static final String BASE_URL = "/api";
     private static final String[] AUTH_WHITELIST = {
-            "/api/health/**"
+            "/actuator/health/**"
     };
 
     @Bean
