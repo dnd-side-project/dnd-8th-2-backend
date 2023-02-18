@@ -2,7 +2,7 @@ name: Reet-Place main CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/#15-actuator-health-check ]
   pull_request:
     branches: [ main ]
 
