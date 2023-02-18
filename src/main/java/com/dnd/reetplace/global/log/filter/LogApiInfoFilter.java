@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,49 +71,60 @@ public class LogApiInfoFilter extends OncePerRequestFilter {
     }
 
     private void logRequest(RequestWrapper request) throws IOException {
+        String logTraceId = getLogTraceId();
         String uri = request.getRequestURI();
         String queryString = request.getQueryString();
         if (queryString != null) {
             uri += "?" + queryString;
         }
 
-        log.info(
-                "[{}] Request: [{}] uri={}, content-type={}, content-length={}",
-                getLogTraceId(),
-                request.getMethod(),
-                uri,
-                request.getContentType(),
-                request.getContentLength()
-        );
+        byte[] content = StreamUtils.copyToByteArray(request.getInputStream());
+        if (ObjectUtils.isEmpty(content)) {
+            log.info("[{}] Request: [{}] uri={}", logTraceId, request.getMethod(), uri);
+        } else {
+            String payloadInfo = getPayloadInfo(request.getContentType(), content);
+            log.info("[{}] Request: [{}] uri={}{}", logTraceId, request.getMethod(), uri, ", " + payloadInfo);
+        }
 
-        logPayload("Request", request.getContentType(), request.getInputStream());
     }
 
     private void logResponse(ContentCachingResponseWrapper response) throws IOException {
-        logPayload("Response", response.getContentType(), response.getContentInputStream());
+        String logTraceId = getLogTraceId();
+        byte[] content = StreamUtils.copyToByteArray(response.getContentInputStream());
+        if (ObjectUtils.isEmpty(content)) {
+            log.info("[{}] Response: no content", logTraceId);
+        } else {
+            String payloadInfo = getPayloadInfo(response.getContentType(), content);
+            log.info("[{}] Response: {}", logTraceId, payloadInfo);
+        }
     }
 
-    private void logPayload(String prefix, String contentType, InputStream inputStream) throws IOException {
+    private String getPayloadInfo(String contentType, byte[] content) {
+        String payloadInfo = "content-type=" + contentType + ", payload=";
+
         if (contentType == null) {
             contentType = MediaType.APPLICATION_JSON_VALUE;
         }
 
-        if (!isVisible(MediaType.valueOf(contentType))) {
-            log.info("[{}] {} Payload: Binary Content", getLogTraceId(), prefix);
-            return;
+        if (MediaType.valueOf(contentType).equals(MediaType.valueOf("text/html")) ||
+                MediaType.valueOf(contentType).equals(MediaType.valueOf("text/css"))) {
+            return payloadInfo + "HTML/CSS Content";
         }
-
-        byte[] content = StreamUtils.copyToByteArray(inputStream);
-        if (ObjectUtils.isEmpty(content)) {
-            return;
+        if (!isVisible(MediaType.valueOf(contentType))) {
+            return payloadInfo + "Binary Content";
         }
 
         String contentString = new String(content);
-        // TODO: application/json type 이외의 경우에는 어떻게 출력해야 할 지 추후 확인 필요
+        // TODO: 추가적인 content-type case에 대한 로그 출력도 고민할 필요 있음.
         if (contentType.equals(MediaType.APPLICATION_JSON_VALUE)) {
-            contentString = contentString.replaceAll("\n *", "").replaceAll(",", ", ");
+            payloadInfo += contentString.replaceAll("\n *", "").replaceAll(",", ", ");
+        } else if (contentType.contains(MediaType.MULTIPART_FORM_DATA_VALUE)) {
+            payloadInfo += "\n" + contentString;
+        } else {
+            payloadInfo += contentString;
         }
-        log.info("[{}] {} Payload: {}", getLogTraceId(), prefix, contentString);
+
+        return payloadInfo;
     }
 
     private boolean isVisible(MediaType mediaType) {
