@@ -23,6 +23,11 @@ import static com.dnd.reetplace.global.log.LogUtils.*;
 @Component
 public class LogApiInfoFilter extends OncePerRequestFilter {
 
+    private static final String[] LOG_BLACK_LIST = {
+            "/swagger",
+            "/v3/api-docs"
+    };
+
     private static final List<MediaType> VISIBLE_TYPES = Arrays.asList(
             MediaType.valueOf("text/*"),
             MediaType.APPLICATION_FORM_URLENCODED,
@@ -55,11 +60,13 @@ public class LogApiInfoFilter extends OncePerRequestFilter {
             ContentCachingResponseWrapper response,
             FilterChain filterChain
     ) throws IOException, ServletException {
+        boolean doLog = Arrays.stream(LOG_BLACK_LIST).noneMatch(request.getRequestURI()::contains);
+
         try {
-            logRequest(request);
+            if (doLog) logRequest(request);
             filterChain.doFilter(request, response);
         } finally {
-            logResponse(response);
+            if (doLog) logResponse(response);
             response.copyBodyToResponse();
         }
     }
