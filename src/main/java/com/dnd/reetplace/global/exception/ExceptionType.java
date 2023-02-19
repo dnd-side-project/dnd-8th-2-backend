@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.*;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
+import com.dnd.reetplace.global.log.LogUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -74,7 +75,7 @@ public enum ExceptionType {
                 .findFirst();
 
         if (exceptionType.isEmpty()) {
-            log.error("정의되지 않은 exception이 발생하였습니다. Type of exception={}", classType);
+            log.error("[{}] 정의되지 않은 exception이 발생하였습니다. Type of exception={}", LogUtils.getLogTraceId(), classType);
         }
 
         return exceptionType.orElse(UNHANDLED);
