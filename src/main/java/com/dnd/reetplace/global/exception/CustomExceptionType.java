@@ -7,6 +7,7 @@ import com.dnd.reetplace.app.domain.S3File;
 import com.dnd.reetplace.app.domain.Survey;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
+import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +38,7 @@ public enum CustomExceptionType {
     UNHANDLED(1000, "알 수 없는 서버 에러가 발생했습니다."),
 
     // Member
-
+    MEMBER_UID_NOT_FOUND(2000, "UID에 해당하는 사용자를 찾을 수 없습니다.", MemberUidNotFoundException.class)
     ;
 
     private final Integer errorCode;
