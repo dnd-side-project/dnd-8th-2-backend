@@ -18,6 +18,16 @@ import java.io.StringWriter;
 
 import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
 
+/**
+ * <p>{@code @ExceptionHandler} method를 통해 Application에서 발생하는 모든 exception들을 처리하는 class.
+ *
+ * <p>이 class는 Spring MVC exception을 처리하는 {@link ResponseEntityExceptionHandler}을 상속받아 구현되었음.
+ * 이 때문에 Spring MVC에서 발생할 수 있는 기본 exception들을 전부 처리하며,
+ * 일부 exception의 경우 응답 형태를 재가공하여 client에게 응답한다.
+ *
+ * @see ResponseEntityExceptionHandler
+ * @see org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -54,7 +64,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        log.error("[{}] Basic Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
+        log.error("[{}] Spring MVC Basic Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
         GlobalExceptionType exceptionType = GlobalExceptionType.from(ex.getClass());
         return ResponseEntity
