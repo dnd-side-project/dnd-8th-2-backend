@@ -3,6 +3,8 @@ package com.dnd.reetplace.app.service;
 import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.dto.auth.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.LoginResponse;
+import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
+import com.dnd.reetplace.app.dto.auth.TokenResponse;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.global.exception.member.KakaoUnauthorizedException;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -89,9 +92,27 @@ public class OAuth2Service {
                     .build();
             memberRepository.save(member);
         }
-        String accessToken = tokenProvider.createAccessToken(member);
-        String refreshToken = tokenProvider.createRefreshToken(member);
+        String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
+        String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
         refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
         return LoginResponse.of(member, accessToken, refreshToken);
+    }
+
+    /**
+     * Authorization Header에 포함된 refresh token을 통해 access token 및 refresh token을 재발급한다.
+     *
+     * @param request Authorization Header(refresh token) 가 포함된 HttpServletRequest 객체
+     * @return 재발급된 access token 및 refresh token
+     */
+    @Transactional
+    public TokenResponse refresh(HttpServletRequest request) {
+        String token = tokenProvider.getToken(request);
+        tokenProvider.validateToken(token);
+        LoginType loginType = tokenProvider.getLoginType(token);
+        RefreshTokenDto refreshTokenDto = refreshTokenRedisService.findRefreshToken(token);
+        String accessToken = tokenProvider.createAccessToken(refreshTokenDto.getUid(), loginType);
+        String refreshToken = tokenProvider.createRefreshToken(refreshTokenDto.getUid(), loginType);
+        refreshTokenRedisService.saveRefreshToken(refreshTokenDto.getUid(), refreshToken);
+        return TokenResponse.of(accessToken, refreshToken);
     }
 }

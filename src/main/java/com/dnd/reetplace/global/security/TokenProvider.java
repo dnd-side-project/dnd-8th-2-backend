@@ -95,15 +95,16 @@ public class TokenProvider {
     /**
      * 사용자에 대한 정보를 기반으로 Access Token을 생성해 반환한다.
      *
-     * @param member 사용자 (Member)
+     * @param uid 사용자 uid
+     * @param loginType 사용자 loginType
      * @return 생성된 Access Token
      */
-    public String createAccessToken(Member member) {
+    public String createAccessToken(String uid, LoginType loginType) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(member.getUid())
+                .setSubject(uid)
                 .claim(ROLE_CLAIM_KEY, RoleType.NORMAL.getKey())
-                .claim(LOGIN_TYPE_CLAIM_KEY, member.getLoginType().name())
+                .claim(LOGIN_TYPE_CLAIM_KEY, loginType.name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + AT_EXP_TIME))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -113,15 +114,16 @@ public class TokenProvider {
     /**
      * 사용자에 대한 정보를 기반으로 Refresh Token을 생성해 반환한다.
      *
-     * @param member 사용자 (Member)
+     * @param uid 사용자 uid
+     * @param loginType 사용자 loginType
      * @return 생성된 Refresh Token
      */
-    public String createRefreshToken(Member member) {
+    public String createRefreshToken(String uid, LoginType loginType) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(member.getUid())
+                .setSubject(uid)
                 .claim(ROLE_CLAIM_KEY, RoleType.NORMAL.getKey())
-                .claim(LOGIN_TYPE_CLAIM_KEY, member.getLoginType().name())
+                .claim(LOGIN_TYPE_CLAIM_KEY, loginType.name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + RT_EXP_TIME))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -132,7 +134,7 @@ public class TokenProvider {
      * Token에서 claim을 추출한다.
      *
      * @param token JWT Token
-     * @return accessToken에서 추출한 claim
+     * @return token에서 추출한 claim
      */
     public Claims getClaim(String token) {
         return Jwts.parserBuilder()
@@ -140,6 +142,27 @@ public class TokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    /**
+     * Token에서 사용자의 uid를 추출한다.
+     * @param token JWT Token
+     * @return token에서 추출한 uid
+     */
+    public String getUid(String token) {
+        return getClaim(token).getSubject();
+    }
+
+    /**
+     * Token에서 사용자의 Login Type을 추출한다.
+     * @param token JWT Token
+     * @return token에서 추출한 Login Type
+     */
+    public LoginType getLoginType(String token) {
+        return Arrays.stream(LoginType.values())
+                .filter(t -> t.name().equals(getClaim(token).get(LOGIN_TYPE_CLAIM_KEY)))
+                .findFirst()
+                .get();
     }
 
     /**
