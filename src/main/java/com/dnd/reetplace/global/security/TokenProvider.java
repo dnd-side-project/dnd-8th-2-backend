@@ -153,7 +153,7 @@ public class TokenProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (Exception e) {
-            log.error("JwtTokenProvider.validateToken() ex={}", String.valueOf(e));
+            log.error("TokenProvider.validateToken() ex={}", String.valueOf(e));
             throw e;
         }
     }

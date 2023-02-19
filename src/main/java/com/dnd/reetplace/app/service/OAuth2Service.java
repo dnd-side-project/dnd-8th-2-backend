@@ -4,12 +4,13 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.dto.auth.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.LoginResponse;
 import com.dnd.reetplace.app.repository.MemberRepository;
-import com.dnd.reetplace.app.repository.RefreshTokenRedisRepository;
 import com.dnd.reetplace.app.type.LoginType;
+import com.dnd.reetplace.global.exception.member.KakaoLoginFailedException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+@Slf4j
 @Transactional(readOnly = true)
 @SuppressWarnings("unchecked")
 @RequiredArgsConstructor
@@ -31,7 +33,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class OAuth2Service {
 
     public static final String GET_PROFILE_URL = "https://kapi.kakao.com/v2/user/me";
-    public static final String EMAIL_AGREEMENT = "email_needs_agreement";
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisService refreshTokenRedisService;
     private final TokenProvider tokenProvider;
@@ -44,7 +45,6 @@ public class OAuth2Service {
      */
     @Transactional
     public LoginResponse kakaoLogin(String token) throws JsonProcessingException {
-
         // Header 추가
         HttpHeaders header = new HttpHeaders();
         header.add(AUTHORIZATION, "Bearer " + token);
@@ -56,12 +56,18 @@ public class OAuth2Service {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(header);
 
         // API 요청
-        ResponseEntity<String> response = rt.exchange(
-                GET_PROFILE_URL,
-                HttpMethod.POST,
-                request,
-                String.class
-        );
+        ResponseEntity<String> response;
+        try {
+            response = rt.exchange(
+                    GET_PROFILE_URL,
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
+        } catch (Exception e) {
+            log.error("OAuth2Service.kakaoLogin() ex={}", String.valueOf(e));
+            throw new KakaoLoginFailedException();
+        }
 
         // response 객체에 매핑
         ObjectMapper mapper = new ObjectMapper();
@@ -73,8 +79,7 @@ public class OAuth2Service {
                 .orElse(null);
 
         if (member == null) {
-            String email = (boolean) kakaoProfile.getKakao_account().get(EMAIL_AGREEMENT) ?
-                    (String) kakaoProfile.getKakao_account().get("email") : null;
+            String email = (String) kakaoProfile.getKakao_account().get("email");
             Map<String, Object> profile = (Map<String, Object>) kakaoProfile.getKakao_account().get("profile");
             member = Member.builder()
                     .uid(uid)
