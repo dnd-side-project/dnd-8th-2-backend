@@ -147,6 +147,7 @@ public class TokenProvider {
 
     /**
      * Token에서 사용자의 uid를 추출한다.
+     *
      * @param token JWT Token
      * @return token에서 추출한 uid
      */
@@ -156,6 +157,7 @@ public class TokenProvider {
 
     /**
      * Token에서 사용자의 Login Type을 추출한다.
+     *
      * @param token JWT Token
      * @return token에서 추출한 Login Type
      */
