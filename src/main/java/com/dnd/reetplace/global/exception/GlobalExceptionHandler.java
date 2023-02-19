@@ -36,7 +36,7 @@ import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> customExceptionHandle(CustomException ex) {
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
         log.error("[{}] CustomException {}:", getLogTraceId(), getExceptionStackTrace(ex));
 
         return ResponseEntity
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ValidationErrorResponse> constraintViolationExceptionHandle(ConstraintViolationException ex) {
+    public ResponseEntity<ValidationErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
         log.error("[{}] Validation Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
         List<ValidationErrorDetails> errorDetails = ex.getConstraintViolations().stream()
@@ -91,7 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exceptionHandle(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         log.error("[{}] UnHandled Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
         return ResponseEntity
