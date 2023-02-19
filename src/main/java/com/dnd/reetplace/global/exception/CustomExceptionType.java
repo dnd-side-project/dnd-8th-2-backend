@@ -7,6 +7,7 @@ import com.dnd.reetplace.app.domain.S3File;
 import com.dnd.reetplace.app.domain.Survey;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
+import com.dnd.reetplace.global.exception.member.JwtTokenEmptyUnauthorizedException;
 import com.dnd.reetplace.global.exception.member.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import com.dnd.reetplace.global.exception.member.RefreshTokenNotFoundException;
@@ -41,8 +42,11 @@ public enum CustomExceptionType {
 
     // Member
     MEMBER_UID_NOT_FOUND(2000, "UID에 해당하는 사용자를 찾을 수 없습니다.", MemberUidNotFoundException.class),
-    REFRESH_TOKEN_NOT_FOUND(2001, "존재하지 않는 Refresh Token입니다.", RefreshTokenNotFoundException.class),
-    KAKAO_UNAUTHORIZED(2002, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class)
+
+    // Auth
+    KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class),
+    REFRESH_TOKEN_NOT_FOUND(2401, "존재하지 않는 Refresh Token입니다.", RefreshTokenNotFoundException.class),
+    JWT_TOKEN_EMPTY_UNAUTHORIZED(2402, "JWT Token이 포함되어 있지 않습니다.", JwtTokenEmptyUnauthorizedException.class),
     ;
 
     private final Integer errorCode;

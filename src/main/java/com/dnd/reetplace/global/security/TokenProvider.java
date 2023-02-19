@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.RoleType;
+import com.dnd.reetplace.global.exception.member.JwtTokenEmptyUnauthorizedException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -176,6 +177,9 @@ public class TokenProvider {
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
+        } catch (IllegalArgumentException e) {
+            log.error("TokenProvider.validateToken() ex= JWT Token is Empty");
+            throw new JwtTokenEmptyUnauthorizedException();
         } catch (Exception e) {
             log.error("TokenProvider.validateToken() ex={}", String.valueOf(e));
             throw e;
