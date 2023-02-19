@@ -39,17 +39,17 @@ public enum GlobalExceptionType {
     MISSING_SERVLET_REQUEST_PARAMETER(1304, "필요한 request parameter가 없습니다.", MissingServletRequestParameterException.class),
     ;
 
-    private final Integer errorCode;
-    private final String errorMessage;
+    private final Integer code;
+    private final String message;
     private final Class<? extends Exception> type;
 
-    GlobalExceptionType(int errorCode, String errorMessage) {
-        this(errorCode, errorMessage, null);
+    GlobalExceptionType(int code, String message) {
+        this(code, message, null);
     }
 
-    GlobalExceptionType(int errorCode, String errorMessage, Class<? extends Exception> type) {
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    GlobalExceptionType(int code, String message, Class<? extends Exception> type) {
+        this.code = code;
+        this.message = message;
         this.type = type;
     }
 

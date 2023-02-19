@@ -38,7 +38,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return ResponseEntity
                 .status(ex.getHttpStatus())
-                .body(new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage()));
+                .body(new ErrorResponse(ex.getCode(), ex.getMessage()));
     }
 
     @Override
@@ -46,10 +46,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("[{}] Validation Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
         GlobalExceptionType exceptionType = GlobalExceptionType.METHOD_ARGUMENT_NOT_VALID;
-        String errorMessage = exceptionType.getErrorMessage() + " " + ex.getAllErrors().get(0).getDefaultMessage();
+        String errorMessage = exceptionType.getMessage() + " " + ex.getAllErrors().get(0).getDefaultMessage();
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(new ErrorResponse(exceptionType.getErrorCode(), errorMessage));
+                .body(new ErrorResponse(exceptionType.getCode(), errorMessage));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         GlobalExceptionType exceptionType = GlobalExceptionType.CONSTRAINT_VIOLATION;
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(new ErrorResponse(exceptionType.getErrorCode(), exceptionType.getErrorMessage()));
+                .body(new ErrorResponse(exceptionType.getCode(), exceptionType.getMessage()));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         GlobalExceptionType exceptionType = GlobalExceptionType.from(ex.getClass());
         return ResponseEntity
                 .status(status)
-                .body(new ErrorResponse(exceptionType.getErrorCode(), exceptionType.getErrorMessage()));
+                .body(new ErrorResponse(exceptionType.getCode(), exceptionType.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -79,8 +79,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
-                        GlobalExceptionType.UNHANDLED.getErrorCode(),
-                        GlobalExceptionType.UNHANDLED.getErrorMessage()
+                        GlobalExceptionType.UNHANDLED.getCode(),
+                        GlobalExceptionType.UNHANDLED.getMessage()
                 ));
     }
 

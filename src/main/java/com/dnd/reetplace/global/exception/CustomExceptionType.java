@@ -37,17 +37,17 @@ public enum CustomExceptionType {
     UNHANDLED(1000, "알 수 없는 서버 에러가 발생했습니다."),
     ;
 
-    private final Integer errorCode;
-    private final String errorMessage;
+    private final Integer code;
+    private final String message;
     private final Class<? extends CustomException> type;
 
-    CustomExceptionType(int errorCode, String errorMessage) {
-        this(errorCode, errorMessage, null);
+    CustomExceptionType(int code, String message) {
+        this(code, message, null);
     }
 
-    CustomExceptionType(int errorCode, String errorMessage, Class<? extends CustomException> type) {
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    CustomExceptionType(int code, String message, Class<? extends CustomException> type) {
+        this.code = code;
+        this.message = message;
         this.type = type;
     }
 
