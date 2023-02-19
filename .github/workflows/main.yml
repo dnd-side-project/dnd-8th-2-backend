@@ -2,7 +2,7 @@ name: Reet-Place main CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/#11-jacoco-redis-kakao-login ]
   pull_request:
     branches: [ main ]
 
