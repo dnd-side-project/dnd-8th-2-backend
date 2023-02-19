@@ -1,4 +1,4 @@
-reet-place.application.version: v.0.0.1
+reet-place.app.version: v.0.0.1
 
 logging:
   level:
