@@ -40,6 +40,9 @@ logging:
 
 spring:
   config.activate.on-profile: prod
+  redis:
+    host: ${REET_PLACE_REDIS_HOST}
+    port: 6379
   datasource:
     url: ${REET_PLACE_PROD_DB_URL}
     username: ${REET_PLACE_PROD_DB_USERNAME}
