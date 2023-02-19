@@ -43,11 +43,14 @@ public class OAuth2Service {
     /**
      * 카카오 서버에서 받은 access token을 기반으로 사용자 프로필을 받아온 후, 로그인 (또는 회원가입)을 진행한다.
      *
-     * @param token 카카오 서버에서 받은 access token
+     * @param request Authorization Header(kakao access token) 가 포함된 HttpServletRequest 객체
      * @return 로그인 (또는 회원가입) 완료 후 사용자 정보 (memberId, uid, accessToken, refreshToken 등)
      */
     @Transactional
-    public LoginResponse kakaoLogin(String token) throws JsonProcessingException {
+    public LoginResponse kakaoLogin(HttpServletRequest request) throws JsonProcessingException {
+
+        String token = tokenProvider.getToken(request);
+
         // Header 추가
         HttpHeaders header = new HttpHeaders();
         header.add(AUTHORIZATION, "Bearer " + token);
@@ -56,7 +59,7 @@ public class OAuth2Service {
         // request 구성
         RestTemplate rt = new RestTemplate();
         rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(header);
+        HttpEntity<MultiValueMap<String, String>> httpRequest = new HttpEntity<>(header);
 
         // API 요청
         ResponseEntity<String> response;
@@ -64,7 +67,7 @@ public class OAuth2Service {
             response = rt.exchange(
                     GET_PROFILE_URL,
                     HttpMethod.POST,
-                    request,
+                    httpRequest,
                     String.class
             );
         } catch (Exception e) {

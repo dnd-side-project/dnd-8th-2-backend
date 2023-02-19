@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +20,8 @@ public class AuthController {
     private final OAuth2Service oAuth2Service;
 
     @GetMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(@RequestHeader("access-token") String accessToken) throws JsonProcessingException {
-        return ResponseEntity.ok(oAuth2Service.kakaoLogin(accessToken));
+    public ResponseEntity<LoginResponse> kakaoLogin(HttpServletRequest request) throws JsonProcessingException {
+        return ResponseEntity.ok(oAuth2Service.kakaoLogin(request));
     }
 
     @GetMapping("/refresh")
