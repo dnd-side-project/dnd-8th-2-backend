@@ -41,6 +41,7 @@ public enum GlobalExceptionType {
     METHOD_ARGUMENT_NOT_VALID(BAD_REQUEST, 1001, "요청 데이터가 잘못되었습니다.", MethodArgumentNotValidException.class),
     CONSTRAINT_VIOLATION(BAD_REQUEST, 1002, "요청 데이터가 잘못되었습니다.", ConstraintViolationException.class),
     ACCESS_DENIED(FORBIDDEN, 1003, "접근 권한이 없습니다."),
+    AUTHENTICATION_REQUIRED(UNAUTHORIZED, 1004, "인증이 필요한 요청입니다."),
 
     // 11XX (JWT)
     JWT_INVALID_SIGNATURE_EXCEPTION(UNAUTHORIZED, 1100, "Token의 서명이 잘못되었습니다.", SignatureException.class),
