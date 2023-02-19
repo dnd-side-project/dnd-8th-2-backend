@@ -55,6 +55,8 @@ spring:
         format_sql: false
   sql.init.mode: never
 
+jwt.secret: ${REET_PLACE_PROD_JWT_SECRET}
+
 ---
 # Settings for test
 spring:

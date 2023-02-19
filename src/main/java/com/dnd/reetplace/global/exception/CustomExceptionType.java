@@ -35,6 +35,9 @@ import java.util.Optional;
 public enum CustomExceptionType {
 
     UNHANDLED(1000, "알 수 없는 서버 에러가 발생했습니다."),
+
+    // Member
+
     ;
 
     private final Integer errorCode;
