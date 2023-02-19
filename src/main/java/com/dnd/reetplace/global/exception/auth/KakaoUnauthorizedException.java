@@ -1,4 +1,4 @@
-package com.dnd.reetplace.global.exception.member;
+package com.dnd.reetplace.global.exception.auth;
 
 import com.dnd.reetplace.global.exception.common.UnauthorizedException;
 

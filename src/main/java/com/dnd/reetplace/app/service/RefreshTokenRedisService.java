@@ -2,7 +2,7 @@ package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.repository.RefreshTokenRedisRepository;
-import com.dnd.reetplace.global.exception.member.RefreshTokenNotFoundException;
+import com.dnd.reetplace.global.exception.auth.RefreshTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

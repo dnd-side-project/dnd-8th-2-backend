@@ -7,10 +7,10 @@ import com.dnd.reetplace.app.domain.S3File;
 import com.dnd.reetplace.app.domain.Survey;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
-import com.dnd.reetplace.global.exception.member.JwtTokenEmptyUnauthorizedException;
-import com.dnd.reetplace.global.exception.member.KakaoUnauthorizedException;
+import com.dnd.reetplace.global.exception.auth.JwtTokenEmptyUnauthorizedException;
+import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
-import com.dnd.reetplace.global.exception.member.RefreshTokenNotFoundException;
+import com.dnd.reetplace.global.exception.auth.RefreshTokenNotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

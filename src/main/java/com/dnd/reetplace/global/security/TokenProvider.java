@@ -4,7 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.RoleType;
-import com.dnd.reetplace.global.exception.member.JwtTokenEmptyUnauthorizedException;
+import com.dnd.reetplace.global.exception.auth.JwtTokenEmptyUnauthorizedException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

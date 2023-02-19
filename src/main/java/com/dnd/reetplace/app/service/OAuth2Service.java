@@ -7,7 +7,7 @@ import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.dto.auth.TokenResponse;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.global.exception.member.KakaoUnauthorizedException;
+import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
