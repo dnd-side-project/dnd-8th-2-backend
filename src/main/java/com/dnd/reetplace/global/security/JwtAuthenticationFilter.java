@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws IOException {
+                                    FilterChain filterChain) throws IOException, ServletException {
 
         String accessToken = tokenProvider.getToken(request);
         if (accessToken != null) {
@@ -39,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 tokenProvider.validateToken(accessToken);
                 Authentication authentication = tokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                filterChain.doFilter(request, response);
             } catch (Exception e) {
                 Class<? extends Exception> type = e.getClass();
                 GlobalExceptionType exceptionType = Arrays.stream(GlobalExceptionType.values())
@@ -54,6 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         }
-
+        filterChain.doFilter(request, response);
     }
 }
