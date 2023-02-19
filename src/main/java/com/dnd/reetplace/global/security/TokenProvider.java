@@ -12,6 +12,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -87,8 +88,8 @@ public class TokenProvider {
                 .get();
         Member member = memberRepository.findByUidAndLoginType(uid, loginType)
                 .orElseThrow(() -> new MemberUidNotFoundException(uid));
-//        return new UsernamePasswordAuthenticationToken() TODO
-        return null;
+        MemberDetails memberDetails = new MemberDetails(member);
+        return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());
     }
 
     /**
