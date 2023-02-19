@@ -1,5 +1,8 @@
 package com.dnd.reetplace.global.security;
 
+import com.dnd.reetplace.app.dto.common.ErrorResponse;
+import com.dnd.reetplace.global.exception.GlobalExceptionType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -8,10 +11,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,14 +31,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws IOException {
 
         String accessToken = tokenProvider.getToken(request);
         if (accessToken != null) {
-            tokenProvider.validateToken(accessToken);
-            Authentication authentication = tokenProvider.getAuthentication(accessToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            try {
+                tokenProvider.validateToken(accessToken);
+                Authentication authentication = tokenProvider.getAuthentication(accessToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                filterChain.doFilter(request, response);
+            } catch (Exception e) {
+                Class<? extends Exception> type = e.getClass();
+                GlobalExceptionType exceptionType = Arrays.stream(GlobalExceptionType.values())
+                        .filter(t -> t.getType() != null && t.getType().equals(type))
+                        .findFirst()
+                        .get();
+                response.setStatus(exceptionType.getHttpStatus().value());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                response.setCharacterEncoding("utf-8");
+                new ObjectMapper().writeValue(response.getWriter(),
+                        new ErrorResponse(exceptionType.getErrorCode(), exceptionType.getErrorMessage()));
+            }
+
         }
-        filterChain.doFilter(request, response);
+
     }
 }

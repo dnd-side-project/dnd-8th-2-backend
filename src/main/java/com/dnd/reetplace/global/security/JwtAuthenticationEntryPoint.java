@@ -27,6 +27,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         response.setStatus(AUTHENTICATION_REQUIRED.getHttpStatus().value());
         response.setContentType(APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("utf-8");
         new ObjectMapper().writeValue(response.getWriter(),
                 new ErrorResponse(AUTHENTICATION_REQUIRED.getErrorCode(), AUTHENTICATION_REQUIRED.getErrorMessage()));
     }
