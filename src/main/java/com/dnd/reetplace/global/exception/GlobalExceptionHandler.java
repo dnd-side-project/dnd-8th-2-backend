@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Objects;
 
 import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
 
@@ -24,12 +23,12 @@ import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> customExceptionHandle(CustomException e) {
-        log.error("[{}] CustomException {}:", getLogTraceId(), getExceptionStackTrace(e));
+    public ResponseEntity<ErrorResponse> customExceptionHandle(CustomException ex) {
+        log.error("[{}] CustomException {}:", getLogTraceId(), getExceptionStackTrace(ex));
 
         return ResponseEntity
-                .status(e.getHttpStatus())
-                .body(new ErrorResponse(e.getErrorCode(), e.getErrorMessage()));
+                .status(ex.getHttpStatus())
+                .body(new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage()));
     }
 
     @Override
@@ -64,8 +63,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exceptionHandle(Exception e) {
-        log.error("[{}] UnHandled Exception: {}", getLogTraceId(), getExceptionStackTrace(e));
+    public ResponseEntity<ErrorResponse> exceptionHandle(Exception ex) {
+        log.error("[{}] UnHandled Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -75,9 +74,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ));
     }
 
-    private String getExceptionStackTrace(Exception e) {
+    private String getExceptionStackTrace(Exception ex) {
         StringWriter stringWriter = new StringWriter();
-        e.printStackTrace(new PrintWriter(stringWriter));
+        ex.printStackTrace(new PrintWriter(stringWriter));
         return String.valueOf(stringWriter);
     }
 }
