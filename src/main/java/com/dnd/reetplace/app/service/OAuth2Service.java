@@ -5,7 +5,7 @@ import com.dnd.reetplace.app.dto.auth.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.LoginResponse;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.global.exception.member.KakaoLoginFailedException;
+import com.dnd.reetplace.global.exception.member.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,7 +66,7 @@ public class OAuth2Service {
             );
         } catch (Exception e) {
             log.error("OAuth2Service.kakaoLogin() ex={}", String.valueOf(e));
-            throw new KakaoLoginFailedException();
+            throw new KakaoUnauthorizedException();
         }
 
         // response 객체에 매핑
