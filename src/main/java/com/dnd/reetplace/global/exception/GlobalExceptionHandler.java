@@ -1,6 +1,8 @@
 package com.dnd.reetplace.global.exception;
 
 import com.dnd.reetplace.app.dto.exception.ErrorResponse;
+import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
+import com.dnd.reetplace.global.exception.util.ViolationMessageResolver;
 import io.micrometer.core.lang.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 import static com.dnd.reetplace.global.log.LogUtils.getLogTraceId;
 
@@ -45,21 +48,36 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         log.error("[{}] Validation Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
-        GlobalExceptionType exceptionType = GlobalExceptionType.METHOD_ARGUMENT_NOT_VALID;
-        String errorMessage = exceptionType.getMessage() + " " + ex.getAllErrors().get(0).getDefaultMessage();
+        List<ValidationErrorDetails> errorDetails = ex.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> new ValidationErrorDetails(
+                        ValidationErrorCode.getErrorCode(fieldError.getCode()),
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                )).toList();
+
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(new ErrorResponse(exceptionType.getCode(), errorMessage));
+                .body(new ValidationErrorResponse(
+                        GlobalExceptionType.METHOD_ARGUMENT_NOT_VALID.getCode(),
+                        GlobalExceptionType.METHOD_ARGUMENT_NOT_VALID.getMessage(),
+                        errorDetails
+                ));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> constraintViolationExceptionHandle(ConstraintViolationException ex) {
+    public ResponseEntity<ValidationErrorResponse> constraintViolationExceptionHandle(ConstraintViolationException ex) {
         log.error("[{}] Validation Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
+
+        List<ValidationErrorDetails> errorDetails = ex.getConstraintViolations().stream()
+                .map(violation -> {
+                    ViolationMessageResolver resolver = new ViolationMessageResolver(violation);
+                    return new ValidationErrorDetails(resolver.getErrorCode(), resolver.getFieldName(), resolver.getMessage());
+                }).toList();
 
         GlobalExceptionType exceptionType = GlobalExceptionType.CONSTRAINT_VIOLATION;
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(new ErrorResponse(exceptionType.getCode(), exceptionType.getMessage()));
+                .body(new ValidationErrorResponse(exceptionType.getCode(), exceptionType.getMessage(), errorDetails));
     }
 
     @Override
