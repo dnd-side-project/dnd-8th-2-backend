@@ -28,6 +28,9 @@ dependencies {
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
+
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
