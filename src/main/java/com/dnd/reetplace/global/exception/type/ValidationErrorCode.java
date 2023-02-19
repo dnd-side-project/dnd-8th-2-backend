@@ -1,5 +1,6 @@
 package com.dnd.reetplace.global.exception.type;
 
+import com.dnd.reetplace.global.exception.ExceptionType;
 import lombok.Getter;
 
 @Getter
@@ -42,7 +43,7 @@ public enum ValidationErrorCode {
     /**
      * 이 수치는 {@code GlobalExceptionType} 참고
      *
-     * @see com.dnd.reetplace.global.exception.GlobalExceptionType
+     * @see ExceptionType
      */
     private static final int VALIDATION_EX_BASE_CODE = 1210;
 

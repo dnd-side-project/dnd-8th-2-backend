@@ -58,8 +58,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ValidationErrorResponse(
-                        GlobalExceptionType.METHOD_ARGUMENT_NOT_VALID.getCode(),
-                        GlobalExceptionType.METHOD_ARGUMENT_NOT_VALID.getMessage(),
+                        ExceptionType.METHOD_ARGUMENT_NOT_VALID.getCode(),
+                        ExceptionType.METHOD_ARGUMENT_NOT_VALID.getMessage(),
                         errorDetails
                 ));
     }
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                     return new ValidationErrorDetails(resolver.getErrorCode(), resolver.getFieldName(), resolver.getMessage());
                 }).toList();
 
-        GlobalExceptionType exceptionType = GlobalExceptionType.CONSTRAINT_VIOLATION;
+        ExceptionType exceptionType = ExceptionType.CONSTRAINT_VIOLATION;
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ValidationErrorResponse(exceptionType.getCode(), exceptionType.getMessage(), errorDetails));
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         log.error("[{}] Spring MVC Basic Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
-        GlobalExceptionType exceptionType = GlobalExceptionType.from(ex.getClass());
+        ExceptionType exceptionType = ExceptionType.from(ex.getClass());
         return ResponseEntity
                 .status(status)
                 .body(new ErrorResponse(exceptionType.getCode(), exceptionType.getMessage()));
@@ -97,8 +97,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
-                        GlobalExceptionType.UNHANDLED.getCode(),
-                        GlobalExceptionType.UNHANDLED.getMessage()
+                        ExceptionType.UNHANDLED.getCode(),
+                        ExceptionType.UNHANDLED.getMessage()
                 ));
     }
 

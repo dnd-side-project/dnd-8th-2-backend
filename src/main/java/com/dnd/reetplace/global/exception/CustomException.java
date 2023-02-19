@@ -11,14 +11,14 @@ public abstract class CustomException extends RuntimeException {
     private final String message;
 
     public CustomException(HttpStatus httpStatus) {
-        CustomExceptionType exceptionType = CustomExceptionType.from(this.getClass());
+        ExceptionType exceptionType = ExceptionType.from(this.getClass());
         this.httpStatus = httpStatus;
         this.code = exceptionType.getCode();
         this.message = exceptionType.getMessage();
     }
 
     public CustomException(HttpStatus httpStatus, String optionalMessage) {
-        CustomExceptionType exceptionType = CustomExceptionType.from(this.getClass());
+        ExceptionType exceptionType = ExceptionType.from(this.getClass());
         this.httpStatus = httpStatus;
         this.code = exceptionType.getCode();
         this.message = exceptionType.getMessage() + " " + optionalMessage;

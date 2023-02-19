@@ -1,5 +1,8 @@
 package com.dnd.reetplace.global.exception;
 
+import com.dnd.reetplace.app.domain.*;
+import com.dnd.reetplace.app.domain.bookmark.Bookmark;
+import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,14 @@ import java.util.Optional;
  *     <li>1210 ~ 1299: 구체적인 Validation content에 대한 exception. 해당 내용은 {@link ValidationErrorCode}, {@link GlobalExceptionHandler} 참고)</li>
  *     <li>13XX: API/Controller 관련 예외</li>
  *     <li>14XX: DB 관련 예외</li>
+ *     <li>2000 ~ 2399: 회원({@link Member}) 관련 예외</li>
+ *     <li>2400 ~ 2699: 로그인/회원가입 관련 예외</li>
+ *     <li>2700 ~ 2999: 회원 설문({@link Survey}) 관련 예외</li>
+ *     <li>3000 ~ 3499: 북마크({@link Bookmark}) 관련 예외</li>
+ *     <li>3500 ~ 3999: 장소({@link Place}) 관련 예외</li>
+ *     <li>4000 ~ 4999: 파일 업로드({@link S3File}) 관련 예외</li>
+ *     <li>5000 ~ 5499: 문의({@link Question}) 관련 예외</li>
+ *     <li>5500 ~ 5999: 문의 답변({@link Answer}) 관련 예외</li>
  * </ul>
  *
  * @see CustomExceptionType
@@ -31,7 +42,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Getter
-public enum GlobalExceptionType {
+public enum ExceptionType {
 
     UNHANDLED(1000, "알 수 없는 서버 에러가 발생했습니다."),
     METHOD_ARGUMENT_NOT_VALID(1200, "요청 데이터가 잘못되었습니다.", MethodArgumentNotValidException.class),
@@ -47,18 +58,18 @@ public enum GlobalExceptionType {
     private final String message;
     private final Class<? extends Exception> type;
 
-    GlobalExceptionType(int code, String message) {
+    ExceptionType(int code, String message) {
         this(code, message, null);
     }
 
-    GlobalExceptionType(int code, String message, Class<? extends Exception> type) {
+    ExceptionType(int code, String message, Class<? extends Exception> type) {
         this.code = code;
         this.message = message;
         this.type = type;
     }
 
-    public static GlobalExceptionType from(Class<? extends Exception> classType) {
-        Optional<GlobalExceptionType> exceptionType = Arrays.stream(values())
+    public static ExceptionType from(Class<? extends Exception> classType) {
+        Optional<ExceptionType> exceptionType = Arrays.stream(values())
                 .filter(ex -> ex.getType() != null && ex.getType().equals(classType))
                 .findFirst();
 
