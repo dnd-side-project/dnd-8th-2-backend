@@ -1,6 +1,7 @@
 package com.dnd.reetplace.app.dto.auth.response;
 
 import com.dnd.reetplace.app.domain.Member;
+import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.type.LoginType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,10 +24,16 @@ public class LoginResponse {
     private String refreshToken;
 
     public static LoginResponse of(
-            Member member,
+            MemberDto memberDto,
             String accessToken,
             String refreshToken
     ) {
-        return new LoginResponse(member.getId(), member.getUid(), member.getLoginType(), member.getNickname(), accessToken, refreshToken);
+        return new LoginResponse(
+                memberDto.getId(),
+                memberDto.getUid(),
+                memberDto.getLoginType(),
+                memberDto.getNickname(),
+                accessToken,
+                refreshToken);
     }
 }

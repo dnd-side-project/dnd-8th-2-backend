@@ -5,6 +5,7 @@ import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.dto.auth.response.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
+import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.global.security.TokenProvider;
@@ -42,7 +43,7 @@ public class OAuth2Service {
         String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
         String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
         refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
-        return LoginResponse.of(member, accessToken, refreshToken);
+        return LoginResponse.of(MemberDto.from(member), accessToken, refreshToken);
     }
 
     private Member kakaoLoginOrSignup(KakaoProfileResponse kakaoProfile) {
