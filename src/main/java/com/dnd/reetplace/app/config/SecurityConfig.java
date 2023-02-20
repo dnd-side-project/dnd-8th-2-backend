@@ -26,7 +26,6 @@ public class SecurityConfig {
 
     private static final String BASE_URL = "/api";
     private static final String[] AUTH_WHITE_LIST = {
-            // TODO: 추후 로그인 권한이 필요하지 않은 API의 uri 기입
             "/auth/login/kakao",
             "/auth/refresh"
     };
