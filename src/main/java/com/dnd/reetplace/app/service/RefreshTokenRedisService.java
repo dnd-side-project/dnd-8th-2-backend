@@ -21,6 +21,6 @@ public class RefreshTokenRedisService {
 
     public RefreshTokenDto findRefreshToken(String refreshToken) {
         return refreshTokenRedisRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RefreshTokenNotFoundException(refreshToken));
+                .orElseThrow(RefreshTokenNotFoundException::new);
     }
 }
