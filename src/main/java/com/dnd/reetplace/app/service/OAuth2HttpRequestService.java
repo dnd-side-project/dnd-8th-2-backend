@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.dto.auth.response.KakaoProfileResponse;
 import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
+import com.dnd.reetplace.global.log.LogUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -45,7 +46,7 @@ public class OAuth2HttpRequestService {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(response.getBody(), KakaoProfileResponse.class);
         } catch (Exception e) {
-            log.error("OAuth2HttpRequestService.getKakaoProfile() ex={}", String.valueOf(e));
+            log.error("[{}] OAuth2Service.kakaoLogin() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
             throw new KakaoUnauthorizedException();
         }
     }
