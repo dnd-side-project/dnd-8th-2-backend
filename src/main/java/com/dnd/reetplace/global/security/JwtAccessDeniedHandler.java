@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.dnd.reetplace.global.exception.GlobalExceptionType.ACCESS_DENIED;
+import static com.dnd.reetplace.global.exception.ExceptionType.ACCESS_DENIED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
@@ -25,10 +26,10 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
 
-        response.setStatus(ACCESS_DENIED.getHttpStatus().value());
+        response.setStatus(FORBIDDEN.value());
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         new ObjectMapper().writeValue(response.getWriter(),
-                new ErrorResponse(ACCESS_DENIED.getErrorCode(), ACCESS_DENIED.getErrorMessage()));
+                new ErrorResponse(ACCESS_DENIED.getCode(), ACCESS_DENIED.getMessage()));
     }
 }

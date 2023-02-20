@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.dnd.reetplace.global.exception.GlobalExceptionType.AUTHENTICATION_REQUIRED;
+import static com.dnd.reetplace.global.exception.ExceptionType.AUTHENTICATION_REQUIRED;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
@@ -25,10 +26,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        response.setStatus(AUTHENTICATION_REQUIRED.getHttpStatus().value());
+        response.setStatus(UNAUTHORIZED.value());
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         new ObjectMapper().writeValue(response.getWriter(),
-                new ErrorResponse(AUTHENTICATION_REQUIRED.getErrorCode(), AUTHENTICATION_REQUIRED.getErrorMessage()));
+                new ErrorResponse(AUTHENTICATION_REQUIRED.getCode(), AUTHENTICATION_REQUIRED.getMessage()));
     }
 }

@@ -1,7 +1,7 @@
 package com.dnd.reetplace.global.security;
 
 import com.dnd.reetplace.app.dto.common.ErrorResponse;
-import com.dnd.reetplace.global.exception.GlobalExceptionType;
+import com.dnd.reetplace.global.exception.ExceptionType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -44,16 +44,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = tokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
-                Class<? extends Exception> type = e.getClass();
-                GlobalExceptionType exceptionType = Arrays.stream(GlobalExceptionType.values())
-                        .filter(t -> t.getType() != null && t.getType().equals(type))
-                        .findFirst()
-                        .get();
-                response.setStatus(exceptionType.getHttpStatus().value());
+                ExceptionType exceptionType = ExceptionType.from(e.getClass());
+                response.setStatus(UNAUTHORIZED.value());
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("utf-8");
                 new ObjectMapper().writeValue(response.getWriter(),
-                        new ErrorResponse(exceptionType.getErrorCode(), exceptionType.getErrorMessage()));
+                        new ErrorResponse(exceptionType.getCode(), exceptionType.getMessage()));
             }
 
         }
