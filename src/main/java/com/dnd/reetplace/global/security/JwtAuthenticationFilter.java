@@ -36,9 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws IOException, ServletException {
 
         String accessToken = tokenProvider.getToken(request);
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        boolean isLoginPath = antPathMatcher.match("/api/auth/login/**", request.getServletPath());
-        if (accessToken != null && !isLoginPath) {
+        if (accessToken != null) {
             try {
                 tokenProvider.validateToken(accessToken);
                 Authentication authentication = tokenProvider.getAuthentication(accessToken);
