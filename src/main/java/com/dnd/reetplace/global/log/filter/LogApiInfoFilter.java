@@ -83,7 +83,7 @@ public class LogApiInfoFilter extends OncePerRequestFilter {
             log.info("[{}] Request: [{}] uri={}", logTraceId, request.getMethod(), uri);
         } else {
             String payloadInfo = getPayloadInfo(request.getContentType(), content);
-            log.info("[{}] Request: [{}] uri={}{}", logTraceId, request.getMethod(), uri, ", " + payloadInfo);
+            log.info("[{}] Request: [{}] uri={}, {}", logTraceId, request.getMethod(), uri, payloadInfo);
         }
 
     }
