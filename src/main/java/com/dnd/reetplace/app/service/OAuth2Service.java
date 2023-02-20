@@ -14,11 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @Slf4j
 @Transactional(readOnly = true)
-@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 @Service
 public class OAuth2Service {
@@ -51,13 +49,10 @@ public class OAuth2Service {
         String uid = kakaoProfile.getId().toString();
         return memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)
                 .orElseGet(() -> {
-                    String email = (String) kakaoProfile.getKakao_account().get("email");
-                    Map<String, Object> profile = (Map<String, Object>) kakaoProfile.getKakao_account().get("profile");
                     Member newMember = Member.builder()
                             .uid(uid)
                             .loginType(LoginType.KAKAO)
-                            .email(email)
-                            .nickname((String) profile.get("nickname"))
+                            .nickname(kakaoProfile.getNickname())
                             .build();
                     memberRepository.save(newMember);
                     return newMember;
