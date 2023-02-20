@@ -1,4 +1,4 @@
-package com.dnd.reetplace.app.dto.auth;
+package com.dnd.reetplace.app.dto.auth.response;
 
 import lombok.Getter;
 

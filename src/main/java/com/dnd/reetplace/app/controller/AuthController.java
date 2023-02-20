@@ -1,7 +1,7 @@
 package com.dnd.reetplace.app.controller;
 
-import com.dnd.reetplace.app.dto.auth.LoginResponse;
-import com.dnd.reetplace.app.dto.auth.TokenResponse;
+import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
+import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
 import com.dnd.reetplace.app.service.OAuth2Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;

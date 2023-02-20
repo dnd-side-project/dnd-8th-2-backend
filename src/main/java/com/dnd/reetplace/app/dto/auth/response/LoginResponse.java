@@ -1,4 +1,4 @@
-package com.dnd.reetplace.app.dto.auth;
+package com.dnd.reetplace.app.dto.auth.response;
 
 import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.type.LoginType;

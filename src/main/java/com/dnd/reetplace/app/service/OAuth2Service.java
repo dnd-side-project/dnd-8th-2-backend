@@ -1,10 +1,10 @@
 package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.Member;
-import com.dnd.reetplace.app.dto.auth.KakaoProfileResponse;
-import com.dnd.reetplace.app.dto.auth.LoginResponse;
+import com.dnd.reetplace.app.dto.auth.response.KakaoProfileResponse;
+import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
-import com.dnd.reetplace.app.dto.auth.TokenResponse;
+import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
