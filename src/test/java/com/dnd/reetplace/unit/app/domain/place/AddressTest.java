@@ -1,4 +1,4 @@
-package com.dnd.reetplace.unit.place;
+package com.dnd.reetplace.unit.app.domain.place;
 
 import com.dnd.reetplace.app.domain.place.Address;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,4 @@
-package com.dnd.reetplace.integration;
+package com.dnd.reetplace.integration.app.service;
 
 import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.repository.RefreshTokenRedisRepository;
