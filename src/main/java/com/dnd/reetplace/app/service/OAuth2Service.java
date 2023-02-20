@@ -38,28 +38,30 @@ public class OAuth2Service {
     public LoginResponse kakaoLogin(String token) {
 
         KakaoProfileResponse kakaoProfile = httpRequestService.getKakaoProfile(token);
-        String uid = kakaoProfile.getId().toString();
 
         // 로그인 또는 회원가입 처리
-        Member member = memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)
-                .orElse(null);
-
-        if (member == null) {
-            String email = (String) kakaoProfile.getKakao_account().get("email");
-            Map<String, Object> profile = (Map<String, Object>) kakaoProfile.getKakao_account().get("profile");
-            member = Member.builder()
-                    .uid(uid)
-                    .loginType(LoginType.KAKAO)
-                    .email(email)
-                    .nickname((String) profile.get("nickname"))
-                    .build();
-            memberRepository.save(member);
-        }
-
+        Member member = kakaoLoginOrSignup(kakaoProfile);
         String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
         String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
         refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
         return LoginResponse.of(member, accessToken, refreshToken);
+    }
+
+    private Member kakaoLoginOrSignup(KakaoProfileResponse kakaoProfile) {
+        String uid = kakaoProfile.getId().toString();
+        return memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)
+                .orElseGet(() -> {
+                    String email = (String) kakaoProfile.getKakao_account().get("email");
+                    Map<String, Object> profile = (Map<String, Object>) kakaoProfile.getKakao_account().get("profile");
+                    Member newMember = Member.builder()
+                            .uid(uid)
+                            .loginType(LoginType.KAKAO)
+                            .email(email)
+                            .nickname((String) profile.get("nickname"))
+                            .build();
+                    memberRepository.save(newMember);
+                    return newMember;
+                });
     }
 
     /**
