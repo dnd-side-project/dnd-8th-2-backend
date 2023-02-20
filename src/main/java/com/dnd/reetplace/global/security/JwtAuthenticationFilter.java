@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -35,7 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws IOException, ServletException {
 
         String accessToken = tokenProvider.getToken(request);
-        if (accessToken != null) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        boolean isLoginPath = antPathMatcher.match("/api/auth/login/**", request.getServletPath());
+        if (accessToken != null && !isLoginPath) {
             try {
                 tokenProvider.validateToken(accessToken);
                 Authentication authentication = tokenProvider.getAuthentication(accessToken);
