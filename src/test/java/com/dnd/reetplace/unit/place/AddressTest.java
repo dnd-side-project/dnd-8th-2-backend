@@ -1,5 +1,6 @@
-package com.dnd.reetplace.app.domain.place;
+package com.dnd.reetplace.unit.place;
 
+import com.dnd.reetplace.app.domain.place.Address;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
