@@ -45,6 +45,7 @@ import java.util.Optional;
  *     <li>1210 ~ 1299: 구체적인 Validation content에 대한 exception. 해당 내용은 {@link ValidationErrorCode}, {@link GlobalExceptionHandler} 참고)</li>
  *     <li>13XX: API/Controller 관련 예외</li>
  *     <li>14XX: DB 관련 예외</li>
+ *     <li>15XX: 인증 관련 예외</li>
  *     <li>2000 ~ 2399: 회원({@link Member}) 관련 예외</li>
  *     <li>2400 ~ 2699: 로그인/회원가입 관련 예외</li>
  *     <li>2700 ~ 2999: 회원 설문({@link Survey}) 관련 예외</li>
@@ -64,14 +65,14 @@ public enum ExceptionType {
      * Global/Normal Exception
      */
     UNHANDLED(1000, "알 수 없는 서버 에러가 발생했습니다.", null),
-    ACCESS_DENIED(1001, "접근 권한이 없습니다.", null),
-    AUTHENTICATION_REQUIRED(1002, "인증이 필요한 요청입니다.", null),
 
-    // 11XX (JWT)
-    JWT_INVALID_SIGNATURE_EXCEPTION(1100, "Token의 서명이 잘못되었습니다.", SignatureException.class),
-    JWT_EXPIRED_EXCEPTION(1101, "Token이 만료되었습니다.", ExpiredJwtException.class),
-    JWT_MALFORMED_EXCEPTION(1102, "유효하지 않은 token입니다.", MalformedJwtException.class),
-    JWT_UNSUPPORTED_EXCEPTION(1103, "처리할 수 없는 token입니다.", UnsupportedJwtException.class),
+    // 인증 관련 (15XX)
+    ACCESS_DENIED(1500, "접근 권한이 없습니다.", null),
+    AUTHENTICATION_REQUIRED(1501, "인증이 필요한 요청입니다.", null),
+    JWT_INVALID_SIGNATURE_EXCEPTION(1502, "Token의 서명이 잘못되었습니다.", SignatureException.class),
+    JWT_EXPIRED_EXCEPTION(1503, "Token이 만료되었습니다.", ExpiredJwtException.class),
+    JWT_MALFORMED_EXCEPTION(1504, "유효하지 않은 token입니다.", MalformedJwtException.class),
+    JWT_UNSUPPORTED_EXCEPTION(1505, "처리할 수 없는 token입니다.", UnsupportedJwtException.class),
 
     /**
      * Validation Exception
@@ -88,7 +89,7 @@ public enum ExceptionType {
     HTTP_MEDIA_TYPE_NOT_SUPPORTED(1301, "지원하지 않는 요청 데이터 타입입니다.", HttpMediaTypeNotSupportedException.class),
     HTTP_MEDIA_TYPE_NOT_ACCEPTABLE(1302, "요청한 데이터 타입으로 응답을 만들어 낼 수 없습니다.", HttpMediaTypeNotAcceptableException.class),
     MISSING_PATH_VARIABLE(1303, "필요로 하는 path variable이 누락 되었습니다.", MissingPathVariableException.class),
-    MISSING_SERVLET_REQUEST_PARAMETER(1304, "필요로 하는 request parameter가 누락 되었습니다.", MissingServletRequestParameterException.class) ,
+    MISSING_SERVLET_REQUEST_PARAMETER(1304, "필요로 하는 request parameter가 누락 되었습니다.", MissingServletRequestParameterException.class),
     SERVLET_REQUEST_BINDING(1305, "복구 불가능한 fatal binding exception이 발생했습니다.", ServletRequestBindingException.class),
     CONVERSION_NOT_SUPPORTED(1306, "Bean property에 대해 적절한 editor 또는 convertor를 찾을 수 없습니다.", ConversionNotSupportedException.class),
     TYPE_MISMATCH(1306, "Bean property를 설정하던 중 type mismatch로 인한 예외가 발생했습니다.", TypeMismatchException.class),
@@ -102,12 +103,12 @@ public enum ExceptionType {
      * Custom Exception
      */
     // Member
-    MEMBER_UID_NOT_FOUND(2000, "UID에 해당하는 사용자를 찾을 수 없습니다.",MemberUidNotFoundException .class),
+    MEMBER_UID_NOT_FOUND(2000, "UID에 해당하는 사용자를 찾을 수 없습니다.", MemberUidNotFoundException.class),
 
     // Auth
-    KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.",KakaoUnauthorizedException .class),
-    REFRESH_TOKEN_NOT_FOUND(2401, "존재하지 않는 Refresh Token입니다.",RefreshTokenNotFoundException .class),
-    JWT_TOKEN_EMPTY_UNAUTHORIZED(2402, "JWT Token이 포함되어 있지 않습니다.",JwtTokenEmptyUnauthorizedException .class),
+    KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class),
+    REFRESH_TOKEN_NOT_FOUND(2401, "존재하지 않는 Refresh Token입니다.", RefreshTokenNotFoundException.class),
+    JWT_TOKEN_EMPTY_UNAUTHORIZED(2402, "JWT Token이 포함되어 있지 않습니다.", JwtTokenEmptyUnauthorizedException.class),
     ;
 
     private final Integer code;
