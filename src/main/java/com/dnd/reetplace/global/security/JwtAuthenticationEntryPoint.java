@@ -1,6 +1,6 @@
 package com.dnd.reetplace.global.security;
 
-import com.dnd.reetplace.app.dto.common.ErrorResponse;
+import com.dnd.reetplace.app.dto.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
