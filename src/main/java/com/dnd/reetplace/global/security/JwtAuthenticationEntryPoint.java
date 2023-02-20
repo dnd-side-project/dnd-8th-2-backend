@@ -19,8 +19,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     /**
      * 인증이 필요한 엔드포인트에 대해 인증되지 않았을 때 동작하는 Handler로, 아래와 같은 Response가 반환된다.
-     * "errorCode": " 1004
-     * "errorMessage": "인증이 필요한 요청입니다."
+     * "code": " 1004
+     * "message": "인증이 필요한 요청입니다."
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
