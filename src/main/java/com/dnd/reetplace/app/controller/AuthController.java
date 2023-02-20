@@ -6,6 +6,7 @@ import com.dnd.reetplace.app.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +20,8 @@ public class AuthController {
     private final OAuth2Service oAuth2Service;
 
     @PostMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(HttpServletRequest request) {
-        return ResponseEntity.ok(oAuth2Service.kakaoLogin(request));
+    public ResponseEntity<LoginResponse> kakaoLogin(@RequestHeader("access-token") String token) {
+        return ResponseEntity.ok(oAuth2Service.kakaoLogin(token));
     }
 
     @PostMapping("/refresh")
