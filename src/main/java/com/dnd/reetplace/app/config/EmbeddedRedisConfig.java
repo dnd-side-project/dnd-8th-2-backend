@@ -22,10 +22,10 @@ public class EmbeddedRedisConfig {
     private RedisServer redisServer;
 
     /**
-     * 여러 스프링 컨텍스트가 실행되면 6379 포트가 충돌이 나 Redis 테스트가 진행되지 않는다.
-     * 6379 포트에 대한 실행 여부를 확인한다.
-     * 1. 실행중이 아닐 경우 6379 포트를 부여하여 Redis Server를 시작한다.
-     * 2. 실행중일 경우 10000 ~ 65535 포트 중 사용하지 않는 포트를 부여하여 Redis Server를 시작한다.
+     * 여러 스프링 컨텍스트가 실행되면 10000 포트가 충돌이 나 Redis 테스트가 진행되지 않는다.
+     * 10000 포트에 대한 실행 여부를 확인한다.
+     * 1. 실행중이 아닐 경우 10000 포트를 부여하여 Redis Server를 시작한다.
+     * 2. 실행중일 경우 10001 ~ 65535 포트 중 사용하지 않는 포트를 부여하여 Redis Server를 시작한다.
      */
     @PostConstruct
     public void redisServer() throws IOException {
@@ -53,12 +53,12 @@ public class EmbeddedRedisConfig {
 
 
     /**
-     * 10000 ~ 65535 포트 중 사용가능한 포트번호를 반환한다.
+     * 10001 ~ 65535 포트 중 사용가능한 포트번호를 반환한다.
      *
      * @return 사용 가능한 포트번호
      */
     public int findAvailablePort() throws IOException {
-        for (int port = 10000; port <= 65535; port++) {
+        for (int port = 10001; port <= 65535; port++) {
             Process process = executeGrepProcessCommand(port);
             if (!isRunning(process)) {
                 return port;
@@ -78,7 +78,7 @@ public class EmbeddedRedisConfig {
     }
 
     /**
-     * 해당 Process가 현재 실행중인지 확인
+     * 해당 Process가 현재 실행중인지 확인한다.
      */
     private boolean isRunning(Process process) {
         String line;

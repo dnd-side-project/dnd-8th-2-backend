@@ -62,7 +62,7 @@ jwt.secret: ${REET_PLACE_PROD_JWT_SECRET}
 spring:
   config.activate.on-profile: test
   redis:
-    port: 6379
+    port: 10001
   datasource:
     url: jdbc:h2:mem:test
     username: sa
