@@ -1,15 +1,14 @@
 package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.Member;
+import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.dto.auth.response.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
-import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.security.TokenProvider;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,58 +46,56 @@ public class OAuth2Service {
      * @return 로그인 (또는 회원가입) 완료 후 사용자 정보 (memberId, uid, accessToken, refreshToken 등)
      */
     @Transactional
-    public LoginResponse kakaoLogin(HttpServletRequest request) throws JsonProcessingException {
-
-        String token = tokenProvider.getToken(request);
-
-        // Header 추가
-        HttpHeaders header = new HttpHeaders();
-        header.add(AUTHORIZATION, "Bearer " + token);
-        header.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        // request 구성
-        RestTemplate rt = new RestTemplate();
-        rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-        HttpEntity<MultiValueMap<String, String>> httpRequest = new HttpEntity<>(header);
-
-        // API 요청
-        ResponseEntity<String> response;
+    public LoginResponse kakaoLogin(HttpServletRequest request) {
         try {
-            response = rt.exchange(
+            String token = tokenProvider.getToken(request);
+
+            // Header 추가
+            HttpHeaders header = new HttpHeaders();
+            header.add(AUTHORIZATION, "Bearer " + token);
+            header.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+            // request 구성
+            RestTemplate rt = new RestTemplate();
+            rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+            HttpEntity<MultiValueMap<String, String>> httpRequest = new HttpEntity<>(header);
+
+            // API 요청
+            ResponseEntity<String> response = rt.exchange(
                     GET_PROFILE_URL,
                     HttpMethod.POST,
                     httpRequest,
                     String.class
             );
+
+            // response 객체에 매핑
+            ObjectMapper mapper = new ObjectMapper();
+            KakaoProfileResponse kakaoProfile = mapper.readValue(response.getBody(), KakaoProfileResponse.class);
+            String uid = kakaoProfile.getId().toString();
+
+            // 로그인 또는 회원가입 처리
+            Member member = memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)
+                    .orElse(null);
+
+            if (member == null) {
+                String email = (String) kakaoProfile.getKakao_account().get("email");
+                Map<String, Object> profile = (Map<String, Object>) kakaoProfile.getKakao_account().get("profile");
+                member = Member.builder()
+                        .uid(uid)
+                        .loginType(LoginType.KAKAO)
+                        .email(email)
+                        .nickname((String) profile.get("nickname"))
+                        .build();
+                memberRepository.save(member);
+            }
+            String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
+            String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
+            refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
+            return LoginResponse.of(member, accessToken, refreshToken);
         } catch (Exception e) {
             log.error("OAuth2Service.kakaoLogin() ex={}", String.valueOf(e));
             throw new KakaoUnauthorizedException();
         }
-
-        // response 객체에 매핑
-        ObjectMapper mapper = new ObjectMapper();
-        KakaoProfileResponse kakaoProfile = mapper.readValue(response.getBody(), KakaoProfileResponse.class);
-        String uid = kakaoProfile.getId().toString();
-
-        // 로그인 또는 회원가입 처리
-        Member member = memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)
-                .orElse(null);
-
-        if (member == null) {
-            String email = (String) kakaoProfile.getKakao_account().get("email");
-            Map<String, Object> profile = (Map<String, Object>) kakaoProfile.getKakao_account().get("profile");
-            member = Member.builder()
-                    .uid(uid)
-                    .loginType(LoginType.KAKAO)
-                    .email(email)
-                    .nickname((String) profile.get("nickname"))
-                    .build();
-            memberRepository.save(member);
-        }
-        String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
-        String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
-        refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
-        return LoginResponse.of(member, accessToken, refreshToken);
     }
 
     /**

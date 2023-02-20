@@ -20,7 +20,7 @@ public class AuthController {
     private final OAuth2Service oAuth2Service;
 
     @GetMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<LoginResponse> kakaoLogin(HttpServletRequest request) {
         return ResponseEntity.ok(oAuth2Service.kakaoLogin(request));
     }
 
