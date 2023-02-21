@@ -2,6 +2,73 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.8'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'jacoco'
+}
+
+jacoco {
+    toolVersion = '0.8.8'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
+    }
+
+    // 추후 QueryDSL 추가 시 Qdomain에 대한 exclude 설정
+    def Qdomains = []
+
+    for (qPattern in '**/QA'..'**/QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    excludes: ['**/*Auth*.*'] + Qdomains,
+                    includes: [
+                            '**/service/**',
+                            '**/controller/**'
+                    ])
+        }))
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    // 추후 QueryDSL 추가 시 Qdomain에 대한 exclude 설정
+    def Qdomains = []
+
+    for (qPattern in '*.QA'..'*.QZ') { // qPattern = '*.QA', '*.QB', ... '*.QZ'
+        Qdomains.add(qPattern + '*')
+    }
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.70
+            }
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.70
+            }
+
+            excludes = ['*.*Auth*'] + Qdomains
+            includes = [
+                    '*.*Service*',
+                    '*.*Controller'
+            ]
+        }
+    }
 }
 
 group = 'com.dnd'
@@ -45,6 +112,20 @@ dependencies {
     // Spring Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Embedded-Redis (for test)
+    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // HttpClient
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
     // Spring Boot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -55,6 +136,19 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+task testCoverage(type: Test) {
+    group 'verification'
+    description 'Runs the unit tests with coverage'
+
+    dependsOn(':test',
+            ':jacocoTestReport',
+            ':jacocoTestCoverageVerification')
+
+    tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+    tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
