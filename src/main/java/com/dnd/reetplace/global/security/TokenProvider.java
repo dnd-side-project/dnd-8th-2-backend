@@ -6,6 +6,7 @@ import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.RoleType;
 import com.dnd.reetplace.global.exception.auth.JwtTokenEmptyUnauthorizedException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
+import com.dnd.reetplace.global.log.LogUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -96,7 +97,7 @@ public class TokenProvider {
     /**
      * 사용자에 대한 정보를 기반으로 Access Token을 생성해 반환한다.
      *
-     * @param uid 사용자 uid
+     * @param uid       사용자 uid
      * @param loginType 사용자 loginType
      * @return 생성된 Access Token
      */
@@ -115,7 +116,7 @@ public class TokenProvider {
     /**
      * 사용자에 대한 정보를 기반으로 Refresh Token을 생성해 반환한다.
      *
-     * @param uid 사용자 uid
+     * @param uid       사용자 uid
      * @param loginType 사용자 loginType
      * @return 생성된 Refresh Token
      */
@@ -180,10 +181,10 @@ public class TokenProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (IllegalArgumentException e) {
-            log.error("TokenProvider.validateToken() ex= JWT Token is Empty");
+            log.error("[{}] TokenProvider.validateToken() ex= JWT Token is Empty", LogUtils.getLogTraceId());
             throw new JwtTokenEmptyUnauthorizedException();
         } catch (Exception e) {
-            log.error("TokenProvider.validateToken() ex={}", String.valueOf(e));
+            log.error("[{}] TokenProvider.validateToken() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
             throw e;
         }
     }
