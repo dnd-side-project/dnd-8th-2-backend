@@ -22,7 +22,7 @@ public class MemberController {
     public ResponseEntity<MemberResponse> getLoginMemberInfo(
             @AuthenticationPrincipal MemberDetails memberDetails
     ) {
-        MemberDto dto = memberService.getMemberInfo(memberDetails.getUid(), memberDetails.getLoginType());
+        MemberDto dto = memberService.getMemberInfo(memberDetails.getId());
         return ResponseEntity.ok(MemberResponse.from(dto));
     }
 }

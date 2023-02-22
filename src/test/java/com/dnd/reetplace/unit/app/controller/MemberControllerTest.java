@@ -52,10 +52,10 @@ class MemberControllerTest {
     @MockBean
     private TokenProvider tokenProvider;
 
-    @DisplayName("내 프로필 조회")
+    @DisplayName("내 프로필 조회에 성공한다")
     @WithMockUser
     @Test
-    void getMyInfo() throws Exception {
+    void givenMemberDetails_whenGetMyProfile_thenSuccess() throws Exception {
 
         // given
         MemberDetails memberDetails = new MemberDetails(createMockMember(1L));
@@ -73,6 +73,7 @@ class MemberControllerTest {
 
     private Member createMockMember(Long id) {
         return Member.builder()
+                .id(id)
                 .uid("testUid" + id)
                 .loginType(LoginType.KAKAO)
                 .nickname("test" + id)
