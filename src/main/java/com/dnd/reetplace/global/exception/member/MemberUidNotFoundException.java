@@ -7,9 +7,9 @@ public class MemberUidNotFoundException extends NotFoundException {
     /**
      * 찾지 못한 사용자에 해당하는 uid를 출력한다.
      *
-     * @param uid 조회시도 한 사용자의 uid
+     * @param memberUid 조회시도 한 사용자의 uid
      */
-    public MemberUidNotFoundException(String uid) {
-        super("uid = " + uid);
+    public MemberUidNotFoundException(String memberUid) {
+        super("memberUid = " + memberUid);
     }
 }
