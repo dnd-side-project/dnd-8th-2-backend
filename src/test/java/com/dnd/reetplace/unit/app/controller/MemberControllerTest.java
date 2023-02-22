@@ -52,8 +52,7 @@ class MemberControllerTest {
     @MockBean
     private TokenProvider tokenProvider;
 
-    @DisplayName("내 프로필 조회에 성공한다")
-    @WithMockUser
+    @DisplayName("로그인한 사용자 정보 조회에 성공한다.")
     @Test
     void givenMemberDetails_whenGetMyProfile_thenSuccess() throws Exception {
 
