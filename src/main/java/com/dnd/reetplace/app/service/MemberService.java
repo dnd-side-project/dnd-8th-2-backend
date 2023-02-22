@@ -21,7 +21,7 @@ public class MemberService {
      * @param memberId 로그인한 사용자의 id
      * @return 로그인한 사용자의 정보
      */
-    public MemberDto getUserInfo(Long memberId) {
+    public MemberDto getMemberInfo(Long memberId) {
         return MemberDto.from(getMember(memberId));
     }
 
