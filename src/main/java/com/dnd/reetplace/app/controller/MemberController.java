@@ -30,7 +30,7 @@ public class MemberController {
     )
     @GetMapping("/my")
     public ResponseEntity<MemberResponse> getLoginMemberInfo(
-            @AuthenticationPrincipal MemberDetails memberDetails
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails
     ) {
         MemberDto dto = memberService.getMemberInfo(memberDetails.getId());
         return ResponseEntity.ok(MemberResponse.from(dto));
