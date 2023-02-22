@@ -37,8 +37,7 @@ public class Member extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    private Member(Long id, String uid, LoginType loginType, String email, String nickname) {
-        this.id = id;
+    private Member(String uid, LoginType loginType, String email, String nickname) {
         this.uid = uid;
         this.loginType = loginType;
         this.email = email;
