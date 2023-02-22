@@ -6,6 +6,7 @@ import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.global.exception.auth.JwtTokenEmptyUnauthorizedException;
 import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.exception.auth.RefreshTokenNotFoundException;
+import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
 import com.dnd.reetplace.global.log.LogUtils;
@@ -102,6 +103,7 @@ public enum ExceptionType {
      */
     // Member
     MEMBER_UID_NOT_FOUND(2000, "UID에 해당하는 사용자를 찾을 수 없습니다.", MemberUidNotFoundException.class),
+    MEMBER_ID_NOT_FOUND(2000, "ID에 해당하는 사용자를 찾을 수 없습니다.", MemberIdNotFoundException.class),
 
     // Auth
     KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class),
