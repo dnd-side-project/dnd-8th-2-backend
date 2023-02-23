@@ -1,6 +1,7 @@
 package com.dnd.reetplace.global.security;
 
 import com.dnd.reetplace.app.domain.Member;
+import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.RoleType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,18 @@ public class MemberDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    public Long getId() {
+        return member.getId();
+    }
+
+    public String getUid() {
+        return member.getUid();
+    }
+
+    public LoginType getLoginType() {
+        return member.getLoginType();
     }
 }

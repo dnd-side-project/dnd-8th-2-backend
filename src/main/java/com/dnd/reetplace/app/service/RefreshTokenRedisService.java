@@ -23,4 +23,9 @@ public class RefreshTokenRedisService {
         return refreshTokenRedisRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(RefreshTokenNotFoundException::new);
     }
+
+    @Transactional
+    public void deleteRefreshToken(String uid) {
+        refreshTokenRedisRepository.deleteById(uid);
+    }
 }
