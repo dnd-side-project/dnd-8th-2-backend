@@ -48,8 +48,13 @@ public class AuthController {
         return ResponseEntity.ok(oAuth2Service.refresh(request));
     }
 
+    @Operation(summary = "로그아웃", description = "로그인 된 사용자를 앱에서 로그아웃합니다.")
+    @Parameter(
+            name = "Authorization", description = "사용자의 Access Token", in = ParameterIn.HEADER,
+            required = true, example = "Bearer eyJ0eXAi..."
+    )
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<Void> logout(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         refreshTokenRedisService.deleteRefreshToken(memberDetails.getUid());
         return ResponseEntity.ok().build();
     }
