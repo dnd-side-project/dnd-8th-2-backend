@@ -6,7 +6,7 @@ import com.dnd.reetplace.app.service.MemberService;
 import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +23,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Operation(summary = "로그인한 사용자 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
-    @Parameter(
-            name = "Authorization", description = "사용자의 Access Token", in = ParameterIn.HEADER,
-            required = true, example = "Bearer eyJ0eXAi..."
+    @Operation(
+            summary = "로그인한 사용자 정보 조회",
+            description = "로그인한 사용자의 정보를 조회합니다.",
+            security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/my")
     public ResponseEntity<MemberResponse> getLoginMemberInfo(
