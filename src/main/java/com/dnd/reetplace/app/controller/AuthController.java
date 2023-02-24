@@ -7,7 +7,6 @@ import com.dnd.reetplace.app.service.RefreshTokenRedisService;
 import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +28,22 @@ public class AuthController {
     private final OAuth2Service oAuth2Service;
     private final RefreshTokenRedisService refreshTokenRedisService;
 
-    @Operation(summary = "카카오 로그인", description = "카카오 서버에서 받은 Access Token을 통해 로그인을 진행합니다.")
-    @Parameter(
-            name = "access-token", description = "카카오 서버에서 받은 Access Token", in = ParameterIn.HEADER,
-            required = true, example = "29WryM8Px6..."
+    @Operation(
+            summary = "카카오 로그인",
+            description = "카카오 서버에서 받은 Access Token을 통해 로그인을 진행합니다."
     )
     @PostMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(@RequestHeader("access-token") String token) {
+    public ResponseEntity<LoginResponse> kakaoLogin(
+            @Parameter(name = "access-token", description = "카카오 서버에서 받은 Access Token", example = "29WryM8Px6...")
+            @RequestHeader("access-token") String token
+    ) {
         return ResponseEntity.ok(oAuth2Service.kakaoLogin(token));
     }
 
-    @Operation(summary = "토큰 재발급", description = "Refresh Token을 통해 Access Token, Refresh Token을 재발급합니다.")
-    @Parameter(
-            name = "Authorization", description = "사용자의 Refresh Token", in = ParameterIn.HEADER,
-            required = true, example = "Bearer eyJ0eXAi..."
+    @Operation(
+            summary = "토큰 재발급",
+            description = "Refresh Token을 통해 Access Token, Refresh Token을 재발급합니다.",
+            security = @SecurityRequirement(name = "Authorization")
     )
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(HttpServletRequest request) {
