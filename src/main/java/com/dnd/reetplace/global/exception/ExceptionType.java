@@ -103,7 +103,7 @@ public enum ExceptionType {
      */
     // Member
     MEMBER_UID_NOT_FOUND(2000, "UID에 해당하는 사용자를 찾을 수 없습니다.", MemberUidNotFoundException.class),
-    MEMBER_ID_NOT_FOUND(2000, "ID에 해당하는 사용자를 찾을 수 없습니다.", MemberIdNotFoundException.class),
+    MEMBER_ID_NOT_FOUND(2001, "ID에 해당하는 사용자를 찾을 수 없습니다.", MemberIdNotFoundException.class),
 
     // Auth
     KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class),
