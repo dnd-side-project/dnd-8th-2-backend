@@ -56,6 +56,6 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         refreshTokenRedisService.deleteRefreshToken(memberDetails.getUid());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
