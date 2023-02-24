@@ -41,7 +41,6 @@ public class AuthController {
             description = "Refresh Token을 통해 Access Token, Refresh Token을 재발급합니다.",
             security = @SecurityRequirement(name = "Authorization")
     )
-    @Parameter(name = "Authorization", description = "사용자의 Refresh Token", example = "Bearer eyJ0eXAi...")
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(HttpServletRequest request) {
         return ResponseEntity.ok(oAuth2Service.refresh(request));
