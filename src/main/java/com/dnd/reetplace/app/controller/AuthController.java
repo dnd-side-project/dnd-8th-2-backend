@@ -3,12 +3,15 @@ package com.dnd.reetplace.app.controller;
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
 import com.dnd.reetplace.app.service.OAuth2Service;
+import com.dnd.reetplace.app.service.RefreshTokenRedisService;
+import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthController {
 
     private final OAuth2Service oAuth2Service;
+    private final RefreshTokenRedisService refreshTokenRedisService;
 
     @Operation(
             summary = "카카오 로그인",
@@ -44,5 +48,16 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(HttpServletRequest request) {
         return ResponseEntity.ok(oAuth2Service.refresh(request));
+    }
+
+    @Operation(
+            summary = "로그아웃",
+            description = "로그인 된 사용자를 앱에서 로그아웃합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        refreshTokenRedisService.deleteRefreshToken(memberDetails.getUid());
+        return ResponseEntity.noContent().build();
     }
 }

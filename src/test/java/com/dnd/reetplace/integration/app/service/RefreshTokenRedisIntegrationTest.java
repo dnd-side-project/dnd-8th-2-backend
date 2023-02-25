@@ -72,4 +72,22 @@ public class RefreshTokenRedisIntegrationTest {
                 () -> refreshTokenRedisService.findRefreshToken(refreshToken));
     }
 
+    @DisplayName("사용자 uid에 대한 refresh token 삭제에 성공한다.")
+    @Test
+    void givenUid_whenDeleteRefreshToken_thenSuccess() {
+
+        // given
+        String uid = "test_uid12345";
+        String refreshToken = "testRefreshToken12345";
+        refreshTokenRedisRepository.save(new RefreshTokenDto(uid, refreshToken));
+
+        // when
+        RefreshTokenDto findRefreshToken = refreshTokenRedisRepository.findById(uid).get();
+        assertThat(findRefreshToken.getRefreshToken()).isEqualTo(refreshToken);
+        refreshTokenRedisService.deleteRefreshToken(uid);
+
+        // then
+        assertThat(refreshTokenRedisRepository.findById(uid)).isEmpty();
+    }
+
 }
