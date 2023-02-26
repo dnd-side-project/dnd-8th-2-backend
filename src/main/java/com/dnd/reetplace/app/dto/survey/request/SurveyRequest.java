@@ -15,7 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class SurveyRequest {
 
-    @Schema(description = "설문 선택항목", example = "RECORD_DELETE", required = true)
+    @Schema(description = "설문 선택항목", example = "OTHER", required = true)
     @NotEmpty
     private SurveyType surveyType;
 

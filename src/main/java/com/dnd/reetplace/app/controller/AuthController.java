@@ -64,7 +64,7 @@ public class AuthController {
     public ResponseEntity<Void> unlink(
             @Valid @RequestBody SurveyRequest surveyRequest,
             @AuthenticationPrincipal MemberDetails memberDetails,
-            @RequestHeader("access-token") String kakaoAccessToken
+            @RequestHeader(value = "access-token", required = false) String kakaoAccessToken
     ) {
         oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), kakaoAccessToken);
         return ResponseEntity.noContent().build();
