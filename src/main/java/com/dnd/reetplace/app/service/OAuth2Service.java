@@ -80,6 +80,7 @@ public class OAuth2Service {
             httpRequestService.unlinkKakao(kakaoAccessToken);
         } // TODO Apple login 구현 시 Apple login에 대한 unlink 로직 구현
 
+        refreshTokenRedisService.deleteRefreshToken(member.getUid());
         memberRepository.delete(member);
         surveyRepository.save(surveyDto.toEntity(member));
     }
