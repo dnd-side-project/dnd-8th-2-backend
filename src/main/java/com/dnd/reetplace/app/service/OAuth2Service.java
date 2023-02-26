@@ -6,8 +6,11 @@ import com.dnd.reetplace.app.dto.auth.response.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
 import com.dnd.reetplace.app.dto.member.MemberDto;
+import com.dnd.reetplace.app.dto.survey.SurveyDto;
 import com.dnd.reetplace.app.repository.MemberRepository;
+import com.dnd.reetplace.app.repository.SurveyRepository;
 import com.dnd.reetplace.app.type.LoginType;
+import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class OAuth2Service {
 
     private final MemberRepository memberRepository;
+    private final SurveyRepository surveyRepository;
     private final RefreshTokenRedisService refreshTokenRedisService;
     private final TokenProvider tokenProvider;
     private final OAuth2HttpRequestService httpRequestService;
@@ -66,6 +70,19 @@ public class OAuth2Service {
                 });
     }
 
+    @Transactional
+    public void unlink(Long memberId, SurveyDto surveyDto, String kakaoAccessToken) {
+        Member member = getMember(memberId);
+
+        // 소셜 로그인 연결끊기
+        if (member.getLoginType().equals(LoginType.KAKAO)) {
+            httpRequestService.unlinkKakao(kakaoAccessToken);
+        } // TODO Apple login 구현 시 Apple login에 대한 unlink 로직 구현
+
+        memberRepository.delete(member);
+        surveyRepository.save(surveyDto.toEntity(member));
+    }
+
     /**
      * Authorization Header에 포함된 refresh token을 통해 access token 및 refresh token을 재발급한다.
      *
@@ -82,5 +99,17 @@ public class OAuth2Service {
         String refreshToken = tokenProvider.createRefreshToken(refreshTokenDto.getUid(), loginType);
         refreshTokenRedisService.saveRefreshToken(refreshTokenDto.getUid(), refreshToken);
         return TokenResponse.of(accessToken, refreshToken);
+    }
+
+    /**
+     * memberId에 해당하는 사용자를 반환한다.
+     * memberId에 해당하는 사용자가 존재하지 않을 시, Exception을 던진다.
+     *
+     * @param memberId 찾고자 하는 사용자의 id
+     * @return id에 해당하는 Member Entity
+     */
+    public Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberIdNotFoundException(memberId));
     }
 }
