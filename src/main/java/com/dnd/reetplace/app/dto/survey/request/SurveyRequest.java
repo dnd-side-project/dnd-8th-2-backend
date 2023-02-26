@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 public class SurveyRequest {
 
     @Schema(description = "설문 선택항목", example = "OTHER", required = true)
-    @NotEmpty
+    @NotNull
     private SurveyType surveyType;
 
     @Schema(description = "설문 선택항목으로 '기타'를 선택한 경우의 탈퇴 이유", example = "~~한 이유로 인한 탈퇴")
