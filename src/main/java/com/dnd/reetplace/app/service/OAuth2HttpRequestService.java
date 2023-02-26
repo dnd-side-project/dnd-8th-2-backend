@@ -58,6 +58,11 @@ public class OAuth2HttpRequestService {
         }
     }
 
+    /**
+     * 카카오 서버와 통신하여 카카오 access token에 해당하는 사용자의 연결을 끊는다.
+     *
+     * @param accessToken 카카오 access token
+     */
     public void unlinkKakao(String accessToken) {
         try {
             // Header 추가
