@@ -10,6 +10,7 @@ import com.dnd.reetplace.app.dto.survey.SurveyDto;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.SurveyRepository;
 import com.dnd.reetplace.app.type.LoginType;
+import com.dnd.reetplace.global.exception.member.MemberDeletedBadRequestException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -103,13 +104,17 @@ public class OAuth2Service {
 
     /**
      * memberId에 해당하는 사용자를 반환한다.
-     * memberId에 해당하는 사용자가 존재하지 않을 시, Exception을 던진다.
+     * memberId에 해당하는 사용자가 존재하지 않거나 탈퇴한 사용자일 시, Exception을 던진다.
      *
      * @param memberId 찾고자 하는 사용자의 id
      * @return id에 해당하는 Member Entity
      */
     public Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
+        if (member.getDeletedAt() != null) {
+            throw new MemberDeletedBadRequestException();
+        }
+        return member;
     }
 }
