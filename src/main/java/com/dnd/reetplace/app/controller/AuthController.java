@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
+import com.dnd.reetplace.app.dto.survey.request.SurveyRequest;
 import com.dnd.reetplace.app.service.OAuth2Service;
 import com.dnd.reetplace.app.service.RefreshTokenRedisService;
 import com.dnd.reetplace.global.security.MemberDetails;
@@ -12,12 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -58,6 +57,16 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         refreshTokenRedisService.deleteRefreshToken(memberDetails.getUid());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/unlink")
+    public ResponseEntity<Void> unlink(
+            @Valid @RequestBody SurveyRequest surveyRequest,
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @RequestHeader("access-token") String kakaoAccessToken
+    ) {
+        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), kakaoAccessToken);
         return ResponseEntity.noContent().build();
     }
 }
