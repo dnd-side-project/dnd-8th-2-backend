@@ -46,6 +46,12 @@ public class OAuth2Service {
         return LoginResponse.of(MemberDto.from(member), accessToken, refreshToken);
     }
 
+    /**
+     * 카카오 서버에서 받은 사용자 프로필을 기반으로 회원이 존재할 시 로그인, 존재하지 않을 시 회원가입을 진행한다.
+     *
+     * @param kakaoProfile 사용자 카카오 프로필
+     * @return 로그인 (또는 회원가입) 완료 후의 Member Entity
+     */
     private Member kakaoLoginOrSignup(KakaoProfileResponse kakaoProfile) {
         String uid = kakaoProfile.getId().toString();
         return memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)

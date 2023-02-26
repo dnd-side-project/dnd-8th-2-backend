@@ -22,6 +22,12 @@ public class OAuth2HttpRequestService {
 
     public static final String KAKAO_GET_PROFILE_URL = "https://kapi.kakao.com/v2/user/me";
 
+    /**
+     * 카카오 서버와 통신하여 카카오 access token에 해당하는 사용자 프로필을 가져온다.
+     *
+     * @param accessToken 카카오 access token
+     * @return access token에 해당하는 사용자 카카오 프로필
+     */
     public KakaoProfileResponse getKakaoProfile(String accessToken) {
         try {
             // Header 추가
