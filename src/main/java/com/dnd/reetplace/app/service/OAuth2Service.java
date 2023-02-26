@@ -71,6 +71,13 @@ public class OAuth2Service {
                 });
     }
 
+    /**
+     * 회원 탈퇴 및 탈퇴 설문을 등록한다.
+     *
+     * @param memberId 탈퇴할 회원의 id
+     * @param surveyDto 탈퇴 설문 관련 dto
+     * @param kakaoAccessToken 카카오 access token
+     */
     @Transactional
     public void unlink(Long memberId, SurveyDto surveyDto, String kakaoAccessToken) {
         Member member = getMember(memberId);
