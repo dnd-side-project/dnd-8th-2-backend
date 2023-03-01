@@ -8,6 +8,7 @@ import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.exception.auth.RefreshTokenNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
+import com.dnd.reetplace.global.exception.place.PlaceKakaoPidNotFoundException;
 import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
 import com.dnd.reetplace.global.log.LogUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -109,6 +110,9 @@ public enum ExceptionType {
     KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class),
     REFRESH_TOKEN_NOT_FOUND(2401, "존재하지 않는 Refresh Token입니다.", RefreshTokenNotFoundException.class),
     JWT_TOKEN_EMPTY_UNAUTHORIZED(2402, "JWT Token이 포함되어 있지 않습니다.", JwtTokenEmptyUnauthorizedException.class),
+
+    // Place
+    PLACE_KAKAO_PID_NOT_FOUND_EXCEPTION(3500, "장소를 찾을 수 없습니다.", PlaceKakaoPidNotFoundException.class),
     ;
 
     private final Integer code;

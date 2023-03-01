@@ -9,7 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 @Embeddable
 public class Point {
