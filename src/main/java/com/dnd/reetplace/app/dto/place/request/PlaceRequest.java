@@ -25,6 +25,10 @@ public class PlaceRequest {
     @Schema(description = "상세 페이지 URL", example = "http://place.map.kakao.com/1520672825")
     private String url;
 
+    @Schema(description = "카카오에서 전달받은 category name", example = "음식점 > 카페 > 테마카페 > 보드카페")
+    @NotBlank
+    private String kakaoCategoryName;
+
     @Schema(description = "<p>카테고리 그룹 코드. 목록은 다음과 같음</p>" +
             "<ul>" +
             "<li>MT1 - 대형마트</li>" +
@@ -106,6 +110,9 @@ public class PlaceRequest {
     @NotBlank
     private PlaceSubCategory subCategory;
 
+    @Schema(description = "대표 전화 번호", example = "02-363-3799")
+    private String phone;
+
     @Schema(description = "지번 주소", example = "서울 서대문구 창천동 18-31")
     private String lotNumberAddress;
 
@@ -125,9 +132,11 @@ public class PlaceRequest {
                 this.getKakaoPlaceId(),
                 this.getName(),
                 this.getUrl(),
+                this.getKakaoCategoryName(),
                 this.getCategoryGroupCode(),
                 this.getCategory(),
                 this.getSubCategory(),
+                this.getPhone(),
                 new Address(this.getLotNumberAddress(), this.getRoadAddress()),
                 new Point(this.getLat(), this.getLng())
         );
