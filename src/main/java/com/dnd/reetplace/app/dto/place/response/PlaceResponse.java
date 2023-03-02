@@ -1,9 +1,7 @@
 package com.dnd.reetplace.app.dto.place.response;
 
-import com.dnd.reetplace.app.domain.place.Address;
 import com.dnd.reetplace.app.domain.place.PlaceCategory;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
-import com.dnd.reetplace.app.domain.place.Point;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
 import io.swagger.v3.oas.annotations.media.Schema;
