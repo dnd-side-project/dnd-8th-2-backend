@@ -67,7 +67,7 @@ public class PlaceResponse {
             "<li>FOOD_CHINESE - 중식</li>" +
             "<li>FOOD_JAPANESE - 일식</li>" +
             "<li>FOOD_WESTERN - 양식</li>" +
-            "<li>FOOD_WORLD - 세계음식(멕시칸, 브라질, 아시안 음식)</li>" +
+            "<li>FOOD_WORLD - 세계음식(멕시칸, 브라질, 아시아음식)</li>" +
             "<li>FOOD_COOKING_BAR - 호프,요리주점</li>" +
             "<li>FOOD_IZAKAYA - 일본식주점</li>" +
             "<li>FOOD_STREET_TENT_RESTAURANT - 포장마차</li>" +
@@ -77,20 +77,19 @@ public class PlaceResponse {
             "<li>ACTIVITY_PC - 피시방</li>" +
             "<li>ACTIVITY_BILLIARDS - 당구장</li>" +
             "<li>ACTIVITY_KARAOKE - 노래방</li>" +
-            "<li>ACTIVITY_COIN_KARAOKE - 코인 노래방</li>" +
-            "<li>ACTIVITY_BOARD_GAME - 보드게임 카페</li>" +
+            "<li>ACTIVITY_BOARD_GAME - 보드카페</li>" +
             "<li>ACTIVITY_PARK - 공원</li>" +
-            "<li>PHOTO_BOOTH - 즉석사진,포토부스</li>" +
+            "<li>ACTIVITY_ROLLER - 롤러장</li>" +
+            "<li>ACTIVITY_COIN_KARAOKE - 코인노래방</li>" +
             "<li>PHOTO_LIFE_FOUR_CUT - 인생네컷</li>" +
-            "<li>PHOTO_PHOTO_SIGNATURE - 포토 시그니쳐</li>" +
+            "<li>PHOTO_PHOTO_SIGNATURE - 포토시그니처</li>" +
             "<li>PHOTO_HARU_FILM - 하루필름</li>" +
+            "<li>PHOTO_SIHYUN_HADA - 시현하다 프레임</li>" +
             "<li>PHOTO_MONO_MANSION - 모노맨션</li>" +
             "<li>PHOTO_RGB_PHOTO - RGB 포토</li>" +
             "<li>PHOTO_PHOTOISM - 포토이즘</li>" +
-            "<li>PHOTO_OTHERS - 기타 포토부스</li>" +
             "<li>SHOPPING_DEPARTMENT_STORE - 백화점</li>" +
             "<li>SHOPPING_MART - 마트</li>" +
-            "<li>SHOPPING_SUPERMARKET - 슈퍼마켓</li>" +
             "<li>SHOPPING_MARKET - 시장</li>" +
             "<li>CAFE - 카페</li>" +
             "<li>CAFE_BOOK - 북카페</li>" +
