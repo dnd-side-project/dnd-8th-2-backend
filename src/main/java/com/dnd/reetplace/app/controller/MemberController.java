@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/members")
-@RequiredArgsConstructor
-@RestController
 @Tag(name = "사용자", description = "사용자 관련 API입니다.")
+@RequiredArgsConstructor
+@RequestMapping("/api/members")
+@RestController
 public class MemberController {
 
     private final MemberService memberService;

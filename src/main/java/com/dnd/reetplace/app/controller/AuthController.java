@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-@RequestMapping("/api/auth")
-@RequiredArgsConstructor
-@RestController
 @Tag(name = "인증", description = "로그인, 회원가입, 토큰 재발급 등 인증 관련 API입니다.")
+@RequiredArgsConstructor
+@RequestMapping("/api/auth")
+@RestController
 public class AuthController {
 
     private final OAuth2Service oAuth2Service;
