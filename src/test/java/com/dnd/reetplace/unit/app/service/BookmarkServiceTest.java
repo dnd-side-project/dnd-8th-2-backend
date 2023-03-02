@@ -6,9 +6,9 @@ import com.dnd.reetplace.app.domain.place.*;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
+import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.service.BookmarkService;
-import com.dnd.reetplace.app.service.MemberService;
 import com.dnd.reetplace.app.type.BookmarkType;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
@@ -34,7 +34,7 @@ class BookmarkServiceTest {
     private BookmarkService sut;
 
     @Mock
-    private MemberService memberService;
+    private MemberRepository memberRepository;
     @Mock
     private PlaceRepository placeRepository;
     @Mock
@@ -50,7 +50,7 @@ class BookmarkServiceTest {
         Member expectedMember = createMember();
         Place expectedFoundPlace = createPlace();
         Bookmark expectedSavedBookmark = createBookmark(expectedMember, expectedFoundPlace);
-        given(memberService.getMember(memberId)).willReturn(expectedMember);
+        given(memberRepository.findByIdAndDeletedAtIsNull(memberId)).willReturn(Optional.of(expectedMember));
         given(placeRepository.findByKakaoPid(kakaoPid)).willReturn(Optional.of(expectedFoundPlace));
         given(bookmarkRepository.save(any(Bookmark.class))).willReturn(expectedSavedBookmark);
 
@@ -58,7 +58,7 @@ class BookmarkServiceTest {
         BookmarkDto actualSavedBookmark = sut.save(memberId, createNotSavedBookmarkDto());
 
         // then
-        then(memberService).should().getMember(memberId);
+        then(memberRepository).should().findByIdAndDeletedAtIsNull(memberId);
         then(placeRepository).should().findByKakaoPid(kakaoPid);
         then(placeRepository).shouldHaveNoMoreInteractions();
         then(bookmarkRepository).should().save(any(Bookmark.class));
@@ -77,7 +77,7 @@ class BookmarkServiceTest {
         Member expectedMember = createMember();
         Place expectedSavedPlace = createPlace();
         Bookmark expectedSavedBookmark = createBookmark(expectedMember, expectedSavedPlace);
-        given(memberService.getMember(memberId)).willReturn(expectedMember);
+        given(memberRepository.findByIdAndDeletedAtIsNull(memberId)).willReturn(Optional.of(expectedMember));
         given(placeRepository.findByKakaoPid(kakaoPid)).willReturn(Optional.empty());
         given(placeRepository.save(any(Place.class))).willReturn(expectedSavedPlace);
         given(bookmarkRepository.save(any(Bookmark.class))).willReturn(expectedSavedBookmark);
@@ -86,7 +86,7 @@ class BookmarkServiceTest {
         BookmarkDto actualSavedBookmark = sut.save(memberId, createNotSavedBookmarkDto());
 
         // then
-        then(memberService).should().getMember(memberId);
+        then(memberRepository).should().findByIdAndDeletedAtIsNull(memberId);
         then(placeRepository).should().findByKakaoPid(kakaoPid);
         then(placeRepository).should().save(any(Place.class));
         then(bookmarkRepository).should().save(any(Bookmark.class));
