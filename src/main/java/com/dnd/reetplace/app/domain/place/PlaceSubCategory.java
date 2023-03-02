@@ -1,7 +1,9 @@
 package com.dnd.reetplace.app.domain.place;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public enum PlaceSubCategory {
 
@@ -43,15 +45,11 @@ public enum PlaceSubCategory {
     CAFE_CARTOON("만화카페"),
     CAFE_DESERT("디저트카페"),
     CAFE_FRESH_FRUIT("생과일전문점"),
-    
+
     CULTURE_CINEMA("영화관"),
     CULTURE_CAR_CINEMA("자동차극장"),
     CULTURE_CONCERT("공연장,연극극장"),
     ;
 
     private final String description;
-
-    PlaceSubCategory(String description) {
-        this.description = description;
-    }
 }

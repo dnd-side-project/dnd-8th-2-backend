@@ -1,7 +1,9 @@
 package com.dnd.reetplace.app.domain.place;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public enum PlaceCategory {
     FOOD("식도락"),
@@ -13,8 +15,4 @@ public enum PlaceCategory {
     ;
 
     private final String description;
-
-    PlaceCategory(String description) {
-        this.description = description;
-    }
 }
