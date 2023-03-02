@@ -43,7 +43,7 @@ public class PlaceService {
      * 장소는 최소 14개 ~ 최대 20개까지 조회된다.
      *
      * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
-     * @param request 조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
+     * @param request            조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
      * @return 카테고리에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
     public PlaceGetListResponse getPlaceList(
@@ -65,9 +65,9 @@ public class PlaceService {
      * 카카오 로컬 API를 통해 중심좌표 내 1km 반경에 해당하는 sub category 장소 목록을 조회한다.
      * 본 메서드를 통해 sub category에 대해 각각 카카오 로컬 API를 호출하여 결과를 합쳐 반환한다.
      *
-     * @param request 조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
+     * @param request     조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
      * @param subCategory 조회하고자 하는 장소의 서브 카테고리 List
-     * @param size 각 카테고리 별 조회하는 장소의 개수
+     * @param size        각 카테고리 별 조회하는 장소의 개수
      * @return 카카오에서 제공하는 장소 정보 List
      */
     private List<KakaoPlaceResponse> getPlaceListFromKakao(PlaceGetListRequest request, List<PlaceSubCategory> subCategory, long size) {
@@ -111,7 +111,7 @@ public class PlaceService {
      * 또한, 카카오에서 제공하는 장소 정보 -> 앱 내에서 필요한 정보만 포함하는 Custom Response로 결과를 변환하여 반환한다.
      *
      * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
-     * @param result 카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
+     * @param result             카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
      * @return 북마크 여부 및 북마크 id가 업데이트 된 Custom Place Response List
      */
     private List<PlaceGetResponse> updatePlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceResponse> result) {
@@ -120,27 +120,26 @@ public class PlaceService {
             return result.stream().map(place ->
                     PlaceGetResponse.of(place, null, null)
             ).toList();
-        } else {
-            List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
-            return result.stream().map(place -> {
-                Optional<Bookmark> bookmark = bookmarkList.stream()
-                        .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
-                        .findFirst();
-                if (bookmark.isPresent()) {
-                    return PlaceGetResponse.of(
-                            place,
-                            bookmark.get().getType(),
-                            bookmark.get().getId()
-                    );
-                } else {
-                    return PlaceGetResponse.of(
-                            place,
-                            null,
-                            null
-                    );
-                }
-            }).toList();
         }
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
+        return result.stream().map(place -> {
+            Optional<Bookmark> bookmark = bookmarkList.stream()
+                    .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
+                    .findFirst();
+            if (bookmark.isPresent()) {
+                return PlaceGetResponse.of(
+                        place,
+                        bookmark.get().getType(),
+                        bookmark.get().getId()
+                );
+            } else {
+                return PlaceGetResponse.of(
+                        place,
+                        null,
+                        null
+                );
+            }
+        }).toList();
     }
 
     /**
