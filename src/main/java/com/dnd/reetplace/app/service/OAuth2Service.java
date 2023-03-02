@@ -10,7 +10,6 @@ import com.dnd.reetplace.app.dto.survey.SurveyDto;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.SurveyRepository;
 import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.global.exception.member.MemberDeletedBadRequestException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +73,8 @@ public class OAuth2Service {
     /**
      * 회원 탈퇴 및 탈퇴 설문을 등록한다.
      *
-     * @param memberId 탈퇴할 회원의 id
-     * @param surveyDto 탈퇴 설문 관련 dto
+     * @param memberId         탈퇴할 회원의 id
+     * @param surveyDto        탈퇴 설문 관련 dto
      * @param kakaoAccessToken 카카오 access token
      */
     @Transactional
@@ -118,11 +117,7 @@ public class OAuth2Service {
      * @return id에 해당하는 Member Entity
      */
     private Member getMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+        return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
-        if (member.getDeletedAt() != null) {
-            throw new MemberDeletedBadRequestException();
-        }
-        return member;
     }
 }

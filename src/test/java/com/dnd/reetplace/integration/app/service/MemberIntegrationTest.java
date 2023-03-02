@@ -5,7 +5,6 @@ import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.service.MemberService;
 import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.global.exception.member.MemberDeletedBadRequestException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,7 +65,7 @@ public class MemberIntegrationTest {
         ReflectionTestUtils.setField(member, "deletedAt", LocalDateTime.now());
 
         // when & then
-        assertThrows(MemberDeletedBadRequestException.class,
+        assertThrows(MemberIdNotFoundException.class,
                 () -> memberService.getMemberInfo(member.getId()));
     }
 

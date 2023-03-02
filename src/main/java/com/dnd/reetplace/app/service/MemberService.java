@@ -3,7 +3,6 @@ package com.dnd.reetplace.app.service;
 import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.repository.MemberRepository;
-import com.dnd.reetplace.global.exception.member.MemberDeletedBadRequestException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,11 +33,7 @@ public class MemberService {
      * @return id에 해당하는 Member Entity
      */
     private Member getMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+        return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
-        if (member.getDeletedAt() != null) {
-            throw new MemberDeletedBadRequestException();
-        }
-        return member;
     }
 }
