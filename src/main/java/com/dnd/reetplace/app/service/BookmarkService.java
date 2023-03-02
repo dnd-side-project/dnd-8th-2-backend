@@ -8,6 +8,7 @@ import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
+import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,8 @@ public class BookmarkService {
      */
     @Transactional
     public BookmarkDto save(Long memberId, BookmarkDto bookmarkDto) {
+        validateAlreadyMarkedPlace(memberId, bookmarkDto.getPlace());
+
         Member member = getExistentMember(memberId);
 
         PlaceDto placeDto = bookmarkDto.getPlace();
@@ -72,5 +75,12 @@ public class BookmarkService {
     private Member getExistentMember(Long memberId) {
         return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
+    }
+
+    private void validateAlreadyMarkedPlace(Long memberId, PlaceDto place) {
+        String kakaoPid = place.getKakaoPid();
+        if (bookmarkRepository.existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid)) {
+            throw new AlreadyMarkedPlaceException(memberId, kakaoPid);
+        }
     }
 }
