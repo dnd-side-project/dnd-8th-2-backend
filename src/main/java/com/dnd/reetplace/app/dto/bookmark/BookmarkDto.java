@@ -27,8 +27,8 @@ public class BookmarkDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static BookmarkDto of(BookmarkType type, Short rate, String people, BookMarkRelLink relLinks) {
-        return of(null, null, null, type, rate, people, relLinks, null, null);
+    public static BookmarkDto of(PlaceDto place, BookmarkType type, Short rate, String people, BookMarkRelLink relLinks) {
+        return of(null, null, place, type, rate, people, relLinks, null, null);
     }
 
     public static BookmarkDto of(Long id, MemberDto member, PlaceDto place, BookmarkType type, Short rate, String people, BookMarkRelLink relLinks, LocalDateTime createdAt, LocalDateTime updatedAt) {

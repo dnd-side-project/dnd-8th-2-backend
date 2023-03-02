@@ -45,6 +45,7 @@ public class BookmarkCreateRequest {
 
     public BookmarkDto toDto() {
         return BookmarkDto.of(
+                this.getPlace().toDto(),
                 this.getType(),
                 this.getRate(),
                 this.getPeople(),
