@@ -38,6 +38,14 @@ public class PlaceService {
     public static final String DEPARTMENT_CATEGORY_NAME = "가정,생활 > 백화점";
     public static final String MARKET_CATEGORY_NAME = "가정,생활 > 시장";
 
+    /**
+     * sub category에 해당하는 장소 목록을 카카오 로컬 API를 사용하여 조회한다.
+     * 장소는 최소 14개 ~ 최대 20개까지 조회된다.
+     *
+     * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
+     * @param request 조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
+     * @return 카테고리에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
+     */
     public PlaceGetListResponse getPlaceList(
             HttpServletRequest httpServletRequest,
             PlaceGetListRequest request) {
@@ -53,6 +61,15 @@ public class PlaceService {
         return PlaceGetListResponse.of(placeListWithBookmark);
     }
 
+    /**
+     * 카카오 로컬 API를 통해 중심좌표 내 1km 반경에 해당하는 sub category 장소 목록을 조회한다.
+     * 본 메서드를 통해 sub category에 대해 각각 카카오 로컬 API를 호출하여 결과를 합쳐 반환한다.
+     *
+     * @param request 조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
+     * @param subCategory 조회하고자 하는 장소의 서브 카테고리 List
+     * @param size 각 카테고리 별 조회하는 장소의 개수
+     * @return 카카오에서 제공하는 장소 정보 List
+     */
     private List<KakaoPlaceResponse> getPlaceListFromKakao(PlaceGetListRequest request, List<PlaceSubCategory> subCategory, long size) {
         ArrayList<KakaoPlaceResponse> result = new ArrayList<>();
         subCategory.forEach(category -> {
@@ -89,6 +106,14 @@ public class PlaceService {
         return result;
     }
 
+    /**
+     * (로그인 시) 각 장소 별 북마크 여부 및 북마크 id를 업데이트한다.
+     * 또한, 카카오에서 제공하는 장소 정보 -> 앱 내에서 필요한 정보만 포함하는 Custom Response로 결과를 변환하여 반환한다.
+     *
+     * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
+     * @param result 카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
+     * @return 북마크 여부 및 북마크 id가 업데이트 된 Custom Place Response List
+     */
     private List<PlaceGetResponse> updatePlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceResponse> result) {
         Member loginMember = findLoginMember(httpServletRequest);
         if (loginMember == null) {
@@ -118,6 +143,12 @@ public class PlaceService {
         }
     }
 
+    /**
+     * HttpServletRequest 내 Authorization Header를 파싱하여 로그인 여부를 판단한다.
+     *
+     * @param request 로그인 여부를 판단하기 위한 HttpServletRequest 객체
+     * @return 로그인 시 해당하는 Member 엔티티 반환, 비로그인 시 null 반환
+     */
     private Member findLoginMember(HttpServletRequest request) {
         String token = tokenProvider.getToken(request);
         if (token != null) {
