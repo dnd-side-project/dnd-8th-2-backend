@@ -103,6 +103,9 @@ public class PlaceResponse {
             example = "ACTIVITY_BOARD_GAME")
     private PlaceSubCategory subCategory;
 
+    @Schema(description = "대표 전화 번호", example = "02-363-3799")
+    private String phone;
+
     @Schema(description = "지번 주소", example = "서울 서대문구 창천동 18-31")
     private String lotNumberAddress;
 
@@ -124,6 +127,7 @@ public class PlaceResponse {
                 place.getCategoryGroupCode(),
                 place.getCategory(),
                 place.getSubCategory(),
+                place.getPhone(),
                 place.getAddress().getLotNumberAddress(),
                 place.getAddress().getRoadAddress(),
                 place.getPoint().getLat(),
