@@ -44,9 +44,17 @@ public class PlaceService {
 
         List<PlaceSubCategory> subCategory = request.getSubCategory();
         long size = Math.round(15.0 / subCategory.size());
-        ArrayList<KakaoPlaceResponse> result = new ArrayList<>();
 
         // 카카오 서버에서 받아온 장소 목록 collect
+        List<KakaoPlaceResponse> result = getPlaceListFromKakao(request, subCategory, size);
+
+        // 북마크 여부 처리
+        List<PlaceGetResponse> placeListWithBookmark = updatePlaceIsBookmark(httpServletRequest, result);
+        return PlaceGetListResponse.of(placeListWithBookmark);
+    }
+
+    private List<KakaoPlaceResponse> getPlaceListFromKakao(PlaceGetListRequest request, List<PlaceSubCategory> subCategory, long size) {
+        ArrayList<KakaoPlaceResponse> result = new ArrayList<>();
         subCategory.forEach(category -> {
             if (category.equals(PlaceSubCategory.FOOD_WORLD)) {
                 long newSize = Math.round(size / 2.0);
@@ -78,37 +86,35 @@ public class PlaceService {
                 result.addAll(kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, size));
             }
         });
+        return result;
+    }
 
-        // 북마크 여부 처리
+    private List<PlaceGetResponse> updatePlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceResponse> result) {
         Member loginMember = findLoginMember(httpServletRequest);
         if (loginMember == null) {
-            List<PlaceGetResponse> placeList =
-                    result.stream().map(place ->
-                            PlaceGetResponse.of(place, null, null)
-                    ).toList();
-            return PlaceGetListResponse.of(placeList);
+            return result.stream().map(place ->
+                    PlaceGetResponse.of(place, null, null)
+            ).toList();
         } else {
             List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
-            List<PlaceGetResponse> placeList =
-                    result.stream().map(place -> {
-                        Optional<Bookmark> bookmark = bookmarkList.stream()
-                                .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
-                                .findFirst();
-                        if (bookmark.isPresent()) {
-                            return PlaceGetResponse.of(
-                                    place,
-                                    bookmark.get().getType(),
-                                    bookmark.get().getId()
-                            );
-                        } else {
-                            return PlaceGetResponse.of(
-                                    place,
-                                    null,
-                                    null
-                            );
-                        }
-                    }).toList();
-            return PlaceGetListResponse.of(placeList);
+            return result.stream().map(place -> {
+                Optional<Bookmark> bookmark = bookmarkList.stream()
+                        .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
+                        .findFirst();
+                if (bookmark.isPresent()) {
+                    return PlaceGetResponse.of(
+                            place,
+                            bookmark.get().getType(),
+                            bookmark.get().getId()
+                    );
+                } else {
+                    return PlaceGetResponse.of(
+                            place,
+                            null,
+                            null
+                    );
+                }
+            }).toList();
         }
     }
 
