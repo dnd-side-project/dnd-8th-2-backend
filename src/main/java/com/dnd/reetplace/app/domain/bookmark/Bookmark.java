@@ -48,15 +48,13 @@ public class Bookmark extends BaseTimeEntity {
             BookmarkType type,
             Short rate,
             String people,
-            String relLink1,
-            String relLink2,
-            String relLink3
+            BookMarkRelLink relLinks
     ) {
         this.member = member;
         this.place = place;
         this.type = type;
         this.rate = rate;
         this.people = people;
-        this.relLinks = new BookMarkRelLink(relLink1, relLink2, relLink3);
+        this.relLinks = relLinks;
     }
 }

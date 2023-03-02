@@ -11,8 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberResponse {
 
-    @Schema(description = "사용자 고유 id", example = "1")
-    private Long memberId;
+    @Schema(description="사용자 고유 id", example="1")
+    private Long id;
 
     @Schema(description = "사용자 고유 uid", example = "1284203261")
     private String uid;

@@ -31,14 +31,21 @@ public class Place extends BaseTimeEntity {
     @Column(nullable = false)
     private String url;
 
+    @Column(nullable = false)
+    private String kakaoCategoryName;
+
     @Enumerated(EnumType.STRING)
     private PlaceCategoryGroupCode categoryGroupCode;
 
     @Column(nullable = false)
-    private String categoryName;
+    @Enumerated(EnumType.STRING)
+    private PlaceCategory category;
 
     @Column(nullable = false)
-    private String subCategoryName;
+    @Enumerated(EnumType.STRING)
+    private PlaceSubCategory subCategory;
+
+    private String phone;
 
     @Embedded
     private Address address;
@@ -46,28 +53,31 @@ public class Place extends BaseTimeEntity {
     @Embedded
     private Point point;
 
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
     @Builder
     private Place(
             String kakaoPid,
             String name,
             String url,
+            String kakaoCategoryName,
             PlaceCategoryGroupCode categoryGroupCode,
-            String categoryName,
-            String subCategoryName,
-            String lotNumberAddress,
-            String roadAddress,
+            PlaceCategory category,
+            PlaceSubCategory subCategory,
+            String phone,
+            Address address,
             String lat,
             String lng
     ) {
         this.kakaoPid = kakaoPid;
         this.name = name;
         this.url = url;
+        this.kakaoCategoryName = kakaoCategoryName;
         this.categoryGroupCode = categoryGroupCode;
-        this.categoryName = categoryName;
-        this.subCategoryName = subCategoryName;
-        this.address = new Address(lotNumberAddress, roadAddress);
+        this.category = category;
+        this.subCategory = subCategory;
+        this.phone = phone;
+        this.address = address;
         this.point = new Point(lat, lng);
     }
 }
