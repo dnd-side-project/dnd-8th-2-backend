@@ -22,7 +22,7 @@ import java.net.URI;
 
 @Tag(name = "장소 북마크", description = "장소 북마크 관련 API입니다.")
 @RequiredArgsConstructor
-@RequestMapping("/api/bookmark")
+@RequestMapping("/api/bookmarks")
 @RestController
 public class BookmarkController {
 
@@ -36,10 +36,10 @@ public class BookmarkController {
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Valid @RequestBody BookmarkCreateRequest request
     ) {
-        BookmarkDto bookmarkDto = bookmarkService.save(memberDetails.getId(), request);
+        BookmarkDto bookmarkDto = bookmarkService.save(memberDetails.getId(), request.toDto());
 
         return ResponseEntity
-                .created(URI.create("/api/bookmark/" + bookmarkDto.getId()))
+                .created(URI.create("/api/bookmarks/" + bookmarkDto.getId()))
                 .body(BookmarkCreateResponse.from(bookmarkDto));
     }
 }
