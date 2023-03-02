@@ -29,6 +29,8 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @Operation(
+            summary = "북마크 생성",
+            description = "북마크 할 장소 및 북마크 내용을 기반으로 북마크를 생성합니다.",
             security = @SecurityRequirement(name = "Authorization")
     )
     @PostMapping
