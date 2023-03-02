@@ -33,7 +33,7 @@ public class MemberService {
      * @param memberId 찾고자 하는 사용자의 id
      * @return id에 해당하는 Member Entity
      */
-    public Member getMember(Long memberId) {
+    private Member getMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
         if (member.getDeletedAt() != null) {
