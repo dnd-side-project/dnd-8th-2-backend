@@ -73,34 +73,37 @@ public class PlaceService {
     private List<KakaoPlaceResponse> getPlaceListFromKakao(PlaceGetListRequest request, List<PlaceSubCategory> subCategory, long size) {
         ArrayList<KakaoPlaceResponse> result = new ArrayList<>();
         subCategory.forEach(category -> {
-            if (category.equals(PlaceSubCategory.FOOD_WORLD)) {
-                long newSize = Math.round(size / 2.0);
-                result.addAll(kakaoHttpRequestService.getPlaceListKeyword(MEXICAN_KEYWORD, request, category, newSize));
-                result.addAll(kakaoHttpRequestService.getPlaceListKeyword(ASIA_KEYWORD, request, category, newSize));
-            } else if (category.equals(PlaceSubCategory.SHOPPING_DEPARTMENT_STORE)) {
-                List<KakaoPlaceResponse> placeList =
-                        kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
-                                .stream().filter(place -> place.getCategory_name().contains(DEPARTMENT_CATEGORY_NAME))
-                                .limit(size)
-                                .toList();
-                result.addAll(placeList);
-            } else if (category.equals(PlaceSubCategory.SHOPPING_MARKET)) {
-                List<KakaoPlaceResponse> placeList =
-                        kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
-                                .stream().filter(place -> place.getCategory_name().contains(MARKET_CATEGORY_NAME))
-                                .limit(size)
-                                .toList();
-                result.addAll(placeList);
-            } else if (category.equals(PlaceSubCategory.SHOPPING_MART)) {
-                result.addAll(kakaoHttpRequestService.getPlaceListCategory(
+            switch (category) {
+                case FOOD_WORLD -> {
+                    long newSize = Math.round(size / 2.0);
+                    result.addAll(kakaoHttpRequestService.getPlaceListKeyword(MEXICAN_KEYWORD, request, category, newSize));
+                    result.addAll(kakaoHttpRequestService.getPlaceListKeyword(ASIA_KEYWORD, request, category, newSize));
+                }
+                case SHOPPING_DEPARTMENT_STORE -> {
+                    List<KakaoPlaceResponse> placeList =
+                            kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
+                                    .stream().filter(place -> place.getCategory_name().contains(DEPARTMENT_CATEGORY_NAME))
+                                    .limit(size)
+                                    .toList();
+                    result.addAll(placeList);
+                }
+                case SHOPPING_MARKET -> {
+                    List<KakaoPlaceResponse> placeList =
+                            kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
+                                    .stream().filter(place -> place.getCategory_name().contains(MARKET_CATEGORY_NAME))
+                                    .limit(size)
+                                    .toList();
+                    result.addAll(placeList);
+                }
+                case SHOPPING_MART -> result.addAll(kakaoHttpRequestService.getPlaceListCategory(
                                 PlaceCategoryGroupCode.MT1.name(),
                                 request,
                                 category,
                                 size
                         )
                 );
-            } else {
-                result.addAll(kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, size));
+                default ->
+                        result.addAll(kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, size));
             }
         });
         return result;
