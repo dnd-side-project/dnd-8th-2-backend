@@ -9,6 +9,7 @@ import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.service.BookmarkService;
+import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.app.type.BookmarkType;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
@@ -18,8 +19,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,6 +98,45 @@ class BookmarkServiceTest {
         assertThat(actualSavedBookmark.getMember().getId()).isEqualTo(expectedMember.getId());
         assertThat(actualSavedBookmark.getPlace().getId()).isEqualTo(expectedSavedPlace.getId());
         assertThat(actualSavedBookmark.getId()).isEqualTo(expectedSavedBookmark.getId());
+    }
+
+    @DisplayName("북마크 전체 검색을 하면, 북마크 slice를 반환한다.")
+    @Test
+    void givenSearchTypeAll_whenSearchingBookmarks_thenReturnBookmarkSlice() {
+        // given
+        Long memberId = 1L;
+        Pageable pageable = Pageable.ofSize(20);
+        PageImpl<Bookmark> expectedBookmarks = new PageImpl<>(List.of(createBookmark(createMember(), createPlace())));
+        given(bookmarkRepository.findByMember_Id(memberId, pageable)).willReturn(expectedBookmarks);
+
+        // when
+        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, BookmarkSearchType.ALL, pageable);
+
+        // then
+        then(bookmarkRepository).should().findByMember_Id(memberId, pageable);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(actualBookmarks.getContent().get(0).getId())
+                .isEqualTo(expectedBookmarks.getContent().get(0).getId());
+    }
+
+    @DisplayName("북마크 검색 종류가 주어지고, 북마크 전체 검색을 하면, 북마크 slice를 반환한다.")
+    @Test
+    void givenSearchTypeNotAll_whenSearchingBookmarks_thenReturnBookmarkSlice() {
+        // given
+        Long memberId = 1L;
+        BookmarkSearchType searchType = BookmarkSearchType.WANT;
+        Pageable pageable = Pageable.ofSize(20);
+        PageImpl<Bookmark> expectedBookmarks = new PageImpl<>(List.of(createBookmark(createMember(), createPlace())));
+        given(bookmarkRepository.findByTypeAndMember_Id(searchType.toBookmarkType(), memberId, pageable))
+                .willReturn(expectedBookmarks);
+
+        // when
+        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, searchType, pageable);
+
+        // then
+        then(bookmarkRepository).should().findByTypeAndMember_Id(searchType.toBookmarkType(), memberId, pageable);
+        assertThat(actualBookmarks.getContent().get(0).getId())
+                .isEqualTo(expectedBookmarks.getContent().get(0).getId());
     }
 
     private Member createMember() {

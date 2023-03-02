@@ -7,8 +7,11 @@ import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
+import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +42,24 @@ public class BookmarkService {
         return BookmarkDto.from(
                 bookmarkRepository.save(bookmarkDto.toEntity(member, place))
         );
+    }
+
+    /**
+     * 북마크 리스트를 검색한다.
+     *
+     * @param memberId 북마크 리스트를 검색하고자 하는 로그인 회원
+     * @param searchType 검색하고자 하는 북마크 리스트의 종류 (전체, 가고 싶어요, 갔다 왔어요)
+     * @param pageable paging 정보
+     * @return 북마크 정보가 담긴 {@link Slice} 객체
+     */
+    public Slice<BookmarkDto> searchBookmarks(Long memberId, BookmarkSearchType searchType, Pageable pageable) {
+        if (searchType.equals(BookmarkSearchType.ALL)) {
+            return bookmarkRepository.findByMember_Id(memberId, pageable)
+                    .map(BookmarkDto::from);
+        }
+
+        return bookmarkRepository.findByTypeAndMember_Id(searchType.toBookmarkType(), memberId, pageable)
+                .map(BookmarkDto::from);
     }
 
     /**
