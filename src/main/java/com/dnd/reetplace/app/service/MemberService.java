@@ -27,13 +27,13 @@ public class MemberService {
 
     /**
      * memberId에 해당하는 사용자를 반환한다.
-     * memberId에 해당하는 사용자가 존재하지 않을 시, Exception을 던진다.
+     * memberId에 해당하는 사용자가 존재하지 않거나 탈퇴한 사용자일 시, Exception을 던진다.
      *
      * @param memberId 찾고자 하는 사용자의 id
      * @return id에 해당하는 Member Entity
      */
-    public Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
+    private Member getMember(Long memberId) {
+        return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
     }
 }
