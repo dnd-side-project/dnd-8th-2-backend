@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class PlaceRequest {
 
-    @Schema(description = "Kakao에서 전달받은 장소 id", example = "1520672825")
+    @Schema(description = "Kakao에서 전달받은 장소 id", example = "585651800")
     @NotBlank
     private String kakaoPlaceId;
 

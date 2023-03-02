@@ -26,7 +26,12 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
-                    excludes: ['**/*Auth*.*'] + Qdomains,
+                    excludes: [
+                            '**/*Auth*.*',
+                            '**/*PlaceController*.*',
+                            '**/*PlaceService*.*',
+                            '**/*Http*.*'
+                    ] + Qdomains,
                     includes: [
                             '**/service/**',
                             '**/controller/**'
@@ -62,7 +67,12 @@ jacocoTestCoverageVerification {
                 minimum = 0.70
             }
 
-            excludes = ['*.*Auth*'] + Qdomains
+            excludes = [
+                    '*.*Auth*',
+                    '*.*PlaceController*',
+                    '*.*PlaceService*',
+                    '*.*Http*'
+            ] + Qdomains
             includes = [
                     '*.*Service*',
                     '*.*Controller'

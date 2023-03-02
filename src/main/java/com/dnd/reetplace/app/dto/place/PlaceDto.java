@@ -59,6 +59,7 @@ public class PlaceDto {
                 .kakaoPid(kakaoPid)
                 .name(name)
                 .url(url)
+                .kakaoCategoryName(kakaoCategoryName)
                 .categoryGroupCode(categoryGroupCode)
                 .category(category)
                 .subCategory(subCategory)

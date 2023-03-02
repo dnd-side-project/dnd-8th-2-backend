@@ -88,7 +88,7 @@ public class TokenProvider {
                 .filter(t -> t.name().equals(claims.get(LOGIN_TYPE_CLAIM_KEY)))
                 .findFirst()
                 .get();
-        Member member = memberRepository.findByUidAndLoginType(uid, loginType)
+        Member member = memberRepository.findByUidAndLoginTypeAndDeletedAtIsNull(uid, loginType)
                 .orElseThrow(() -> new MemberUidNotFoundException(uid));
         MemberDetails memberDetails = new MemberDetails(member);
         return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());

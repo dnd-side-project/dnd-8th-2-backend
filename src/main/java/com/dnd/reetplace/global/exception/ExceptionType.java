@@ -8,6 +8,7 @@ import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
 import com.dnd.reetplace.global.exception.auth.RefreshTokenNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
+import com.dnd.reetplace.global.exception.place.PlaceKakaoApiBadRequestException;
 import com.dnd.reetplace.global.exception.place.PlaceKakaoPidNotFoundException;
 import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
 import com.dnd.reetplace.global.log.LogUtils;
@@ -113,6 +114,7 @@ public enum ExceptionType {
 
     // Place
     PLACE_KAKAO_PID_NOT_FOUND_EXCEPTION(3500, "장소를 찾을 수 없습니다.", PlaceKakaoPidNotFoundException.class),
+    PLACE_KAKAO_API_BAD_REQUEST_EXCEPTION(3501, "장소 조회에 실패했습니다. 올바른 파라미터를 입력했는지 확인해주세요.", PlaceKakaoApiBadRequestException.class)
     ;
 
     private final Integer code;
