@@ -58,7 +58,7 @@ public class OAuth2Service {
      */
     private Member kakaoLoginOrSignup(KakaoProfileResponse kakaoProfile) {
         String uid = kakaoProfile.getId().toString();
-        return memberRepository.findByUidAndLoginType(uid, LoginType.KAKAO)
+        return memberRepository.findByUidAndLoginTypeAndDeletedAtIsNull(uid, LoginType.KAKAO)
                 .orElseGet(() -> {
                     Member newMember = Member.builder()
                             .uid(uid)

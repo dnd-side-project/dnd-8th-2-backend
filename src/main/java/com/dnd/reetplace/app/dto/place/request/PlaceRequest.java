@@ -9,14 +9,16 @@ import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class PlaceRequest {
 
-    @Schema(description = "Kakao에서 전달받은 장소 id", example = "1520672825")
+    @Schema(description = "Kakao에서 전달받은 장소 id", example = "585651800")
     @NotBlank
     private String kakaoPlaceId;
 
