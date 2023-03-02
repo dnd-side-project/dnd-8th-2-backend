@@ -1,4 +1,4 @@
-reet-place.application.version: v.0.0.1
+reet-place.app.version: v.0.0.1
 
 logging:
   level:
@@ -19,6 +19,9 @@ management.endpoints.web.exposure.include: "*"
 
 spring:
   config.activate.on-profile: local
+  redis:
+    host: localhost
+    port: 6379
   datasource:
     url: ${REET_PLACE_LOCAL_DB_URL}
     username: ${REET_PLACE_LOCAL_DB_USERNAME}
@@ -37,6 +40,9 @@ logging:
 
 spring:
   config.activate.on-profile: prod
+  redis:
+    host: ${REET_PLACE_PROD_REDIS_HOST}
+    port: 6379
   datasource:
     url: ${REET_PLACE_PROD_DB_URL}
     username: ${REET_PLACE_PROD_DB_USERNAME}
@@ -49,10 +55,14 @@ spring:
         format_sql: false
   sql.init.mode: never
 
+jwt.secret: ${REET_PLACE_PROD_JWT_SECRET}
+
 ---
 # Settings for test
 spring:
   config.activate.on-profile: test
+  redis:
+    port: 10000
   datasource:
     url: jdbc:h2:mem:test
     username: sa
