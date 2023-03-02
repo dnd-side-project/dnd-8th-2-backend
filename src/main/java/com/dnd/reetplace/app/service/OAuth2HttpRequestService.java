@@ -21,7 +21,14 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class OAuth2HttpRequestService {
 
     public static final String KAKAO_GET_PROFILE_URL = "https://kapi.kakao.com/v2/user/me";
+    public static final String KAKAO_UNLINK = "https://kapi.kakao.com/v1/user/unlink";
 
+    /**
+     * 카카오 서버와 통신하여 카카오 access token에 해당하는 사용자 프로필을 가져온다.
+     *
+     * @param accessToken 카카오 access token
+     * @return access token에 해당하는 사용자 카카오 프로필
+     */
     public KakaoProfileResponse getKakaoProfile(String accessToken) {
         try {
             // Header 추가
@@ -47,6 +54,36 @@ public class OAuth2HttpRequestService {
             return mapper.readValue(response.getBody(), KakaoProfileResponse.class);
         } catch (Exception e) {
             log.error("[{}] OAuth2Service.kakaoLogin() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
+            throw new KakaoUnauthorizedException();
+        }
+    }
+
+    /**
+     * 카카오 서버와 통신하여 카카오 access token에 해당하는 사용자의 연결을 끊는다.
+     *
+     * @param accessToken 카카오 access token
+     */
+    public void unlinkKakao(String accessToken) {
+        try {
+            // Header 추가
+            HttpHeaders header = new HttpHeaders();
+            header.add(AUTHORIZATION, "Bearer " + accessToken);
+            header.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+            // request 구성
+            RestTemplate rt = new RestTemplate();
+            rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+            HttpEntity<MultiValueMap<String, String>> httpRequest = new HttpEntity<>(header);
+
+            // API 요청
+            rt.exchange(
+                    KAKAO_UNLINK,
+                    HttpMethod.POST,
+                    httpRequest,
+                    String.class
+            );
+        } catch (Exception e) {
+            log.error("[{}] OAuth2Service.unlinkKakao() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
             throw new KakaoUnauthorizedException();
         }
     }

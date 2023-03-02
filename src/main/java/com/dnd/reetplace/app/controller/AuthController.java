@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
+import com.dnd.reetplace.app.dto.survey.request.SurveyRequest;
 import com.dnd.reetplace.app.service.OAuth2Service;
 import com.dnd.reetplace.app.service.RefreshTokenRedisService;
 import com.dnd.reetplace.global.security.MemberDetails;
@@ -12,12 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -58,6 +57,28 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         refreshTokenRedisService.deleteRefreshToken(memberDetails.getUid());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "사용자의 계정을 탈퇴합니다.<br><br>" +
+                    "surveyType은 각각 다음과 같습니다.<br>" +
+                    "- RECORD_DELETE : 기록 삭제 목적<br>" +
+                    "- LOW_USED : 사용 빈도가 낮아서<br>" +
+                    "- USE_OTHER_SERVICE : 다른 서비스 사용 목적<br>" +
+                    "- INCONVENIENCE_AND_ERRORS : 이용이 불편하고 장애가 많아서<br>" +
+                    "- OTHER : 기타 (해당 경우 description field 필수값)",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @PostMapping("/unlink")
+    public ResponseEntity<Void> unlink(
+            @Valid @RequestBody SurveyRequest surveyRequest,
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Parameter(name = "access-token", description = "카카오 서버에서 받은 Access Token", example = "29WryM8Px6...")
+            @RequestHeader(value = "access-token") String kakaoAccessToken
+    ) {
+        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), kakaoAccessToken);
         return ResponseEntity.noContent().build();
     }
 }
