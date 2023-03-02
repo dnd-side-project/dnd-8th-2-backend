@@ -5,12 +5,14 @@ import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
 import com.dnd.reetplace.app.type.BookmarkType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+@AllArgsConstructor
 @Getter
 public class BookmarkCreateRequest {
 

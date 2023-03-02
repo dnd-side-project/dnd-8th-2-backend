@@ -7,10 +7,12 @@ import com.dnd.reetplace.app.domain.place.Point;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
+@AllArgsConstructor
 @Getter
 public class PlaceRequest {
 
