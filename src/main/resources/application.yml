@@ -32,6 +32,9 @@ spring:
     defer-datasource-initialization: true
   sql.init.mode: always
 
+kakao:
+  rest-api-key: ${REET_PLACE_LOCAL_KAKAO_API_KEY}
+
 ---
 # Settings for production(dev-server)
 logging:
@@ -54,6 +57,9 @@ spring:
       hibernate:
         format_sql: false
   sql.init.mode: never
+
+kakao:
+  rest-api-key: ${REET_PLACE_PROD_KAKAO_API_KEY}
 
 jwt.secret: ${REET_PLACE_PROD_JWT_SECRET}
 
