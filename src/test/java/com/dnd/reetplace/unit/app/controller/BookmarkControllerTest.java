@@ -14,10 +14,7 @@ import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
 import com.dnd.reetplace.app.service.BookmarkService;
-import com.dnd.reetplace.app.type.BookmarkSearchType;
-import com.dnd.reetplace.app.type.BookmarkType;
-import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
+import com.dnd.reetplace.app.type.*;
 import com.dnd.reetplace.global.security.JwtAuthenticationFilter;
 import com.dnd.reetplace.global.security.MemberDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -97,18 +94,20 @@ class BookmarkControllerTest {
     void givenSearchConditions_whenSearching_thenReturnBookmarksSlice() throws Exception {
         // given
         Long memberId = 1L;
-        given(bookmarkService.searchBookmarks(memberId, BookmarkSearchType.ALL, Pageable.ofSize(20)))
-                .willReturn(Page.empty());
+        given(bookmarkService.searchBookmarks(
+                memberId,
+                BookmarkSearchType.ALL,
+                BookmarkSearchSort.LATEST,
+                Pageable.ofSize(20))
+        ).willReturn(Page.empty());
 
         // when & then
-        mvc.perform(
-                        get("/api/bookmarks/list")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .param("searchType", "ALL")
-                                .with(csrf())
-                                .with(user(new MemberDetails(createMember())))
-                )
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/bookmarks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("searchType", "ALL")
+                .with(csrf())
+                .with(user(new MemberDetails(createMember())))
+        ).andExpect(status().isOk());
     }
 
     private Member createMember() {

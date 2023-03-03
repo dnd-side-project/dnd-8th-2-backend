@@ -9,10 +9,7 @@ import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.service.BookmarkService;
-import com.dnd.reetplace.app.type.BookmarkSearchType;
-import com.dnd.reetplace.app.type.BookmarkType;
-import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
+import com.dnd.reetplace.app.type.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -105,15 +102,16 @@ class BookmarkServiceTest {
     void givenSearchTypeAll_whenSearchingBookmarks_thenReturnBookmarkSlice() {
         // given
         Long memberId = 1L;
+        BookmarkSearchSort sort = BookmarkSearchSort.LATEST;
         Pageable pageable = Pageable.ofSize(20);
         PageImpl<Bookmark> expectedBookmarks = new PageImpl<>(List.of(createBookmark(createMember(), createPlace())));
-        given(bookmarkRepository.findByMember_Id(memberId, pageable)).willReturn(expectedBookmarks);
+        given(bookmarkRepository.findByMember_IdOrderByCreatedAtDesc(memberId, pageable)).willReturn(expectedBookmarks);
 
         // when
-        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, BookmarkSearchType.ALL, pageable);
+        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, BookmarkSearchType.ALL, sort, pageable);
 
         // then
-        then(bookmarkRepository).should().findByMember_Id(memberId, pageable);
+        then(bookmarkRepository).should().findByMember_IdOrderByCreatedAtDesc(memberId, pageable);
         then(bookmarkRepository).shouldHaveNoMoreInteractions();
         assertThat(actualBookmarks.getContent().get(0).getId())
                 .isEqualTo(expectedBookmarks.getContent().get(0).getId());
@@ -125,16 +123,17 @@ class BookmarkServiceTest {
         // given
         Long memberId = 1L;
         BookmarkSearchType searchType = BookmarkSearchType.WANT;
+        BookmarkSearchSort sort = BookmarkSearchSort.LATEST;
         Pageable pageable = Pageable.ofSize(20);
         PageImpl<Bookmark> expectedBookmarks = new PageImpl<>(List.of(createBookmark(createMember(), createPlace())));
-        given(bookmarkRepository.findByTypeAndMember_Id(searchType.toBookmarkType(), memberId, pageable))
+        given(bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId, pageable))
                 .willReturn(expectedBookmarks);
 
         // when
-        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, searchType, pageable);
+        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, searchType, sort, pageable);
 
         // then
-        then(bookmarkRepository).should().findByTypeAndMember_Id(searchType.toBookmarkType(), memberId, pageable);
+        then(bookmarkRepository).should().findByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId, pageable);
         assertThat(actualBookmarks.getContent().get(0).getId())
                 .isEqualTo(expectedBookmarks.getContent().get(0).getId());
     }
