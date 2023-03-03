@@ -137,9 +137,8 @@ public class PlaceGetResponse {
     ) {
         PlaceCategoryGroupCode categoryGroupCode;
         try {
-            categoryGroupCode =
-                    PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
-        } catch (Exception e) {
+            categoryGroupCode = PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
+        } catch (IllegalArgumentException e) {
             categoryGroupCode = null;
         }
         return new PlaceGetResponse(

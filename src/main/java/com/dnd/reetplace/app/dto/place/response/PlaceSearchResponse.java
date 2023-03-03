@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class PlaceSearchResponse {
@@ -141,28 +143,25 @@ public class PlaceSearchResponse {
     ) {
         PlaceCategoryGroupCode categoryGroupCode;
         try {
-            categoryGroupCode =
-                    PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
-        } catch (Exception e) {
+            categoryGroupCode = PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
+        } catch (IllegalArgumentException e) {
             categoryGroupCode = null;
         }
-        PlaceCategory category = null;
-        PlaceSubCategory subCategory = null;
 
-        for (PlaceSubCategory sub : PlaceSubCategory.values()) {
-            if (kakaoResponse.getCategory_name().contains(sub.getDescription())) {
-                subCategory = sub;
-                category = sub.getMainCategory();
-                break;
-            }
-        }
+        PlaceSubCategory subCategory;
+        PlaceCategory category;
         if (kakaoResponse.getCategory_name().contains("멕시칸") || kakaoResponse.getCategory_name().contains("아시아")) {
             subCategory = PlaceSubCategory.WORLD;
             category = PlaceCategory.FOOD;
-        }
-        if (kakaoResponse.getCategory_name().contains("치킨")) {
+        } else if (kakaoResponse.getCategory_name().contains("치킨")) {
             subCategory = PlaceSubCategory.COOKING_BAR;
             category = PlaceCategory.FOOD;
+        } else {
+            subCategory = Arrays.stream(PlaceSubCategory.values())
+                    .filter(sub -> kakaoResponse.getCategory_name().contains(sub.getDescription()))
+                    .findFirst()
+                    .orElse(null);
+            category = subCategory == null ? null : subCategory.getMainCategory();
         }
 
         return new PlaceSearchResponse(
