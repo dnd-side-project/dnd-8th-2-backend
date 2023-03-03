@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI reetPlaceApi(@Value("reet-place.app.version") String appVersion) {
+    public OpenAPI reetPlaceApi(@Value("${reet-place.app.version}") String appVersion) {
         // TODO: 로그인 기능 구현 후 Swagger에서 access-token을 header에 첨부할 수 있도록 security scheme component 추가 필요.
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
