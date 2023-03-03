@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
+import com.dnd.reetplace.app.type.BookmarkSearchSort;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,13 +51,13 @@ public class BookmarkController {
             description = "북마크 내역을 불러옵니다. 한 페이지에 20개의 데이터가 응답됩니다.",
             security = @SecurityRequirement(name = "Authorization")
     )
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<Slice<BookmarkResponse>> searchBookmarks(
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
                     description = "<p>북마크 검색 종류. 목록은 다음과 같음</p>" +
                             "<ul>" +
-                            "<li>ALL - 전체 조회" +
+                            "<li>ALL - 전체 조회</li>" +
                             "<li>WANT - 가보고 싶어요</li>" +
                             "<li>GONE - 다녀왔어요</li>" +
                             "</ul>",
@@ -69,11 +70,22 @@ public class BookmarkController {
             @Parameter(
                     description = "한 페이지에 담긴 데이터의 최대 개수(사이즈). 기본값은 20입니다.",
                     example = "20"
-            ) @RequestParam(required = false, defaultValue = "20") int size
+            ) @RequestParam(required = false, defaultValue = "20") int size,
+            @Parameter(
+                    description = "<p>북마크 검색 정렬 기준. 목록은 다음과 같음</p>" +
+                            "<p>현재 인기순 정렬은 구현이 되지 않은 상태. 최신순 정렬로만 검색 가능</p>" +
+                            "<ul>" +
+                            "<li>LATEST - 최신순</li>" +
+                            "<li>POPULARITY - 인기순</li>" +
+                            "</ul>",
+                    example = "ALL"
+            )
+            @RequestParam(required = false, defaultValue = "LATEST") BookmarkSearchSort sort
     ) {
         Slice<BookmarkResponse> response = bookmarkService.searchBookmarks(
                 memberDetails.getId(),
                 searchType,
+                sort,
                 PageRequest.of(page, size)
         ).map(BookmarkResponse::from);
 

@@ -21,8 +21,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Bookmark> findAllByMember(@Param("memberId") Long memberId);
 
     @EntityGraph(attributePaths = {"member", "place"})
-    Slice<Bookmark> findByMember_Id(Long memberId, Pageable pageable);
+    Slice<Bookmark> findByMember_IdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"member", "place"})
-    Slice<Bookmark> findByTypeAndMember_Id(BookmarkType type, Long memberId, Pageable pageable);
+    Slice<Bookmark> findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType type, Long memberId, Pageable pageable);
 }
