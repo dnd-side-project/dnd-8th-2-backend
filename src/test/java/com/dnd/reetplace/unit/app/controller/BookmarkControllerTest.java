@@ -89,7 +89,7 @@ class BookmarkControllerTest {
                 .andExpect(jsonPath("$.id").value(expectedBookmarkId));
     }
 
-    @DisplayName("")
+    @DisplayName("주어진 검색 정보/조건으로 검색을 하면 북마크 목록을 반환한다.")
     @Test
     void givenSearchConditions_whenSearching_thenReturnBookmarksSlice() throws Exception {
         // given
