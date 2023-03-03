@@ -1,6 +1,6 @@
 package com.dnd.reetplace.app.repository;
 
-import com.dnd.reetplace.app.dto.place.response.KakaoPlaceResponse;
+import com.dnd.reetplace.app.dto.place.response.KakaoPlaceGetResponse;
 import org.qlrm.mapper.JpaResultMapper;
 
 import javax.persistence.EntityManager;
@@ -25,7 +25,7 @@ public class PlaceRepositoryCustomImpl implements PlaceRepositoryCustom {
     }
 
     @Override
-    public List<KakaoPlaceResponse> getReetPlacePopularPlaceList(String lat, String lng) {
+    public List<KakaoPlaceGetResponse> getReetPlacePopularPlaceList(String lat, String lng) {
         String sql = "select " +
                 "p.lot_number_address, " +
                 "p.category_group_code, " +
@@ -52,6 +52,6 @@ public class PlaceRepositoryCustomImpl implements PlaceRepositoryCustom {
                 .setParameter("center_lat", lat)
                 .setParameter("center_lng", lng);
 
-        return mapper.list(query, KakaoPlaceResponse.class);
+        return mapper.list(query, KakaoPlaceGetResponse.class);
     }
 }

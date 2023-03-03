@@ -2,9 +2,10 @@ package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
-import com.dnd.reetplace.app.dto.place.response.KakaoPlaceListResponse;
-import com.dnd.reetplace.app.dto.place.response.KakaoPlaceResponse;
-import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
+import com.dnd.reetplace.app.dto.place.response.KakaoPlaceGetListResponse;
+import com.dnd.reetplace.app.dto.place.response.KakaoPlaceGetResponse;
+import com.dnd.reetplace.app.dto.place.response.KakaoPlaceSearchListResponse;
+import com.dnd.reetplace.app.dto.place.response.KakaoPlaceSearchResponse;
 import com.dnd.reetplace.global.exception.place.PlaceKakaoApiBadRequestException;
 import com.dnd.reetplace.global.log.LogUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class KakaoHttpRequestService {
     public static final String GET_PLACE_KEYWORD_URL = "https://dapi.kakao.com/v2/local/search/keyword";
     public static final String GET_PLACE_CATEGORY_URL = "https://dapi.kakao.com/v2/local/search/category";
 
-    public List<KakaoPlaceResponse> getPlaceListKeyword(
+    public List<KakaoPlaceGetResponse> getPlaceListKeyword(
             String query,
             PlaceGetListRequest request,
             PlaceSubCategory subCategory,
@@ -60,13 +61,13 @@ public class KakaoHttpRequestService {
             rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
             // API 요청
-            ResponseEntity<KakaoPlaceListResponse> response = rt.exchange(
+            ResponseEntity<KakaoPlaceGetListResponse> response = rt.exchange(
                     uriBuilder.toUriString(),
                     HttpMethod.GET,
                     httpRequest,
-                    KakaoPlaceListResponse.class
+                    KakaoPlaceGetListResponse.class
             );
-            List<KakaoPlaceResponse> placeList = response.getBody().getDocuments();
+            List<KakaoPlaceGetResponse> placeList = response.getBody().getDocuments();
             placeList.forEach(place ->
                     place.updateCategory(request.getCategory(), subCategory)
             );
@@ -77,7 +78,7 @@ public class KakaoHttpRequestService {
         }
     }
 
-    public List<KakaoPlaceResponse> getPlaceListCategory(
+    public List<KakaoPlaceGetResponse> getPlaceListCategory(
             String categoryGroupCode,
             PlaceGetListRequest request,
             PlaceSubCategory subCategory,
@@ -103,19 +104,51 @@ public class KakaoHttpRequestService {
             rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
             // API 요청
-            ResponseEntity<KakaoPlaceListResponse> response = rt.exchange(
+            ResponseEntity<KakaoPlaceGetListResponse> response = rt.exchange(
                     uriBuilder.toUriString(),
                     HttpMethod.GET,
                     httpRequest,
-                    KakaoPlaceListResponse.class
+                    KakaoPlaceGetListResponse.class
             );
-            List<KakaoPlaceResponse> placeList = response.getBody().getDocuments();
+            List<KakaoPlaceGetResponse> placeList = response.getBody().getDocuments();
             placeList.forEach(place ->
                     place.updateCategory(request.getCategory(), subCategory)
             );
             return placeList;
         } catch (Exception e) {
             log.error("[{}] KakaoHttpRequestService.getPlaceListCategory() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
+            throw new PlaceKakaoApiBadRequestException();
+        }
+    }
+
+    public List<KakaoPlaceSearchResponse> searchPlace(String query, int page) {
+        try {
+            // Header 추가
+            HttpHeaders header = new HttpHeaders();
+            header.add(AUTHORIZATION, "KakaoAK " + restApiKey);
+            header.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+            // request 구성
+            UriComponents uriBuilder = UriComponentsBuilder
+                    .fromUriString(GET_PLACE_KEYWORD_URL)
+                    .queryParam("query", query)
+                    .queryParam("page", page)
+                    .build();
+
+            HttpEntity<MultiValueMap<String, String>> httpRequest = new HttpEntity<>(header);
+            RestTemplate rt = new RestTemplate();
+            rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
+            // API 요청
+            ResponseEntity<KakaoPlaceSearchListResponse> response = rt.exchange(
+                    uriBuilder.toUriString(),
+                    HttpMethod.GET,
+                    httpRequest,
+                    KakaoPlaceSearchListResponse.class
+            );
+            return response.getBody().getDocuments();
+        } catch (Exception e) {
+            log.error("[{}] KakaoHttpRequestService.searchPlace() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
             throw new PlaceKakaoApiBadRequestException();
         }
     }

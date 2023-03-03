@@ -204,7 +204,7 @@ class BookmarkServiceTest {
                 "test category1 > test category2 > test category3",
                 PlaceCategoryGroupCode.CT1,
                 PlaceCategory.CULTURE,
-                PlaceSubCategory.CULTURE_CINEMA,
+                PlaceSubCategory.CINEMA,
                 "010-1234-5678",
                 new Address(
                         "sido sgg detail",

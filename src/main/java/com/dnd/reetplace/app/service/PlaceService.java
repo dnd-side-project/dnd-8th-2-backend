@@ -4,9 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
-import com.dnd.reetplace.app.dto.place.response.KakaoPlaceResponse;
-import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
-import com.dnd.reetplace.app.dto.place.response.PlaceGetResponse;
+import com.dnd.reetplace.app.dto.place.response.*;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
@@ -22,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.dnd.reetplace.app.domain.place.PlaceCategory.REET_PLACE_POPULAR;
 
@@ -58,14 +55,29 @@ public class PlaceService {
         long size = Math.round(15.0 / subCategory.size());
 
         // 카카오 서버에서 받아온 장소 목록 collect
-        List<KakaoPlaceResponse> result =
+        List<KakaoPlaceGetResponse> result =
                 request.getCategory().equals(REET_PLACE_POPULAR) ?
                         placeRepository.getReetPlacePopularPlaceList(request.getLat(), request.getLng()) :
                         getPlaceListFromKakao(request, subCategory, size);
 
         // 북마크 여부 처리
-        List<PlaceGetResponse> placeListWithBookmark = updatePlaceIsBookmark(httpServletRequest, result);
+        List<PlaceGetResponse> placeListWithBookmark = updateGetPlaceIsBookmark(httpServletRequest, result);
         return PlaceGetListResponse.of(placeListWithBookmark);
+    }
+
+    /**
+     * 키워드에 해당하는 장소를 카카오 로컬 API를 사용하여 전국을 기준으로 검색한다.
+     * 장소는 최대 15개까지 조회된다. (앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.)
+     *
+     * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
+     * @param query              검색하고자 하는 키워드
+     * @param page               결과 페이지
+     * @return 키워드에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
+     */
+    public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, String query, int page) {
+        List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(query, page);
+        List<PlaceSearchResponse> placeSearchWithBookmark = updateSearchPlaceIsBookmark(httpServletRequest, result);
+        return PlaceSearchListResponse.of(placeSearchWithBookmark);
     }
 
     /**
@@ -77,32 +89,32 @@ public class PlaceService {
      * @param size        각 카테고리 별 조회하는 장소의 개수
      * @return 카카오에서 제공하는 장소 정보 List
      */
-    private List<KakaoPlaceResponse> getPlaceListFromKakao(PlaceGetListRequest request, List<PlaceSubCategory> subCategory, long size) {
-        ArrayList<KakaoPlaceResponse> result = new ArrayList<>();
+    private List<KakaoPlaceGetResponse> getPlaceListFromKakao(PlaceGetListRequest request, List<PlaceSubCategory> subCategory, long size) {
+        ArrayList<KakaoPlaceGetResponse> result = new ArrayList<>();
         subCategory.forEach(category -> {
             switch (category) {
-                case FOOD_WORLD -> {
+                case WORLD -> {
                     long newSize = Math.round(size / 2.0);
                     result.addAll(kakaoHttpRequestService.getPlaceListKeyword(MEXICAN_KEYWORD, request, category, newSize));
                     result.addAll(kakaoHttpRequestService.getPlaceListKeyword(ASIA_KEYWORD, request, category, newSize));
                 }
-                case SHOPPING_DEPARTMENT_STORE -> {
-                    List<KakaoPlaceResponse> placeList =
+                case DEPARTMENT_STORE -> {
+                    List<KakaoPlaceGetResponse> placeList =
                             kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
                                     .stream().filter(place -> place.getCategory_name().contains(DEPARTMENT_CATEGORY_NAME))
                                     .limit(size)
                                     .toList();
                     result.addAll(placeList);
                 }
-                case SHOPPING_MARKET -> {
-                    List<KakaoPlaceResponse> placeList =
+                case MARKET -> {
+                    List<KakaoPlaceGetResponse> placeList =
                             kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
                                     .stream().filter(place -> place.getCategory_name().contains(MARKET_CATEGORY_NAME))
                                     .limit(size)
                                     .toList();
                     result.addAll(placeList);
                 }
-                case SHOPPING_MART -> result.addAll(kakaoHttpRequestService.getPlaceListCategory(
+                case MART -> result.addAll(kakaoHttpRequestService.getPlaceListCategory(
                                 PlaceCategoryGroupCode.MT1.name(),
                                 request,
                                 category,
@@ -117,39 +129,65 @@ public class PlaceService {
     }
 
     /**
-     * (로그인 시) 각 장소 별 북마크 여부 및 북마크 id를 업데이트한다.
+     * (로그인 시) 장소 목록 조회에서 각 장소 별 북마크 여부 및 북마크 id를 업데이트한다.
      * 또한, 카카오에서 제공하는 장소 정보 -> 앱 내에서 필요한 정보만 포함하는 Custom Response로 결과를 변환하여 반환한다.
      *
      * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
      * @param result             카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
      * @return 북마크 여부 및 북마크 id가 업데이트 된 Custom Place Response List
      */
-    private List<PlaceGetResponse> updatePlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceResponse> result) {
+    private List<PlaceGetResponse> updateGetPlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceGetResponse> result) {
         Member loginMember = findLoginMember(httpServletRequest);
         if (loginMember == null) {
-            return result.stream().map(place ->
-                    PlaceGetResponse.of(place, null, null)
-            ).toList();
+            return result.stream()
+                    .map(PlaceGetResponse::ofWithoutBookmark)
+                    .toList();
         }
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
-        return result.stream().map(place -> {
-            Optional<Bookmark> bookmark = bookmarkList.stream()
-                    .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
-                    .findFirst();
-            if (bookmark.isPresent()) {
-                return PlaceGetResponse.of(
-                        place,
-                        bookmark.get().getType(),
-                        bookmark.get().getId()
-                );
-            } else {
-                return PlaceGetResponse.of(
-                        place,
-                        null,
-                        null
-                );
-            }
-        }).toList();
+        return result.stream()
+                .map(place -> bookmarkList.stream()
+                        .filter(bookmark ->
+                                Objects.equals(bookmark.getPlace().getKakaoPid(), place.getId()))
+                        .findFirst()
+                        .map(bookmark -> PlaceGetResponse.of(
+                                place,
+                                bookmark.getType(),
+                                bookmark.getId()))
+                        .orElse(PlaceGetResponse.ofWithoutBookmark(place)))
+                .toList();
+    }
+
+    /**
+     * (로그인 시) 장소 검색에서 각 장소 별 북마크 여부 및 북마크 id, 릿플점수를 업데이트한다.
+     * 또한, 카카오에서 제공하는 장소 정보 -> 앱 내에서 필요한 정보만 포함하는 Custom Response로 결과를 변환하여 반환한다.
+     * 이 때, 앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.
+     *
+     * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
+     * @param result             카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
+     * @return 북마크 여부, 북마크 id, 릿플점수가 업데이트 된 Custom Place Response List
+     */
+    private List<PlaceSearchResponse> updateSearchPlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceSearchResponse> result) {
+        Member loginMember = findLoginMember(httpServletRequest);
+        if (loginMember == null) {
+            return result.stream()
+                    .map(PlaceSearchResponse::ofWithoutBookmark)
+                    .filter(place -> place.getCategory() != null)
+                    .toList();
+        }
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
+        return result.stream()
+                .map(place -> bookmarkList.stream()
+                        .filter(bookmark ->
+                                Objects.equals(bookmark.getPlace().getKakaoPid(), place.getId()))
+                        .findFirst()
+                        .map(bookmark -> PlaceSearchResponse.of(
+                                place,
+                                bookmark.getType(),
+                                bookmark.getId(),
+                                bookmark.getRate()))
+                        .orElse(PlaceSearchResponse.ofWithoutBookmark(place)))
+                .filter(place -> place.getCategory() != null)
+                .toList();
     }
 
     /**

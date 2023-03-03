@@ -9,9 +9,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class PlaceGetResponse {
+public class PlaceSearchResponse {
 
     @Schema(description = "Kakao에서 등록된 장소 id 값", example = "585651800")
     private String kakaoPid;
@@ -130,10 +132,14 @@ public class PlaceGetResponse {
     @Schema(description = "북마크 고유 id값 (북마크 없을 시 null)", example = "1")
     private Long bookmarkId;
 
-    public static PlaceGetResponse of(
-            KakaoPlaceGetResponse kakaoResponse,
+    @Schema(description = "릿플점수 (북마크 없을 시 null)", example = "3")
+    private Short rate;
+
+    public static PlaceSearchResponse of(
+            KakaoPlaceSearchResponse kakaoResponse,
             BookmarkType bookmarkType,
-            Long bookmarkId
+            Long bookmarkId,
+            Short rate
     ) {
         PlaceCategoryGroupCode categoryGroupCode;
         try {
@@ -141,25 +147,43 @@ public class PlaceGetResponse {
         } catch (IllegalArgumentException | NullPointerException e) {
             categoryGroupCode = null;
         }
-        return new PlaceGetResponse(
+
+        PlaceSubCategory subCategory;
+        PlaceCategory category;
+        if (kakaoResponse.getCategory_name().contains("멕시칸") || kakaoResponse.getCategory_name().contains("아시아")) {
+            subCategory = PlaceSubCategory.WORLD;
+            category = PlaceCategory.FOOD;
+        } else if (kakaoResponse.getCategory_name().contains("치킨")) {
+            subCategory = PlaceSubCategory.COOKING_BAR;
+            category = PlaceCategory.FOOD;
+        } else {
+            subCategory = Arrays.stream(PlaceSubCategory.values())
+                    .filter(sub -> kakaoResponse.getCategory_name().contains(sub.getDescription()))
+                    .findFirst()
+                    .orElse(null);
+            category = subCategory == null ? null : subCategory.getMainCategory();
+        }
+
+        return new PlaceSearchResponse(
                 kakaoResponse.getId(),
                 kakaoResponse.getPlace_name(),
                 kakaoResponse.getPlace_url(),
                 categoryGroupCode,
                 kakaoResponse.getCategory_name(),
-                kakaoResponse.getCategory(),
-                kakaoResponse.getSubCategory(),
+                category,
+                subCategory,
                 kakaoResponse.getPhone(),
                 kakaoResponse.getAddress_name(),
                 kakaoResponse.getRoad_address_name(),
                 kakaoResponse.getY(),
                 kakaoResponse.getX(),
                 bookmarkType,
-                bookmarkId
+                bookmarkId,
+                rate
         );
     }
 
-    public static PlaceGetResponse ofWithoutBookmark(KakaoPlaceGetResponse kakaoResponse) {
-        return of(kakaoResponse, null, null);
+    public static PlaceSearchResponse ofWithoutBookmark(KakaoPlaceSearchResponse kakaoResponse) {
+        return of(kakaoResponse, null, null, null);
     }
 }

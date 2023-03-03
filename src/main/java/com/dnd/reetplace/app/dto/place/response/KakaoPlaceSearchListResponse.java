@@ -5,6 +5,6 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class KakaoPlaceListResponse {
-    private List<KakaoPlaceResponse> documents;
+public class KakaoPlaceSearchListResponse {
+    private List<KakaoPlaceSearchResponse> documents;
 }
