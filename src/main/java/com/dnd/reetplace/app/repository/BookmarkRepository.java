@@ -13,6 +13,8 @@ import java.util.List;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
+    boolean existsByMember_IdAndPlace_KakaoPid(Long memberId, String kakaoPid);
+
     @Query("select b from Bookmark b " +
             "join fetch b.place p " +
             "where b.member.id = :memberId")
