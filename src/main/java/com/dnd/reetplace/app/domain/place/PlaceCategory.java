@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum PlaceCategory {
+    REET_PLACE_POPULAR("릿플인기"),
     FOOD("식도락"),
     ACTIVITY("액티비티"),
     PHOTO_BOOTH("포토부스"),
