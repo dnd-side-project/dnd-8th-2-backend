@@ -10,6 +10,7 @@ import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.service.BookmarkService;
 import com.dnd.reetplace.app.type.*;
+import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
