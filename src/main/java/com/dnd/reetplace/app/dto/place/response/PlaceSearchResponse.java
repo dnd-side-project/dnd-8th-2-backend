@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class PlaceGetResponse {
+public class PlaceSearchResponse {
 
     @Schema(description = "Kakao에서 등록된 장소 id 값", example = "585651800")
     private String kakaoPid;
@@ -130,10 +130,14 @@ public class PlaceGetResponse {
     @Schema(description = "북마크 고유 id값 (북마크 없을 시 null)", example = "1")
     private Long bookmarkId;
 
-    public static PlaceGetResponse of(
-            KakaoPlaceGetResponse kakaoResponse,
+    @Schema(description = "릿플점수 (북마크 없을 시 null)", example = "3")
+    private Short rate;
+
+    public static PlaceSearchResponse of(
+            KakaoPlaceSearchResponse kakaoResponse,
             BookmarkType bookmarkType,
-            Long bookmarkId
+            Long bookmarkId,
+            Short rate
     ) {
         PlaceCategoryGroupCode categoryGroupCode;
         try {
@@ -142,21 +146,41 @@ public class PlaceGetResponse {
         } catch (Exception e) {
             categoryGroupCode = null;
         }
-        return new PlaceGetResponse(
+        PlaceCategory category = null;
+        PlaceSubCategory subCategory = null;
+
+        for (PlaceSubCategory sub : PlaceSubCategory.values()) {
+            if (kakaoResponse.getCategory_name().contains(sub.getDescription())) {
+                subCategory = sub;
+                category = sub.getMainCategory();
+                break;
+            }
+        }
+        if (kakaoResponse.getCategory_name().contains("멕시칸") || kakaoResponse.getCategory_name().contains("아시아")) {
+            subCategory = PlaceSubCategory.FOOD_WORLD;
+            category = PlaceCategory.FOOD;
+        }
+        if (kakaoResponse.getCategory_name().contains("치킨")) {
+            subCategory = PlaceSubCategory.FOOD_COOKING_BAR;
+            category = PlaceCategory.FOOD;
+        }
+
+        return new PlaceSearchResponse(
                 kakaoResponse.getId(),
                 kakaoResponse.getPlace_name(),
                 kakaoResponse.getPlace_url(),
                 categoryGroupCode,
                 kakaoResponse.getCategory_name(),
-                kakaoResponse.getCategory(),
-                kakaoResponse.getSubCategory(),
+                category,
+                subCategory,
                 kakaoResponse.getPhone(),
                 kakaoResponse.getAddress_name(),
                 kakaoResponse.getRoad_address_name(),
                 kakaoResponse.getY(),
                 kakaoResponse.getX(),
                 bookmarkType,
-                bookmarkId
+                bookmarkId,
+                rate
         );
     }
 }
