@@ -53,6 +53,8 @@ public class KakaoPlaceResponse {
         this.road_address_name = road_address_name;
         this.x = x;
         this.y = y;
+        this.category = PlaceCategory.valueOf(category);
+        this.subCategory = PlaceSubCategory.valueOf(subCategory);
     }
 
     // Native Query 파싱을 위한 생성자 (JpaResultMapper)
@@ -81,6 +83,8 @@ public class KakaoPlaceResponse {
         this.road_address_name = road_address_name;
         this.x = x;
         this.y = y;
+        this.category = PlaceCategory.valueOf(category);
+        this.subCategory = PlaceSubCategory.valueOf(subCategory);
     }
 
     public void updateCategory(PlaceCategory category, PlaceSubCategory subCategory) {
