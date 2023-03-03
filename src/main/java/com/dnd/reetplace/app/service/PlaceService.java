@@ -9,6 +9,7 @@ import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceGetResponse;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
+import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
@@ -23,12 +24,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.dnd.reetplace.app.domain.place.PlaceCategory.REET_PLACE_POPULAR;
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class PlaceService {
 
     private final TokenProvider tokenProvider;
+    private final PlaceRepository placeRepository;
     private final BookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
     private final KakaoHttpRequestService kakaoHttpRequestService;
@@ -54,7 +58,10 @@ public class PlaceService {
         long size = Math.round(15.0 / subCategory.size());
 
         // 카카오 서버에서 받아온 장소 목록 collect
-        List<KakaoPlaceResponse> result = getPlaceListFromKakao(request, subCategory, size);
+        List<KakaoPlaceResponse> result =
+                request.getCategory().equals(REET_PLACE_POPULAR) ?
+                        placeRepository.getReetPlacePopularPlaceList(request.getLat(), request.getLng()) :
+                        getPlaceListFromKakao(request, subCategory, size);
 
         // 북마크 여부 처리
         List<PlaceGetResponse> placeListWithBookmark = updatePlaceIsBookmark(httpServletRequest, result);
