@@ -158,4 +158,8 @@ public class PlaceGetResponse {
                 bookmarkId
         );
     }
+
+    public static PlaceGetResponse ofWithoutBookmark(KakaoPlaceGetResponse kakaoResponse) {
+        return of(kakaoResponse, null, null);
+    }
 }

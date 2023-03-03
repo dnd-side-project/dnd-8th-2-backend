@@ -182,4 +182,8 @@ public class PlaceSearchResponse {
                 rate
         );
     }
+
+    public static PlaceSearchResponse ofWithoutBookmark(KakaoPlaceSearchResponse kakaoResponse) {
+        return of(kakaoResponse, null, null, null);
+    }
 }

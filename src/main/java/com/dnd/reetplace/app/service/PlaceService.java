@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.dnd.reetplace.app.domain.place.PlaceCategory.REET_PLACE_POPULAR;
 
@@ -71,8 +70,8 @@ public class PlaceService {
      * 장소는 최대 15개까지 조회된다. (앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.)
      *
      * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
-     * @param query 검색하고자 하는 키워드
-     * @param page 결과 페이지
+     * @param query              검색하고자 하는 키워드
+     * @param page               결과 페이지
      * @return 키워드에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
     public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, String query, int page) {
@@ -140,29 +139,22 @@ public class PlaceService {
     private List<PlaceGetResponse> updateGetPlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceGetResponse> result) {
         Member loginMember = findLoginMember(httpServletRequest);
         if (loginMember == null) {
-            return result.stream().map(place ->
-                    PlaceGetResponse.of(place, null, null)
-            ).toList();
+            return result.stream()
+                    .map(PlaceGetResponse::ofWithoutBookmark)
+                    .toList();
         }
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
-        return result.stream().map(place -> {
-            Optional<Bookmark> bookmark = bookmarkList.stream()
-                    .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
-                    .findFirst();
-            if (bookmark.isPresent()) {
-                return PlaceGetResponse.of(
-                        place,
-                        bookmark.get().getType(),
-                        bookmark.get().getId()
-                );
-            } else {
-                return PlaceGetResponse.of(
-                        place,
-                        null,
-                        null
-                );
-            }
-        }).toList();
+        return result.stream()
+                .map(place -> bookmarkList.stream()
+                        .filter(bookmark ->
+                                Objects.equals(bookmark.getPlace().getKakaoPid(), place.getId()))
+                        .findFirst()
+                        .map(bookmark -> PlaceGetResponse.of(
+                                place,
+                                bookmark.getType(),
+                                bookmark.getId()))
+                        .orElse(PlaceGetResponse.ofWithoutBookmark(place)))
+                .toList();
     }
 
     /**
@@ -176,34 +168,26 @@ public class PlaceService {
      */
     private List<PlaceSearchResponse> updateSearchPlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceSearchResponse> result) {
         Member loginMember = findLoginMember(httpServletRequest);
-        List<PlaceSearchResponse> placeList;
         if (loginMember == null) {
-            placeList = result.stream().map(place ->
-                    PlaceSearchResponse.of(place, null, null, null)
-            ).toList();
-        } else {
-            List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
-            placeList = result.stream().map(place -> {
-                Optional<Bookmark> bookmark = bookmarkList.stream()
-                        .filter(b -> Objects.equals(b.getPlace().getKakaoPid(), place.getId()))
-                        .findFirst();
-                if (bookmark.isPresent()) {
-                    return PlaceSearchResponse.of(
-                            place,
-                            bookmark.get().getType(),
-                            bookmark.get().getId(),
-                            bookmark.get().getRate()
-                    );
-                } else {
-                    return PlaceSearchResponse.of(
-                            place,
-                            null,
-                            null,
-                            null);
-                }
-            }).toList();
+            return result.stream()
+                    .map(PlaceSearchResponse::ofWithoutBookmark)
+                    .filter(place -> place.getCategory() != null)
+                    .toList();
         }
-        return placeList.stream().filter(p -> p.getCategory() != null).toList();
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
+        return result.stream()
+                .map(place -> bookmarkList.stream()
+                        .filter(bookmark ->
+                                Objects.equals(bookmark.getPlace().getKakaoPid(), place.getId()))
+                        .findFirst()
+                        .map(bookmark -> PlaceSearchResponse.of(
+                                place,
+                                bookmark.getType(),
+                                bookmark.getId(),
+                                bookmark.getRate()))
+                        .orElse(PlaceSearchResponse.ofWithoutBookmark(place)))
+                .filter(place -> place.getCategory() != null)
+                .toList();
     }
 
     /**
