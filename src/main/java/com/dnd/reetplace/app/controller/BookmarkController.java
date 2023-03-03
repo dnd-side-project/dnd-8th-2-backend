@@ -73,6 +73,7 @@ public class BookmarkController {
             ) @RequestParam(required = false, defaultValue = "20") int size,
             @Parameter(
                     description = "<p>북마크 검색 정렬 기준. 목록은 다음과 같음</p>" +
+                            "<p>현재 인기순 정렬은 구현이 되지 않은 상태. 최신순 정렬로만 검색 가능</p>" +
                             "<ul>" +
                             "<li>LATEST - 최신순</li>" +
                             "<li>POPULARITY - 인기순</li>" +
