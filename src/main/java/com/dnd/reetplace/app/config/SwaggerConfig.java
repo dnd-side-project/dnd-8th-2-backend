@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ public class SwaggerConfig {
     public OpenAPI reetPlaceApi(@Value("reet-place.app.version") String appVersion) {
         // TODO: 로그인 기능 구현 후 Swagger에서 access-token을 header에 첨부할 수 있도록 security scheme component 추가 필요.
         return new OpenAPI()
+                .addServersItem(new Server().url("/"))
                 .info(
                         new Info()
                                 .title("Reet-Place API Docs")
