@@ -24,6 +24,7 @@ public class PlaceGetListRequest {
 
     @Schema(description = "<p>카테고리. 목록은 다음과 같음</p>" +
             "<ul>" +
+            "<li>REET_PLACE_POPULAR - 릿플인기</li>" +
             "<li>FOOD - 식도락</li>" +
             "<li>ACTIVITY - 액티비티</li>" +
             "<li>PHOTO_BOOTH - 포토부스</li>" +
@@ -37,6 +38,7 @@ public class PlaceGetListRequest {
 
     @Schema(description = "<p>하위 카테고리. 목록은 다음과 같음</p>" +
             "<ul>" +
+            "<li>REET_PLACE_POPULAR - 릿플인기</li>" +
             "<li>FOOD_KOREAN - 한식</li>" +
             "<li>FOOD_CHINESE - 중식</li>" +
             "<li>FOOD_JAPANESE - 일식</li>" +

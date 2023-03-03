@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public enum PlaceSubCategory {
 
+    REET_PLACE_POPULAR("릿플인기"),
+
     FOOD_KOREAN("한식"),
     FOOD_CHINESE("중식"),
     FOOD_JAPANESE("일식"),

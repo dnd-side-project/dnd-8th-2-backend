@@ -25,12 +25,13 @@ public class Address {
     private String roadAddress;
 
     public Address(String lotNumberAddress, String roadAddress) {
-        int sidoIdx = roadAddress.indexOf(" ");
-        int sggIdx = roadAddress.indexOf(" ", sidoIdx + 1);
+        String address = roadAddress.isBlank() ? lotNumberAddress : roadAddress;
+        int sidoIdx = address.indexOf(" ");
+        int sggIdx = address.indexOf(" ", sidoIdx + 1);
 
-        this.sido = roadAddress.substring(0, sidoIdx);
-        this.sgg = roadAddress.substring(sidoIdx + 1, sggIdx);
-        this.lotNumberAddress = lotNumberAddress.substring(sggIdx + 1);
-        this.roadAddress = roadAddress.substring(sggIdx + 1);
+        this.sido = address.substring(0, sidoIdx);
+        this.sgg = address.substring(sidoIdx + 1, sggIdx);
+        this.lotNumberAddress = lotNumberAddress.isBlank() ? "" : lotNumberAddress.substring(sggIdx + 1);
+        this.roadAddress = roadAddress.isBlank() ? "" : roadAddress.substring(sggIdx + 1);
     }
 }
