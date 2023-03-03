@@ -2,20 +2,21 @@ package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
-import com.dnd.reetplace.app.dto.bookmark.response.BookmarkCreateResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
+import com.dnd.reetplace.app.type.BookmarkSearchSort;
+import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -34,7 +35,7 @@ public class BookmarkController {
             security = @SecurityRequirement(name = "Authorization")
     )
     @PostMapping
-    public ResponseEntity<BookmarkCreateResponse> save(
+    public ResponseEntity<BookmarkResponse> save(
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Valid @RequestBody BookmarkCreateRequest request
     ) {
@@ -42,6 +43,52 @@ public class BookmarkController {
 
         return ResponseEntity
                 .created(URI.create("/api/bookmarks/" + bookmarkDto.getId()))
-                .body(BookmarkCreateResponse.from(bookmarkDto));
+                .body(BookmarkResponse.from(bookmarkDto));
+    }
+
+    @Operation(
+            summary = "북마크 리스트 조회",
+            description = "북마크 내역을 불러옵니다. 한 페이지에 20개의 데이터가 응답됩니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping
+    public ResponseEntity<Slice<BookmarkResponse>> searchBookmarks(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Parameter(
+                    description = "<p>북마크 검색 종류. 목록은 다음과 같음</p>" +
+                            "<ul>" +
+                            "<li>ALL - 전체 조회</li>" +
+                            "<li>WANT - 가보고 싶어요</li>" +
+                            "<li>GONE - 다녀왔어요</li>" +
+                            "</ul>",
+                    example = "ALL"
+            ) @RequestParam BookmarkSearchType searchType,
+            @Parameter(
+                    description = "페이지 번호 (0부터 시작합니다). 기본값은 0입니다.",
+                    example = "0"
+            ) @RequestParam(required = false, defaultValue = "0") int page,
+            @Parameter(
+                    description = "한 페이지에 담긴 데이터의 최대 개수(사이즈). 기본값은 20입니다.",
+                    example = "20"
+            ) @RequestParam(required = false, defaultValue = "20") int size,
+            @Parameter(
+                    description = "<p>북마크 검색 정렬 기준. 목록은 다음과 같음</p>" +
+                            "<p>현재 인기순 정렬은 구현이 되지 않은 상태. 최신순 정렬로만 검색 가능</p>" +
+                            "<ul>" +
+                            "<li>LATEST - 최신순</li>" +
+                            "<li>POPULARITY - 인기순</li>" +
+                            "</ul>",
+                    example = "ALL"
+            )
+            @RequestParam(required = false, defaultValue = "LATEST") BookmarkSearchSort sort
+    ) {
+        Slice<BookmarkResponse> response = bookmarkService.searchBookmarks(
+                memberDetails.getId(),
+                searchType,
+                sort,
+                PageRequest.of(page, size)
+        ).map(BookmarkResponse::from);
+
+        return ResponseEntity.ok().body(response);
     }
 }
