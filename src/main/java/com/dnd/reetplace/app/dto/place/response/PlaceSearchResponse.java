@@ -144,7 +144,7 @@ public class PlaceSearchResponse {
         PlaceCategoryGroupCode categoryGroupCode;
         try {
             categoryGroupCode = PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             categoryGroupCode = null;
         }
 
