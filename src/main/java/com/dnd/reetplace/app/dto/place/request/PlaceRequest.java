@@ -70,42 +70,42 @@ public class PlaceRequest {
 
     @Schema(description = "<p>하위 카테고리. 목록은 다음과 같음</p>" +
             "<ul>" +
-            "<li>FOOD_KOREAN - 한식</li>" +
-            "<li>FOOD_CHINESE - 중식</li>" +
-            "<li>FOOD_JAPANESE - 일식</li>" +
-            "<li>FOOD_WESTERN - 양식</li>" +
-            "<li>FOOD_WORLD - 세계음식(멕시칸, 브라질, 아시아음식)</li>" +
-            "<li>FOOD_COOKING_BAR - 호프,요리주점</li>" +
-            "<li>FOOD_IZAKAYA - 일본식주점</li>" +
-            "<li>FOOD_STREET_TENT_RESTAURANT - 포장마차</li>" +
-            "<li>FOOD_WINE_BAR - 와인바</li>" +
-            "<li>FOOD_COCKTAIL_BAR - 칵테일바</li>" +
-            "<li>ACTIVITY_BOWLING - 볼링장</li>" +
-            "<li>ACTIVITY_PC - 피시방</li>" +
-            "<li>ACTIVITY_BILLIARDS - 당구장</li>" +
-            "<li>ACTIVITY_KARAOKE - 노래방</li>" +
-            "<li>ACTIVITY_BOARD_GAME - 보드카페</li>" +
-            "<li>ACTIVITY_PARK - 공원</li>" +
-            "<li>ACTIVITY_ROLLER - 롤러장</li>" +
-            "<li>ACTIVITY_COIN_KARAOKE - 코인노래방</li>" +
-            "<li>PHOTO_LIFE_FOUR_CUT - 인생네컷</li>" +
-            "<li>PHOTO_PHOTO_SIGNATURE - 포토시그니처</li>" +
-            "<li>PHOTO_HARU_FILM - 하루필름</li>" +
-            "<li>PHOTO_SIHYUN_HADA - 시현하다 프레임</li>" +
-            "<li>PHOTO_MONO_MANSION - 모노맨션</li>" +
-            "<li>PHOTO_RGB_PHOTO - RGB 포토</li>" +
-            "<li>PHOTO_PHOTOISM - 포토이즘</li>" +
-            "<li>SHOPPING_DEPARTMENT_STORE - 백화점</li>" +
-            "<li>SHOPPING_MART - 마트</li>" +
-            "<li>SHOPPING_MARKET - 시장</li>" +
+            "<li>KOREAN - 한식</li>" +
+            "<li>CHINESE - 중식</li>" +
+            "<li>JAPANESE - 일식</li>" +
+            "<li>WESTERN - 양식</li>" +
+            "<li>WORLD - 세계음식(멕시칸, 브라질, 아시아음식)</li>" +
+            "<li>COOKING_BAR - 호프,요리주점</li>" +
+            "<li>IZAKAYA - 일본식주점</li>" +
+            "<li>STREET_TENT_RESTAURANT - 포장마차</li>" +
+            "<li>WINE_BAR - 와인바</li>" +
+            "<li>COCKTAIL_BAR - 칵테일바</li>" +
+            "<li>BOWLING - 볼링장</li>" +
+            "<li>PC - 피시방</li>" +
+            "<li>BILLIARDS - 당구장</li>" +
+            "<li>KARAOKE - 노래방</li>" +
+            "<li>BOARD_GAME - 보드카페</li>" +
+            "<li>PARK - 공원</li>" +
+            "<li>ROLLER - 롤러장</li>" +
+            "<li>COIN_KARAOKE - 코인노래방</li>" +
+            "<li>LIFE_FOUR_CUT - 인생네컷</li>" +
+            "<li>PHOTO_SIGNATURE - 포토시그니처</li>" +
+            "<li>HARU_FILM - 하루필름</li>" +
+            "<li>SIHYUN_HADA - 시현하다 프레임</li>" +
+            "<li>MONO_MANSION - 모노맨션</li>" +
+            "<li>RGB_PHOTO - RGB 포토</li>" +
+            "<li>PHOTOISM - 포토이즘</li>" +
+            "<li>DEPARTMENT_STORE - 백화점</li>" +
+            "<li>MART - 마트</li>" +
+            "<li>MARKET - 시장</li>" +
             "<li>CAFE - 카페</li>" +
-            "<li>CAFE_BOOK - 북카페</li>" +
-            "<li>CAFE_CARTOON - 만화카페</li>" +
-            "<li>CAFE_DESERT - 디저트카페</li>" +
-            "<li>CAFE_FRESH_FRUIT - 생과일전문점</li>" +
-            "<li>CULTURE_CINEMA - 영화관</li>" +
-            "<li>CULTURE_CAR_CINEMA - 자동차극장</li>" +
-            "<li>CULTURE_CONCERT - 공연장,연극극장</li>" +
+            "<li>BOOK - 북카페</li>" +
+            "<li>CARTOON - 만화카페</li>" +
+            "<li>DESERT - 디저트카페</li>" +
+            "<li>FRESH_FRUIT - 생과일전문점</li>" +
+            "<li>CINEMA - 영화관</li>" +
+            "<li>CAR_CINEMA - 자동차극장</li>" +
+            "<li>CONCERT - 공연장,연극극장</li>" +
             "</ul>",
             example = "ACTIVITY_BOARD_GAME")
     @NotBlank

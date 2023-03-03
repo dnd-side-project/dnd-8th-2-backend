@@ -152,7 +152,7 @@ class BookmarkControllerTest {
                 "category1 > category2 > category3",
                 PlaceCategoryGroupCode.CT1,
                 PlaceCategory.CULTURE,
-                PlaceSubCategory.CULTURE_CINEMA,
+                PlaceSubCategory.CINEMA,
                 "010-1234-5678",
                 new Address(
                         "sido sgg detail",
@@ -185,7 +185,7 @@ class BookmarkControllerTest {
                 "category1 > category2 > category3",
                 PlaceCategoryGroupCode.CT1,
                 PlaceCategory.CULTURE,
-                PlaceSubCategory.CULTURE_CINEMA,
+                PlaceSubCategory.CINEMA,
                 "010-1234-5678",
                 "sido sgg lot_number_detail",
                 "sido sgg road_detail",

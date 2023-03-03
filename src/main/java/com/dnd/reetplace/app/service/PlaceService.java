@@ -94,12 +94,12 @@ public class PlaceService {
         ArrayList<KakaoPlaceGetResponse> result = new ArrayList<>();
         subCategory.forEach(category -> {
             switch (category) {
-                case FOOD_WORLD -> {
+                case WORLD -> {
                     long newSize = Math.round(size / 2.0);
                     result.addAll(kakaoHttpRequestService.getPlaceListKeyword(MEXICAN_KEYWORD, request, category, newSize));
                     result.addAll(kakaoHttpRequestService.getPlaceListKeyword(ASIA_KEYWORD, request, category, newSize));
                 }
-                case SHOPPING_DEPARTMENT_STORE -> {
+                case DEPARTMENT_STORE -> {
                     List<KakaoPlaceGetResponse> placeList =
                             kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
                                     .stream().filter(place -> place.getCategory_name().contains(DEPARTMENT_CATEGORY_NAME))
@@ -107,7 +107,7 @@ public class PlaceService {
                                     .toList();
                     result.addAll(placeList);
                 }
-                case SHOPPING_MARKET -> {
+                case MARKET -> {
                     List<KakaoPlaceGetResponse> placeList =
                             kakaoHttpRequestService.getPlaceListKeyword(category.getDescription(), request, category, 15)
                                     .stream().filter(place -> place.getCategory_name().contains(MARKET_CATEGORY_NAME))
@@ -115,7 +115,7 @@ public class PlaceService {
                                     .toList();
                     result.addAll(placeList);
                 }
-                case SHOPPING_MART -> result.addAll(kakaoHttpRequestService.getPlaceListCategory(
+                case MART -> result.addAll(kakaoHttpRequestService.getPlaceListCategory(
                                 PlaceCategoryGroupCode.MT1.name(),
                                 request,
                                 category,
