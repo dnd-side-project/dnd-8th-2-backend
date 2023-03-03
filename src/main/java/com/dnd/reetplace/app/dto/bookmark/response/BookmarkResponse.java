@@ -1,6 +1,5 @@
 package com.dnd.reetplace.app.dto.bookmark.response;
 
-import com.dnd.reetplace.app.domain.bookmark.BookMarkRelLink;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.member.response.MemberResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceResponse;
@@ -12,7 +11,7 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class BookmarkCreateResponse {
+public class BookmarkResponse {
 
     @Schema(description = "생성된 북마크 PK", example = "1")
     private Long id;
@@ -46,8 +45,8 @@ public class BookmarkCreateResponse {
     @Schema(description = "장소와 관련된 URL3", example = "null")
     private String relLink3;
 
-    public static BookmarkCreateResponse from(BookmarkDto bookmarkDto) {
-        return new BookmarkCreateResponse(
+    public static BookmarkResponse from(BookmarkDto bookmarkDto) {
+        return new BookmarkResponse(
                 bookmarkDto.getId(),
                 MemberResponse.from(bookmarkDto.getMember()),
                 PlaceResponse.from(bookmarkDto.getPlace()),

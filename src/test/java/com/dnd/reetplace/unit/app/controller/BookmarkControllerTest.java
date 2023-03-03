@@ -14,9 +14,7 @@ import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
 import com.dnd.reetplace.app.service.BookmarkService;
-import com.dnd.reetplace.app.type.BookmarkType;
-import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
+import com.dnd.reetplace.app.type.*;
 import com.dnd.reetplace.global.security.JwtAuthenticationFilter;
 import com.dnd.reetplace.global.security.MemberDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +25,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -39,6 +39,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,6 +87,27 @@ class BookmarkControllerTest {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(expectedBookmarkId));
+    }
+
+    @DisplayName("주어진 검색 정보/조건으로 검색을 하면 북마크 목록을 반환한다.")
+    @Test
+    void givenSearchConditions_whenSearching_thenReturnBookmarksSlice() throws Exception {
+        // given
+        Long memberId = 1L;
+        given(bookmarkService.searchBookmarks(
+                memberId,
+                BookmarkSearchType.ALL,
+                BookmarkSearchSort.LATEST,
+                Pageable.ofSize(20))
+        ).willReturn(Page.empty());
+
+        // when & then
+        mvc.perform(get("/api/bookmarks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("searchType", "ALL")
+                .with(csrf())
+                .with(user(new MemberDetails(createMember())))
+        ).andExpect(status().isOk());
     }
 
     private Member createMember() {

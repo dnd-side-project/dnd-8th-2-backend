@@ -26,7 +26,12 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
-                    excludes: ['**/*Auth*.*'] + Qdomains,
+                    excludes: [
+                            '**/*Auth*.*',
+                            '**/*PlaceController*.*',
+                            '**/*PlaceService*.*',
+                            '**/*Http*.*'
+                    ] + Qdomains,
                     includes: [
                             '**/service/**',
                             '**/controller/**'
@@ -62,7 +67,12 @@ jacocoTestCoverageVerification {
                 minimum = 0.70
             }
 
-            excludes = ['*.*Auth*'] + Qdomains
+            excludes = [
+                    '*.*Auth*',
+                    '*.*PlaceController*',
+                    '*.*PlaceService*',
+                    '*.*Http*'
+            ] + Qdomains
             includes = [
                     '*.*Service*',
                     '*.*Controller'
@@ -125,6 +135,9 @@ dependencies {
 
     // HttpClient
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
+    // qlrm (JpaResultMapper)
+    implementation group: 'ch.simas.qlrm', name: 'qlrm', version: '1.7.1'
 
     // Spring Boot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -2,7 +2,7 @@ package com.dnd.reetplace.app.dto.place.response;
 
 import com.dnd.reetplace.app.domain.place.PlaceCategory;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
-import com.dnd.reetplace.app.dto.place.PlaceDto;
+import com.dnd.reetplace.app.type.BookmarkType;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -11,10 +11,7 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class PlaceResponse {
-
-    @Schema(description = "id(PK)", example = "1")
-    private Long id;
+public class PlaceGetResponse {
 
     @Schema(description = "Kakao에서 등록된 장소 id 값", example = "585651800")
     private String kakaoPid;
@@ -121,21 +118,45 @@ public class PlaceResponse {
     @Schema(description = "경도", example = "126.93713158887188")
     private String lng;
 
-    public static PlaceResponse from(PlaceDto place) {
-        return new PlaceResponse(
-                place.getId(),
-                place.getKakaoPid(),
-                place.getName(),
-                place.getUrl(),
-                place.getCategoryGroupCode(),
-                place.getKakaoCategoryName(),
-                place.getCategory(),
-                place.getSubCategory(),
-                place.getPhone(),
-                place.getAddress().getLotNumberAddress(),
-                place.getAddress().getRoadAddress(),
-                place.getPoint().getLat(),
-                place.getPoint().getLng()
+    @Schema(description = "<p>북마크 종류. 목록은 다음과 같음</p>" +
+            "<ul>" +
+            "<li>WANT - 가보고 싶어요</li>" +
+            "<li>GONE - 다녀왔어요</li>" +
+            "<li>북마크가 없을 시 null</li>" +
+            "</ul>",
+            example = "WANT")
+    private BookmarkType type;
+
+    @Schema(description = "북마크 고유 id값 (북마크 없을 시 null)", example = "1")
+    private Long bookmarkId;
+
+    public static PlaceGetResponse of(
+            KakaoPlaceResponse kakaoResponse,
+            BookmarkType bookmarkType,
+            Long bookmarkId
+    ) {
+        PlaceCategoryGroupCode categoryGroupCode;
+        try {
+            categoryGroupCode =
+                    PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
+        } catch (Exception e) {
+            categoryGroupCode = null;
+        }
+        return new PlaceGetResponse(
+                kakaoResponse.getId(),
+                kakaoResponse.getPlace_name(),
+                kakaoResponse.getPlace_url(),
+                categoryGroupCode,
+                kakaoResponse.getCategory_name(),
+                kakaoResponse.getCategory(),
+                kakaoResponse.getSubCategory(),
+                kakaoResponse.getPhone(),
+                kakaoResponse.getAddress_name(),
+                kakaoResponse.getRoad_address_name(),
+                kakaoResponse.getY(),
+                kakaoResponse.getX(),
+                bookmarkType,
+                bookmarkId
         );
     }
 }

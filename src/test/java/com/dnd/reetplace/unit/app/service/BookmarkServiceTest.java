@@ -9,20 +9,24 @@ import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.service.BookmarkService;
-import com.dnd.reetplace.app.type.BookmarkType;
-import com.dnd.reetplace.app.type.LoginType;
-import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
+import com.dnd.reetplace.app.type.*;
+import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -50,6 +54,7 @@ class BookmarkServiceTest {
         Member expectedMember = createMember();
         Place expectedFoundPlace = createPlace();
         Bookmark expectedSavedBookmark = createBookmark(expectedMember, expectedFoundPlace);
+        given(bookmarkRepository.existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid)).willReturn(false);
         given(memberRepository.findByIdAndDeletedAtIsNull(memberId)).willReturn(Optional.of(expectedMember));
         given(placeRepository.findByKakaoPid(kakaoPid)).willReturn(Optional.of(expectedFoundPlace));
         given(bookmarkRepository.save(any(Bookmark.class))).willReturn(expectedSavedBookmark);
@@ -58,6 +63,7 @@ class BookmarkServiceTest {
         BookmarkDto actualSavedBookmark = sut.save(memberId, createNotSavedBookmarkDto());
 
         // then
+        then(bookmarkRepository).should().existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid);
         then(memberRepository).should().findByIdAndDeletedAtIsNull(memberId);
         then(placeRepository).should().findByKakaoPid(kakaoPid);
         then(placeRepository).shouldHaveNoMoreInteractions();
@@ -77,6 +83,7 @@ class BookmarkServiceTest {
         Member expectedMember = createMember();
         Place expectedSavedPlace = createPlace();
         Bookmark expectedSavedBookmark = createBookmark(expectedMember, expectedSavedPlace);
+        given(bookmarkRepository.existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid)).willReturn(false);
         given(memberRepository.findByIdAndDeletedAtIsNull(memberId)).willReturn(Optional.of(expectedMember));
         given(placeRepository.findByKakaoPid(kakaoPid)).willReturn(Optional.empty());
         given(placeRepository.save(any(Place.class))).willReturn(expectedSavedPlace);
@@ -86,6 +93,7 @@ class BookmarkServiceTest {
         BookmarkDto actualSavedBookmark = sut.save(memberId, createNotSavedBookmarkDto());
 
         // then
+        then(bookmarkRepository).should().existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid);
         then(memberRepository).should().findByIdAndDeletedAtIsNull(memberId);
         then(placeRepository).should().findByKakaoPid(kakaoPid);
         then(placeRepository).should().save(any(Place.class));
@@ -93,6 +101,64 @@ class BookmarkServiceTest {
         assertThat(actualSavedBookmark.getMember().getId()).isEqualTo(expectedMember.getId());
         assertThat(actualSavedBookmark.getPlace().getId()).isEqualTo(expectedSavedPlace.getId());
         assertThat(actualSavedBookmark.getId()).isEqualTo(expectedSavedBookmark.getId());
+    }
+
+    @DisplayName("북마크 정보가 주어지고, 이미 마킹했던 장소를 다시 북마크 하려고 하는 경우, 예외를 발생시킨다.")
+    @Test
+    void givenBookmarkInfo_whenMarkingAlreadyMarkedPlace_thenThrowException() {
+        // given
+        Long memberId = 1L;
+        String kakaoPid = "test kakao pid";
+        given(bookmarkRepository.existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid)).willReturn(true);
+
+        // when
+        Throwable t = catchThrowable(() -> sut.save(memberId, createNotSavedBookmarkDto()));
+
+        // then
+        then(bookmarkRepository).should().existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(t).isInstanceOf(AlreadyMarkedPlaceException.class);
+    }
+
+    @DisplayName("북마크 전체 검색을 하면, 북마크 slice를 반환한다.")
+    @Test
+    void givenSearchTypeAll_whenSearchingBookmarks_thenReturnBookmarkSlice() {
+        // given
+        Long memberId = 1L;
+        BookmarkSearchSort sort = BookmarkSearchSort.LATEST;
+        Pageable pageable = Pageable.ofSize(20);
+        PageImpl<Bookmark> expectedBookmarks = new PageImpl<>(List.of(createBookmark(createMember(), createPlace())));
+        given(bookmarkRepository.findByMember_IdOrderByCreatedAtDesc(memberId, pageable)).willReturn(expectedBookmarks);
+
+        // when
+        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, BookmarkSearchType.ALL, sort, pageable);
+
+        // then
+        then(bookmarkRepository).should().findByMember_IdOrderByCreatedAtDesc(memberId, pageable);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(actualBookmarks.getContent().get(0).getId())
+                .isEqualTo(expectedBookmarks.getContent().get(0).getId());
+    }
+
+    @DisplayName("북마크 검색 종류가 주어지고, 북마크 전체 검색을 하면, 북마크 slice를 반환한다.")
+    @Test
+    void givenSearchTypeNotAll_whenSearchingBookmarks_thenReturnBookmarkSlice() {
+        // given
+        Long memberId = 1L;
+        BookmarkSearchType searchType = BookmarkSearchType.WANT;
+        BookmarkSearchSort sort = BookmarkSearchSort.LATEST;
+        Pageable pageable = Pageable.ofSize(20);
+        PageImpl<Bookmark> expectedBookmarks = new PageImpl<>(List.of(createBookmark(createMember(), createPlace())));
+        given(bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId, pageable))
+                .willReturn(expectedBookmarks);
+
+        // when
+        Slice<BookmarkDto> actualBookmarks = sut.searchBookmarks(memberId, searchType, sort, pageable);
+
+        // then
+        then(bookmarkRepository).should().findByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId, pageable);
+        assertThat(actualBookmarks.getContent().get(0).getId())
+                .isEqualTo(expectedBookmarks.getContent().get(0).getId());
     }
 
     private Member createMember() {
