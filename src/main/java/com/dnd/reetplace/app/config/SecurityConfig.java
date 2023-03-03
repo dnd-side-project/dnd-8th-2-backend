@@ -28,7 +28,8 @@ public class SecurityConfig {
     private static final String[] AUTH_WHITE_LIST = {
             "/auth/login/kakao",
             "/auth/refresh",
-            "/places"
+            "/places",
+            "/places/search"
     };
 
     @Bean

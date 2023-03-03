@@ -9,7 +9,7 @@ import java.math.BigInteger;
 
 @NoArgsConstructor
 @Getter
-public class KakaoPlaceResponse {
+public class KakaoPlaceGetResponse {
     private String address_name;
     private String category_group_code;
     private String category_group_name;
@@ -26,7 +26,7 @@ public class KakaoPlaceResponse {
     private PlaceSubCategory subCategory;
 
     // Native Query 파싱을 위한 생성자 (JpaResultMapper)
-    public KakaoPlaceResponse(
+    public KakaoPlaceGetResponse(
             String address_name,
             String category_group_code,
             String category_name,
@@ -58,7 +58,7 @@ public class KakaoPlaceResponse {
     }
 
     // Native Query 파싱을 위한 생성자 (JpaResultMapper)
-    public KakaoPlaceResponse(
+    public KakaoPlaceGetResponse(
             String address_name,
             String category_name,
             Double distance,
