@@ -11,12 +11,16 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
 
 @Tag(name = "인증", description = "로그인, 회원가입, 토큰 재발급 등 인증 관련 API입니다.")
 @RequiredArgsConstructor
@@ -37,6 +41,14 @@ public class AuthController {
             @RequestHeader("access-token") String token
     ) {
         return ResponseEntity.ok(oAuth2Service.kakaoLogin(token));
+    }
+
+    @PostMapping("/login/apple")
+    public ResponseEntity<LoginResponse> appleLogin(
+            @RequestHeader("identity-token") String token,
+            @RequestParam("nickname") String nickname
+    ) {
+        return ResponseEntity.ok(oAuth2Service.appleLogin(token, nickname));
     }
 
     @Operation(

@@ -40,10 +40,11 @@ public class OAuth2Service {
     @Transactional
     public LoginResponse kakaoLogin(String token) {
 
+        // 카카오 사용자 프로필 획득
         KakaoProfileResponse kakaoProfile = httpRequestService.getKakaoProfile(token);
 
         // 로그인 또는 회원가입 처리
-        Member member = kakaoLoginOrSignup(kakaoProfile);
+        Member member = loginOrSignup(kakaoProfile.getId().toString(), kakaoProfile.getNickname(), LoginType.KAKAO);
         String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
         String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
         refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
@@ -51,19 +52,41 @@ public class OAuth2Service {
     }
 
     /**
-     * 카카오 서버에서 받은 사용자 프로필을 기반으로 회원이 존재할 시 로그인, 존재하지 않을 시 회원가입을 진행한다.
+     * 애플 서버에서 받은 identity token을 기반으로 사용자 프로필을 받아온 후, 로그인 (또는 회원가입)을 진행한다.
      *
-     * @param kakaoProfile 사용자 카카오 프로필
+     * @param token apple identity token
+     * @param nickname 애플 서버에서 받은 사용자 이름
+     * @return 로그인 (또는 회원가입) 완료 후 사용자 정보 (memberId, uid, accessToken, refreshToken 등)
+     */
+    @Transactional
+    public LoginResponse appleLogin(String token, String nickname) {
+
+        // 애플 사용자 프로필 획득
+        String uid = httpRequestService.getAppleUid(token);
+
+        // 로그인 또는 회원가입 처리
+        Member member = loginOrSignup(uid, nickname, LoginType.APPLE);
+        String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
+        String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
+        refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
+        return LoginResponse.of(MemberDto.from(member), accessToken, refreshToken);
+    }
+
+    /**
+     * uid를 기반으로 회원이 존재할 시 로그인, 존재하지 않을 시 회원가입을 진행한다.
+     *
+     * @param uid uid (카카오 또는 애플)
+     * @param nickname 사용자 닉네임 (카카오 - 이름 / 애플 - GUEST)
+     * @param loginType 소셜 로그인 타입
      * @return 로그인 (또는 회원가입) 완료 후의 Member Entity
      */
-    private Member kakaoLoginOrSignup(KakaoProfileResponse kakaoProfile) {
-        String uid = kakaoProfile.getId().toString();
-        return memberRepository.findByUidAndLoginTypeAndDeletedAtIsNull(uid, LoginType.KAKAO)
+    private Member loginOrSignup(String uid, String nickname, LoginType loginType) {
+        return memberRepository.findByUidAndLoginTypeAndDeletedAtIsNull(uid, loginType)
                 .orElseGet(() -> {
                     Member newMember = Member.builder()
                             .uid(uid)
-                            .loginType(LoginType.KAKAO)
-                            .nickname(kakaoProfile.getNickname())
+                            .loginType(loginType)
+                            .nickname(nickname)
                             .build();
                     memberRepository.save(newMember);
                     return newMember;
