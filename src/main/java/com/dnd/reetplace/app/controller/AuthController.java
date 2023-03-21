@@ -43,9 +43,15 @@ public class AuthController {
         return ResponseEntity.ok(oAuth2Service.kakaoLogin(token));
     }
 
+    @Operation(
+            summary = "애플 로그인",
+            description = "애플 서버에서 받은 Identity Token을 통해 로그인을 진행합니다."
+    )
     @PostMapping("/login/apple")
     public ResponseEntity<LoginResponse> appleLogin(
+            @Parameter(name = "identity-token", description = "애플 서버에서 받은 Identity Token", example = "eyJraWQiO...")
             @RequestHeader("identity-token") String token,
+            @Parameter(name = "nickname", description = "애플 서버에서 받은 사용자 이름", example = "홍길동")
             @RequestParam("nickname") String nickname
     ) {
         return ResponseEntity.ok(oAuth2Service.appleLogin(token, nickname));
