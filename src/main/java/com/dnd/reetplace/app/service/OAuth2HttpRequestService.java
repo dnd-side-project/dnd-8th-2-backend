@@ -87,12 +87,7 @@ public class OAuth2HttpRequestService {
             RestTemplate rt = new RestTemplate();
 
             // Public Key 목록 조회
-            ApplePublicKeyResponse response = rt.exchange(
-                    APPLE_GET_PUBLIC_KEY_URL,
-                    HttpMethod.GET,
-                    new HttpEntity<>(null),
-                    ApplePublicKeyResponse.class
-            ).getBody();
+            ApplePublicKeyResponse response = rt.getForObject(APPLE_GET_PUBLIC_KEY_URL, ApplePublicKeyResponse.class);
 
             // identity token과 Public Key 목록 매칭을 통해 publicKey 조회
             PublicKey publicKey = getApplePublicKey(identityToken, response);
@@ -118,7 +113,7 @@ public class OAuth2HttpRequestService {
      * 애플 identity token 내 key와 애플 서버에서 받아온 PublicKey 목록을 매칭하여 PublicKey를 반환한다.
      *
      * @param identityToken 애플 identity token
-     * @param response 애플 서버에서 받아온 PublicKey 목록
+     * @param response      애플 서버에서 받아온 PublicKey 목록
      * @return identity token 내 key와 PublicKey 목록에서 매칭된 PublicKey
      */
     private PublicKey getApplePublicKey(String identityToken, ApplePublicKeyResponse response) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
