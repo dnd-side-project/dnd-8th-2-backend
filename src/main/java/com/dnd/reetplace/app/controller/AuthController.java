@@ -93,10 +93,10 @@ public class AuthController {
     public ResponseEntity<Void> unlink(
             @Valid @RequestBody SurveyRequest surveyRequest,
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
-            @Parameter(name = "access-token", description = "카카오 서버에서 받은 Access Token", example = "29WryM8Px6...")
-            @RequestHeader(value = "access-token") String kakaoAccessToken
+            @Parameter(name = "identifier", description = "카카오 - Access Token / 애플 - Authorization Code", example = "29WryM8Px6...")
+            @RequestHeader(value = "identifier") String identifier
     ) {
-        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), kakaoAccessToken);
+        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), identifier);
         return ResponseEntity.noContent().build();
     }
 }
