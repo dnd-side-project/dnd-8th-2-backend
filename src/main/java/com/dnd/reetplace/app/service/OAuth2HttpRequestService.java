@@ -10,7 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,13 +23,26 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -40,6 +55,20 @@ public class OAuth2HttpRequestService {
     public static final String KAKAO_UNLINK = "https://kapi.kakao.com/v1/user/unlink";
 
     public static final String APPLE_GET_PUBLIC_KEY_URL = "https://appleid.apple.com/auth/keys";
+    public static final String APPLE_GET_TOKEN_URL = "https://appleid.apple.com/auth/token";
+    public static final String APPLE_UNLINK = "https://appleid.apple.com/auth/revoke";
+
+    @Value("${apple.client_id:none}")
+    public String appleClientId;
+
+    @Value("${apple.key_id:none}")
+    public String appleKeyId;
+
+    @Value("${apple.team_id:none}")
+    public String appleTeamId;
+
+    @Value("${apple.private_key:none}")
+    public String applePrivateKey;
 
     /**
      * 카카오 서버와 통신하여 카카오 access token에 해당하는 사용자 프로필을 가져온다.
@@ -169,5 +198,119 @@ public class OAuth2HttpRequestService {
             log.error("[{}] OAuth2Service.unlinkKakao() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
             throw new KakaoUnauthorizedException();
         }
+    }
+
+    /**
+     * 애플 서버와 통신하여 애플 authorization code에 해당하는 사용자의 연결을 끊는다.
+     *
+     * @param authorizationCode 애플 authorization code
+     */
+    public void unlinkApple(String authorizationCode) {
+        try {
+            // Parameters
+            String clientSecret = createAppleClientSecret();
+            Map<String, String> params = new HashMap<>();
+            params.put("client_secret", clientSecret);
+            params.put("token", getAppleRefreshToken(clientSecret, authorizationCode));
+            params.put("client_id", appleClientId);
+
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .uri(new URI(APPLE_UNLINK))
+                    .POST(getParamsUrlEncoded(params))
+                    .headers("Content-Type", "application/x-www-form-urlencoded")
+                    .build();
+
+            HttpClient httpClient = HttpClient.newHttpClient();
+            httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            log.error("[{}] OAuth2Service.unlinkApple() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
+            throw new AppleUnauthorizedException();
+        }
+    }
+
+    /**
+     * 애플 private key를 PrivateKey 객체로 만들어 반환한다.
+     *
+     * @return PrivateKey 객체
+     */
+    private PrivateKey getApplePrivateKey() {
+        try {
+            KeyFactory kf = KeyFactory.getInstance("EC");
+            return kf.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(applePrivateKey)));
+        } catch (Exception e) {
+            log.error("[{}] OAuth2Service.getPrivateKey() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
+            throw new AppleUnauthorizedException();
+        }
+    }
+
+    /**
+     * 애플과 연동된 앱 정보를 통해 client secret JWT를 생성한다.
+     *
+     * @return client secret JWT Token
+     */
+    private String createAppleClientSecret() {
+        Date exp = Date.from(LocalDateTime.now()
+                .plusDays(30)
+                .atZone(ZoneId.systemDefault()).toInstant());
+        Map<String, Object> jwtHeader = new HashMap<>();
+        jwtHeader.put("kid", appleKeyId);
+        jwtHeader.put("alg", "ES256");
+        return Jwts.builder()
+                .setHeaderParams(jwtHeader)
+                .setIssuer(appleTeamId)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(exp)
+                .setAudience("https://appleid.apple.com")
+                .setSubject(appleClientId)
+                .signWith(getApplePrivateKey(), SignatureAlgorithm.ES256)
+                .compact();
+    }
+
+    /**
+     * client secret과 authorization code를 통해 애플 서버와 통신하여 refresh token을 반환한다.
+     *
+     * @param clientSecret      애플 client secret JWT
+     * @param authorizationCode 애플 authorization code
+     * @return 애플 refresh token
+     */
+    private String getAppleRefreshToken(String clientSecret, String authorizationCode) {
+        try {
+            // Parameters
+            Map<String, String> params = new HashMap<>();
+            params.put("client_secret", clientSecret);
+            params.put("code", authorizationCode);
+            params.put("grant_type", "authorization_code");
+            params.put("client_id", appleClientId);
+
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .uri(new URI(APPLE_GET_TOKEN_URL))
+                    .POST(getParamsUrlEncoded(params))
+                    .headers("Content-Type", "application/x-www-form-urlencoded")
+                    .build();
+
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpResponse<String> response = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> body = mapper.readValue(response.body(), Map.class);
+            return body.get("refresh_token").toString();
+        } catch (Exception e) {
+            log.error("[{}] OAuth2Service.getAppleRefreshToken() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
+            throw new AppleUnauthorizedException();
+        }
+    }
+
+    /**
+     * key-value 형식의 params를 url-encoded 형태로 변환한다.
+     *
+     * @param parameters map 형식의 params
+     * @return url-encoded 형태로 변환된 params
+     */
+    private HttpRequest.BodyPublisher getParamsUrlEncoded(Map<String, String> parameters) {
+        String urlEncoded = parameters.entrySet()
+                .stream()
+                .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
+        return HttpRequest.BodyPublishers.ofString(urlEncoded);
     }
 }

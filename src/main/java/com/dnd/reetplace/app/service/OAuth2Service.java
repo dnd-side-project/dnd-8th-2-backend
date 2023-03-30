@@ -54,7 +54,7 @@ public class OAuth2Service {
     /**
      * 애플 서버에서 받은 identity token을 기반으로 사용자 프로필을 받아온 후, 로그인 (또는 회원가입)을 진행한다.
      *
-     * @param token apple identity token
+     * @param token    apple identity token
      * @param nickname 애플 서버에서 받은 사용자 이름
      * @return 로그인 (또는 회원가입) 완료 후 사용자 정보 (memberId, uid, accessToken, refreshToken 등)
      */
@@ -75,8 +75,8 @@ public class OAuth2Service {
     /**
      * uid를 기반으로 회원이 존재할 시 로그인, 존재하지 않을 시 회원가입을 진행한다.
      *
-     * @param uid uid (카카오 또는 애플)
-     * @param nickname 사용자 닉네임 (카카오 - 이름 / 애플 - GUEST)
+     * @param uid       uid (카카오 또는 애플)
+     * @param nickname  사용자 닉네임 (카카오 - 이름 / 애플 - GUEST)
      * @param loginType 소셜 로그인 타입
      * @return 로그인 (또는 회원가입) 완료 후의 Member Entity
      */
@@ -96,18 +96,20 @@ public class OAuth2Service {
     /**
      * 회원 탈퇴 및 탈퇴 설문을 등록한다.
      *
-     * @param memberId         탈퇴할 회원의 id
-     * @param surveyDto        탈퇴 설문 관련 dto
-     * @param kakaoAccessToken 카카오 access token
+     * @param memberId   탈퇴할 회원의 id
+     * @param surveyDto  탈퇴 설문 관련 dto
+     * @param identifier 카카오 - access token / 애플 - authorization code
      */
     @Transactional
-    public void unlink(Long memberId, SurveyDto surveyDto, String kakaoAccessToken) {
+    public void unlink(Long memberId, SurveyDto surveyDto, String identifier) {
         Member member = getMember(memberId);
 
         // 소셜 로그인 연결끊기
         if (member.getLoginType().equals(LoginType.KAKAO)) {
-            httpRequestService.unlinkKakao(kakaoAccessToken);
-        } // TODO Apple login 구현 시 Apple login에 대한 unlink 로직 구현
+            httpRequestService.unlinkKakao(identifier);
+        } else {
+            httpRequestService.unlinkApple(identifier);
+        }
 
         refreshTokenRedisService.deleteRefreshToken(member.getUid());
         memberRepository.delete(member);
