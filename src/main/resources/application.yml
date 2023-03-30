@@ -35,6 +35,12 @@ spring:
 kakao:
   rest-api-key: ${REET_PLACE_LOCAL_KAKAO_API_KEY}
 
+apple:
+  client_id: com.dnd.reetplace
+  key_id: ${REET_PLACE_LOCAL_APPLE_KEY_ID}
+  team_id: ${REET_PLACE_LOCAL_APPLE_TEAM_ID}
+  private_key: ${REET_PLACE_LOCAL_APPLE_PRIVATE_KEY}
+
 ---
 # Settings for production(dev-server)
 logging:
@@ -60,6 +66,12 @@ spring:
 
 kakao:
   rest-api-key: ${REET_PLACE_PROD_KAKAO_API_KEY}
+
+apple:
+  client_id: com.dnd.reetplace
+  key_id: ${REET_PLACE_PROD_APPLE_KEY_ID}
+  team_id: ${REET_PLACE_PROD_APPLE_TEAM_ID}
+  private_key: ${REET_PLACE_PROD_APPLE_PRIVATE_KEY}
 
 jwt.secret: ${REET_PLACE_PROD_JWT_SECRET}
 
