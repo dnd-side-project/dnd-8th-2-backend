@@ -15,9 +15,9 @@ spring:
 
 apple:
   client_id: com.dnd.reetplace
-  key_id: ${REET_PLACE_APPLE_KEY_ID}
-  team_id: ${REET_PLACE_APPLE_TEAM_ID}
-  private_key: ${REET_PLACE_APPLE_PRIVATE_KEY}
+  key_id: ${REET_PLACE_APPLE_KEY_ID:none}
+  team_id: ${REET_PLACE_APPLE_TEAM_ID:none}
+  private_key: ${REET_PLACE_APPLE_PRIVATE_KEY:none}
 
 ---
 # Settings for local(dev)

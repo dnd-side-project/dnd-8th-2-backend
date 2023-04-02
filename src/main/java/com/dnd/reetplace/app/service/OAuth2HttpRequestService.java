@@ -58,17 +58,17 @@ public class OAuth2HttpRequestService {
     public static final String APPLE_GET_TOKEN_URL = "https://appleid.apple.com/auth/token";
     public static final String APPLE_UNLINK = "https://appleid.apple.com/auth/revoke";
 
-    @Value("${apple.client_id:none}")
-    public String appleClientId;
+    @Value("${apple.client_id:}")
+    private String appleClientId;
 
-    @Value("${apple.key_id:none}")
-    public String appleKeyId;
+    @Value("${apple.key_id:}")
+    private String appleKeyId;
 
-    @Value("${apple.team_id:none}")
-    public String appleTeamId;
+    @Value("${apple.team_id:}")
+    private String appleTeamId;
 
-    @Value("${apple.private_key:none}")
-    public String applePrivateKey;
+    @Value("${apple.private_key:}")
+    private String applePrivateKey;
 
     /**
      * 카카오 서버와 통신하여 카카오 access token에 해당하는 사용자 프로필을 가져온다.
