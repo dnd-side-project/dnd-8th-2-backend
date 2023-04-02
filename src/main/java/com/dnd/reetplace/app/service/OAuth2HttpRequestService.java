@@ -58,16 +58,16 @@ public class OAuth2HttpRequestService {
     public static final String APPLE_GET_TOKEN_URL = "https://appleid.apple.com/auth/token";
     public static final String APPLE_UNLINK = "https://appleid.apple.com/auth/revoke";
 
-    @Value("${apple.client_id:}")
+    @Value("${apple.client_id}")
     private String appleClientId;
 
-    @Value("${apple.key_id:}")
+    @Value("${apple.key_id}")
     private String appleKeyId;
 
-    @Value("${apple.team_id:}")
+    @Value("${apple.team_id}")
     private String appleTeamId;
 
-    @Value("${apple.private_key:}")
+    @Value("${apple.private_key}")
     private String applePrivateKey;
 
     /**
