@@ -190,6 +190,7 @@ class BookmarkServiceTest {
         return BookmarkDto.of(
                 createNotSavedPlaceDto(),
                 BookmarkType.WANT,
+                "https://thumbnail-image-url",
                 (short) 2,
                 "test",
                 null

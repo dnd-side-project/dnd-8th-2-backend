@@ -14,6 +14,7 @@ import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
 import com.dnd.reetplace.app.service.BookmarkService;
+import com.dnd.reetplace.app.service.ScrapService;
 import com.dnd.reetplace.app.type.*;
 import com.dnd.reetplace.global.security.JwtAuthenticationFilter;
 import com.dnd.reetplace.global.security.MemberDetails;
@@ -59,6 +60,8 @@ class BookmarkControllerTest {
 
     @MockBean
     BookmarkService bookmarkService;
+    @MockBean
+    ScrapService scrapService;
 
     BookmarkControllerTest(
             @Autowired MockMvc mvc,
@@ -76,6 +79,8 @@ class BookmarkControllerTest {
         Long expectedBookmarkId = 2L;
         given(bookmarkService.save(eq(memberId), any(BookmarkDto.class)))
                 .willReturn(createSavedBookmarkDto(expectedBookmarkId));
+        given(scrapService.getPlaceThumbnailUrl(any(String.class)))
+                .willReturn("https://place...");
 
         // when & then
         mvc.perform(
@@ -100,6 +105,8 @@ class BookmarkControllerTest {
                 BookmarkSearchSort.LATEST,
                 Pageable.ofSize(20))
         ).willReturn(Page.empty());
+        given(scrapService.getPlaceThumbnailUrl(any(String.class)))
+                .willReturn("https://place...");
 
         // when & then
         mvc.perform(get("/api/bookmarks")
@@ -135,6 +142,7 @@ class BookmarkControllerTest {
                 createSavedMemberDto(),
                 createSavedPlaceDto(),
                 BookmarkType.WANT,
+                "https://thumbnail-image-url",
                 (short) 2,
                 "people",
                 new BookMarkRelLink(null, null, null),

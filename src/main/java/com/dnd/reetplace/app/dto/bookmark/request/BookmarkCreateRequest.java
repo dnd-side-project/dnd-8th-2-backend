@@ -45,10 +45,11 @@ public class BookmarkCreateRequest {
     @Schema(description = "장소와 관련된 URL3", example = "null")
     private String relLink3;
 
-    public BookmarkDto toDto() {
+    public BookmarkDto toDto(String thumbnailUrl) {
         return BookmarkDto.of(
                 this.getPlace().toDto(),
                 this.getType(),
+                thumbnailUrl,
                 this.getRate(),
                 this.getPeople(),
                 new BookMarkRelLink(this.getRelLink1(), this.getRelLink2(), this.getRelLink3())

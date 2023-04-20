@@ -30,6 +30,9 @@ public class BookmarkResponse {
             example = "WANT")
     private BookmarkType type;
 
+    @Schema(description = "썸네일 이미지 url", example = "https://t1.daumcdn.net/place/75B5CF9ACCF84162A7E13CB1FD4D5D43")
+    private String thumbnailImage;
+
     @Schema(description = "별점. 개수로 표현함 (1, 2, 3 중 하나)", example = "2")
     private Short rate;
 
@@ -51,6 +54,7 @@ public class BookmarkResponse {
                 MemberResponse.from(bookmarkDto.getMember()),
                 PlaceResponse.from(bookmarkDto.getPlace()),
                 bookmarkDto.getType(),
+                bookmarkDto.getThumbnailUrl(),
                 bookmarkDto.getRate(),
                 bookmarkDto.getPeople(),
                 bookmarkDto.getRelLinks().getRelLink1(),
