@@ -71,7 +71,8 @@ jacocoTestCoverageVerification {
                     '*.*Auth*',
                     '*.*PlaceController*',
                     '*.*PlaceService*',
-                    '*.*Http*'
+                    '*.*Http*',
+                    '*.*Scrap*'
             ] + Qdomains
             includes = [
                     '*.*Service*',
