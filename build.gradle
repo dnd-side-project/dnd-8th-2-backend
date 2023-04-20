@@ -136,6 +136,9 @@ dependencies {
     // HttpClient
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
 
+    // JSoup
+    implementation 'org.jsoup:jsoup:1.15.4'
+
     // qlrm (JpaResultMapper)
     implementation group: 'ch.simas.qlrm', name: 'qlrm', version: '1.7.1'
 
