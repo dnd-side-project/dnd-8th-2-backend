@@ -125,7 +125,7 @@ public enum ExceptionType {
     private final String message;
     private final Class<? extends Exception> type;
 
-    public static ExceptionType from(Class<? extends Exception> classType) {
+    public static Optional<ExceptionType> from(Class<? extends Exception> classType) {
         Optional<ExceptionType> exceptionType = Arrays.stream(values())
                 .filter(ex -> ex.getType() != null && ex.getType().equals(classType))
                 .findFirst();
@@ -134,6 +134,6 @@ public enum ExceptionType {
             log.error("[{}] 정의되지 않은 exception이 발생하였습니다. Type of exception={}", LogUtils.getLogTraceId(), classType);
         }
 
-        return exceptionType.orElse(UNHANDLED);
+        return exceptionType;
     }
 }
