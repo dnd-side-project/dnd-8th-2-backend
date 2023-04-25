@@ -1,6 +1,7 @@
 package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.Member;
+import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
@@ -10,6 +11,8 @@ import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkNotFoundByIdException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +53,11 @@ public class BookmarkService {
         );
     }
 
+    private Bookmark findEntityById(Long bookmarkId) {
+        return bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new BookmarkNotFoundByIdException(bookmarkId));
+    }
+
     /**
      * 북마크 리스트를 검색한다.
      *
@@ -72,6 +80,19 @@ public class BookmarkService {
     }
 
     /**
+     * 북마크 저장을 취소(삭제)한다.
+     *
+     * @param loginMemberId 북마크를 삭제하고자 하는 회원(로그인 회원)의 PK.
+     * @param bookmarkId 삭제하고자 하는 북마크
+     */
+    @Transactional
+    public void delete(Long loginMemberId, Long bookmarkId) {
+        Bookmark bookmark = this.findEntityById(bookmarkId);
+        validateBookmarkDeletePermission(loginMemberId, bookmark);
+        bookmarkRepository.delete(bookmark);
+    }
+
+    /**
      * memberId에 해당하는 사용자를 반환한다.
      * memberId에 해당하는 사용자가 존재하지 않거나 탈퇴한 사용자일 시, Exception을 던진다.
      *
@@ -83,10 +104,29 @@ public class BookmarkService {
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
     }
 
+    /**
+     * 이미 저장한 장소인지 검증한다.
+     *
+     * @param memberId PK of login member
+     * @param place 저장 여부를 확인할 장소
+     */
     private void validateAlreadyMarkedPlace(Long memberId, PlaceDto place) {
         String kakaoPid = place.getKakaoPid();
         if (bookmarkRepository.existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid)) {
             throw new AlreadyMarkedPlaceException(memberId, kakaoPid);
+        }
+    }
+
+    /**
+     * 북마크 삭제 권한을 확인한다.
+     * 북마크를 생성한 회원(소유자)만이 삭제가 가능하다.
+     *
+     * @param loginMemberId 북마크를 삭제하고자 하는 회원(로그인 회원)의 PK.
+     * @param bookmark 삭제하고자 하는 북마크
+     */
+    private void validateBookmarkDeletePermission(Long loginMemberId, Bookmark bookmark) {
+        if (!bookmark.getMember().getId().equals(loginMemberId)) {
+            throw new BookmarkDeletePermissionDeniedException();
         }
     }
 }

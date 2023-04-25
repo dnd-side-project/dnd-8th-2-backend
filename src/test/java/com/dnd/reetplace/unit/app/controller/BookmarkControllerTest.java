@@ -37,11 +37,10 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -112,6 +111,20 @@ class BookmarkControllerTest {
         mvc.perform(get("/api/bookmarks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("searchType", "ALL")
+                .with(csrf())
+                .with(user(new MemberDetails(createMember())))
+        ).andExpect(status().isOk());
+    }
+
+    @DisplayName("삭제할 북마크의 PK가 주어지고, 삭제하면, 북마크가 삭제된다.")
+    @Test
+    void givenBookmarkId_whenDeleting_thenDeleteBookmark() throws Exception {
+        // given
+        long bookmarkId = 1L;
+        willDoNothing().given(bookmarkService).delete(any(Long.class), eq(bookmarkId));
+
+        // when & then
+        mvc.perform(delete("/api/bookmarks/" + bookmarkId)
                 .with(csrf())
                 .with(user(new MemberDetails(createMember())))
         ).andExpect(status().isOk());
