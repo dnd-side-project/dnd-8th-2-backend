@@ -1,5 +1,6 @@
 package com.dnd.reetplace.app.service;
 
+import com.dnd.reetplace.global.exception.common.ScrapIOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,7 +25,7 @@ public class ScrapService {
         try {
             doc = Jsoup.connect(PRINT_PAGE_BASE_URL + kakaoPid).get();
         } catch (IOException ex) {
-            return DEFAULT_IMAGE_URL;
+            throw new ScrapIOException(ex);
         }
 
         Element thumbnailImage = doc.selectFirst("div.kakaomap_popup div.popup_body div.thumb_info img.thumb_g");
