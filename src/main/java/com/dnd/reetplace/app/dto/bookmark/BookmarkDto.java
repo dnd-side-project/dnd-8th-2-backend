@@ -21,18 +21,19 @@ public class BookmarkDto {
     private MemberDto member;
     private PlaceDto place;
     private BookmarkType type;
+    private String thumbnailUrl;
     private Short rate;
     private String people;
     private BookMarkRelLink relLinks;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static BookmarkDto of(PlaceDto place, BookmarkType type, Short rate, String people, BookMarkRelLink relLinks) {
-        return of(null, null, place, type, rate, people, relLinks, null, null);
+    public static BookmarkDto of(PlaceDto place, BookmarkType type, String thumbnailUrl, Short rate, String people, BookMarkRelLink relLinks) {
+        return of(null, null, place, type, thumbnailUrl, rate, people, relLinks, null, null);
     }
 
-    public static BookmarkDto of(Long id, MemberDto member, PlaceDto place, BookmarkType type, Short rate, String people, BookMarkRelLink relLinks, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        return new BookmarkDto(id, member, place, type, rate, people, relLinks, createdAt, updatedAt);
+    public static BookmarkDto of(Long id, MemberDto member, PlaceDto place, BookmarkType type, String thumbnailUrl, Short rate, String people, BookMarkRelLink relLinks, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new BookmarkDto(id, member, place, type, thumbnailUrl, rate, people, relLinks, createdAt, updatedAt);
     }
 
     public static BookmarkDto from(Bookmark entity) {
@@ -41,6 +42,7 @@ public class BookmarkDto {
                 MemberDto.from(entity.getMember()),
                 PlaceDto.from(entity.getPlace()),
                 entity.getType(),
+                entity.getThumbnailUrl(),
                 entity.getRate(),
                 entity.getPeople(),
                 entity.getRelLinks(),
@@ -54,6 +56,7 @@ public class BookmarkDto {
                 .member(member)
                 .place(place)
                 .type(type)
+                .thumbnailUrl(thumbnailUrl)
                 .rate(rate)
                 .people(people)
                 .relLinks(relLinks)

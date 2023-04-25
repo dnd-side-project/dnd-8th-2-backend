@@ -33,6 +33,8 @@ public class Bookmark extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BookmarkType type;
 
+    private String thumbnailUrl;
+
     @Column(nullable = false)
     private Short rate;
 
@@ -46,6 +48,7 @@ public class Bookmark extends BaseTimeEntity {
             Member member,
             Place place,
             BookmarkType type,
+            String thumbnailUrl,
             Short rate,
             String people,
             BookMarkRelLink relLinks
@@ -53,6 +56,7 @@ public class Bookmark extends BaseTimeEntity {
         this.member = member;
         this.place = place;
         this.type = type;
+        this.thumbnailUrl = thumbnailUrl;
         this.rate = rate;
         this.people = people;
         this.relLinks = relLinks;

@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = tokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
-                ExceptionType exceptionType = ExceptionType.from(e.getClass());
+                ExceptionType exceptionType = ExceptionType.from(e.getClass()).orElse(ExceptionType.UNHANDLED);
                 response.setStatus(UNAUTHORIZED.value());
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("utf-8");

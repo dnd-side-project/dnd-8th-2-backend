@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
+import com.dnd.reetplace.app.service.ScrapService;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.security.MemberDetails;
@@ -28,6 +29,7 @@ import java.net.URI;
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
+    private final ScrapService scrapService;
 
     @Operation(
             summary = "북마크 생성",
@@ -39,7 +41,8 @@ public class BookmarkController {
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Valid @RequestBody BookmarkCreateRequest request
     ) {
-        BookmarkDto bookmarkDto = bookmarkService.save(memberDetails.getId(), request.toDto());
+        String placeThumbnailUrl = scrapService.getPlaceThumbnailUrl(request.getPlace().getKakaoPlaceId());
+        BookmarkDto bookmarkDto = bookmarkService.save(memberDetails.getId(), request.toDto(placeThumbnailUrl));
 
         return ResponseEntity
                 .created(URI.create("/api/bookmarks/" + bookmarkDto.getId()))
