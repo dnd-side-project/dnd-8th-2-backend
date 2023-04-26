@@ -11,6 +11,7 @@ import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.service.BookmarkService;
 import com.dnd.reetplace.app.type.*;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +29,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookmarkServiceTest {
@@ -161,15 +161,58 @@ class BookmarkServiceTest {
                 .isEqualTo(expectedBookmarks.getContent().get(0).getId());
     }
 
-    private Member createMember() {
+    @DisplayName("북마크와 북마크한 회원의 PK가 주어지고, 삭제하면, 북마크가 삭제된다.")
+    @Test
+    void givenBookmarkAndMemberId_whenDeleting_thenDeleteBookmark() {
+        // given
+        long memberId = 1L;
+        long bookmarkId = 2L;
+        Bookmark bookmark = createBookmark(createMember(memberId), createPlace());
+        given(bookmarkRepository.findById(bookmarkId)).willReturn(Optional.of(bookmark));
+        willDoNothing().given(bookmarkRepository).delete(bookmark);
+
+        // when
+        sut.delete(memberId, bookmarkId);
+
+        // then
+        then(bookmarkRepository).should().findById(bookmarkId);
+        then(bookmarkRepository).should().delete(bookmark);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+    }
+
+    @DisplayName("북마크의 PK와 별개의 회원의 PK가 주어지고, 북마크를 삭제하면, 예외가 발생한다.")
+    @Test
+    void givenBookmarkAndAnotherMemberId_whenDeleting_thenThrowException() {
+        // given
+        long memberId = 1L;
+        long anotherMemberId = 2L;
+        long bookmarkId = 3L;
+        Member member = createMember(memberId);
+        Bookmark bookmark = createBookmark(member, createPlace());
+        given(bookmarkRepository.findById(bookmarkId)).willReturn(Optional.of(bookmark));
+
+        // when
+        Throwable t = catchThrowable(() -> sut.delete(anotherMemberId, bookmarkId));
+
+        // then
+        then(bookmarkRepository).should().findById(bookmarkId);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(t).isInstanceOf(BookmarkDeletePermissionDeniedException.class);
+    }
+
+    private Member createMember(Long memberId) {
         Member member = Member.builder()
                 .uid("test")
                 .loginType(LoginType.KAKAO)
                 .nickname("test")
                 .build();
-        ReflectionTestUtils.setField(member, "id", 1L);
+        ReflectionTestUtils.setField(member, "id", memberId);
 
         return member;
+    }
+
+    private Member createMember() {
+        return createMember(1L);
     }
 
     private Place createPlace() {

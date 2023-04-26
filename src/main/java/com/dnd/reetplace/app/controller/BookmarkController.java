@@ -10,6 +10,10 @@ import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -93,5 +97,22 @@ public class BookmarkController {
         ).map(BookmarkResponse::from);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(
+            summary = "북마크 취소",
+            description = "북마크를 취소합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @ApiResponses({
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content),
+            @ApiResponse(description = "북마크 취소 권한이 없는 경우(내가 저장하지 않은 북마크를 삭제하려고 하는 경우).", responseCode = "403", content = @Content)
+    })
+    @DeleteMapping("/{bookmarkId}")
+    public void delete(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long bookmarkId
+    ) {
+        bookmarkService.delete(memberDetails.getId(), bookmarkId);
     }
 }
