@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
+import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
@@ -15,6 +16,7 @@ import com.dnd.reetplace.app.type.BookmarkType;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkNotFoundByIdException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkUpdatePermissionDeniedException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -97,6 +99,22 @@ public class BookmarkService {
     }
 
     /**
+     * 북마크 정보를 수정한다.
+     *
+     * @param loginMemberId 북마크를 수정하고자 하는 로그인 회원의 PK
+     * @param bookmarkId    수정하고자 하는 북마크의 PK
+     * @param updateRequest 수정하려는 정보
+     * @return 수정된 북마크 정보가 담긴 dto
+     */
+    @Transactional
+    public BookmarkDto update(Long loginMemberId, Long bookmarkId, BookmarkUpdateRequest updateRequest) {
+        Bookmark bookmark = findById(bookmarkId);
+        validateBookmarkUpdatePermission(loginMemberId, bookmark);
+        bookmark.update(updateRequest);
+        return BookmarkDto.from(bookmark);
+    }
+
+    /**
      * 북마크 저장을 취소(삭제)한다.
      *
      * @param loginMemberId 북마크를 삭제하고자 하는 회원(로그인 회원)의 PK.
@@ -136,6 +154,18 @@ public class BookmarkService {
         String kakaoPid = place.getKakaoPid();
         if (bookmarkRepository.existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid)) {
             throw new AlreadyMarkedPlaceException(memberId, kakaoPid);
+        }
+    }
+    /**
+     * 북마크 수정 권한을 확인한다.
+     * 북마크를 생성한 회원(소유자)만이 수정이 가능하다.
+     *
+     * @param loginMemberId 북마크를 수정하고자 하는 회원(로그인 회원)의 PK.
+     * @param bookmark      수정하고자 하는 북마크
+     */
+    private void validateBookmarkUpdatePermission(Long loginMemberId, Bookmark bookmark) {
+        if (!bookmark.getMember().getId().equals(loginMemberId)) {
+            throw new BookmarkUpdatePermissionDeniedException();
         }
     }
 

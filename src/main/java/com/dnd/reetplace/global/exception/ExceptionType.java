@@ -7,6 +7,7 @@ import com.dnd.reetplace.global.exception.auth.*;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkNotFoundByIdException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkUpdatePermissionDeniedException;
 import com.dnd.reetplace.global.exception.common.ScrapIOException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
@@ -123,6 +124,7 @@ public enum ExceptionType {
     ALREADY_MARKED_PLACE_EXCEPTION(3000, "이미 북마크한 장소는 다시 북마크 할 수 없습니다.", AlreadyMarkedPlaceException.class),
     BOOKMARK_NOT_FOUND_BY_ID(3001, "북마크 정보를 찾을 수 없습니다.", BookmarkNotFoundByIdException.class),
     BOOKMARK_DELETE_PERMISSION_DENIED(3002, "북마크를 취소할 수 있는 권한이 없습니다.", BookmarkDeletePermissionDeniedException.class),
+    BOOKMARK_UPDATE_PERMISSION_DENIED(3003, "북마크를 수정할 수 있는 권한이 없습니다.", BookmarkUpdatePermissionDeniedException.class),
 
     // Place
     PLACE_KAKAO_PID_NOT_FOUND_EXCEPTION(3500, "장소를 찾을 수 없습니다.", PlaceKakaoPidNotFoundException.class),
