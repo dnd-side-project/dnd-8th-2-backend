@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.*;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
+import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
@@ -118,6 +119,31 @@ class BookmarkServiceTest {
         then(bookmarkRepository).should().existsByMember_IdAndPlace_KakaoPid(memberId, kakaoPid);
         then(bookmarkRepository).shouldHaveNoMoreInteractions();
         assertThat(t).isInstanceOf(AlreadyMarkedPlaceException.class);
+    }
+
+    @DisplayName("회원의 PK가 주어지고, 북마크 개수를 조회하면, 조회된 북마크 개수를 반환한다.")
+    @Test
+    void givenMemberId_whenGettingNumOfBookmarks_thenReturnNumOfBookmarks() {
+        // given
+        long memberId = 1L;
+        Member dummyMember = createMember();
+        Place dummyPlace = createPlace();
+        List<Bookmark> bookmarks = List.of(createBookmark(dummyMember, dummyPlace),
+                createBookmark(dummyMember, dummyPlace),
+                createBookmark(dummyMember, dummyPlace));
+        int numOfBookmarks = bookmarks.size();
+        given(bookmarkRepository.findAllByMember(memberId))
+                .willReturn(bookmarks);
+
+        // when
+        NumOfBookmarksResponse numOfBookmarksResponse = sut.getNumOfBookmarks(memberId);
+
+        // then
+        then(bookmarkRepository).should().findAllByMember(memberId);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(numOfBookmarksResponse.getNumOfAll()).isEqualTo(numOfBookmarks);
+        assertThat(numOfBookmarksResponse.getNumOfWant()).isEqualTo(numOfBookmarks);
+        assertThat(numOfBookmarksResponse.getNumOfDone()).isEqualTo(0);
     }
 
     @DisplayName("북마크 전체 검색을 하면, 북마크 slice를 반환한다.")
