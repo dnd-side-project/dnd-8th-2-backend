@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
+import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
 import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
@@ -12,6 +13,7 @@ import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -109,6 +111,28 @@ public class BookmarkController {
         ).map(BookmarkResponse::from);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(
+            summary = "북마크 수정",
+            description = "북마크를 수정합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @ApiResponses({
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content(schema = @Schema(implementation = BookmarkResponse.class))),
+            @ApiResponse(description = "북마크를 수정할 수 있는 권한이 없는 경우", responseCode = "403", content = @Content)
+    })
+    @PutMapping("/{bookmarkId}")
+    public BookmarkResponse update(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Parameter(
+                    description = "수정하고자 하는 북마크의 id",
+                    example = "3"
+            ) @PathVariable Long bookmarkId,
+            @RequestBody BookmarkUpdateRequest updateRequest
+    ) {
+        BookmarkDto bookmarkDto = bookmarkService.update(memberDetails.getId(), bookmarkId, updateRequest);
+        return BookmarkResponse.from(bookmarkDto);
     }
 
     @Operation(

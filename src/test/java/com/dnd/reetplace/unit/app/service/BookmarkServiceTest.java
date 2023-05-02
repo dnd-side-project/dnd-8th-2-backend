@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.*;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
+import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
@@ -13,6 +14,7 @@ import com.dnd.reetplace.app.service.BookmarkService;
 import com.dnd.reetplace.app.type.*;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkUpdatePermissionDeniedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -187,6 +189,53 @@ class BookmarkServiceTest {
                 .isEqualTo(expectedBookmarks.getContent().get(0).getId());
     }
 
+    @DisplayName("수정할 북마크 정보가 주어지고, 북마크를 수정하면, 북마크 수정 후 수정된 북마크 정보가 반환된다.")
+    @Test
+    void givenBookmarkInfoToUpdate_whenUpdating_thenReturnUpdatedBookmark() {
+        // given
+        long memberId = 1L;
+        long bookmarkId = 2L;
+        Member member = createMember(memberId);
+        Place place = createPlace();
+        Bookmark bookmark = createBookmark(bookmarkId, member, place);
+        BookmarkUpdateRequest infoToUpdate = new BookmarkUpdateRequest(BookmarkType.DONE, (short) 3, "update", "updateLink1", null, null);
+        given(bookmarkRepository.findById(bookmarkId)).willReturn(Optional.of(bookmark));
+
+        // when
+        BookmarkDto updatedBookmark = sut.update(memberId, bookmarkId, infoToUpdate);
+
+        // then
+        then(bookmarkRepository).should().findById(bookmarkId);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(updatedBookmark.getType()).isEqualTo(infoToUpdate.getType());
+        assertThat(updatedBookmark.getRate()).isEqualTo(infoToUpdate.getRate());
+        assertThat(updatedBookmark.getPeople()).isEqualTo(infoToUpdate.getPeople());
+        assertThat(updatedBookmark.getRelLinks().getRelLink1()).isEqualTo(infoToUpdate.getRelLink1());
+        assertThat(updatedBookmark.getRelLinks().getRelLink2()).isEqualTo(infoToUpdate.getRelLink2());
+        assertThat(updatedBookmark.getRelLinks().getRelLink3()).isEqualTo(infoToUpdate.getRelLink3());
+    }
+
+    @DisplayName("수정할 북마크 정보와 북마크를 소유하고 있지 않은 잘못된 회원의 PK가 주어지고, 북마크를 수정하려고 하면, 예외가 발생한다.")
+    @Test
+    void givenBookmarkInfoToUpdateAndInvalidMemberId_whenUpdating_thenThrowException() {
+        // given
+        long memberId = 1L;
+        long bookmarkId = 2L;
+        Member member = createMember(memberId);
+        Place place = createPlace();
+        Bookmark bookmark = createBookmark(bookmarkId, member, place);
+        BookmarkUpdateRequest infoToUpdate = new BookmarkUpdateRequest(BookmarkType.DONE, (short) 3, "update", "updateLink1", null, null);
+        given(bookmarkRepository.findById(bookmarkId)).willReturn(Optional.of(bookmark));
+
+        // when
+        Throwable t = catchThrowable(() -> sut.update(100L, bookmarkId, infoToUpdate));
+
+        // then
+        then(bookmarkRepository).should().findById(bookmarkId);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(t).isInstanceOf(BookmarkUpdatePermissionDeniedException.class);
+    }
+
     @DisplayName("북마크와 북마크한 회원의 PK가 주어지고, 삭제하면, 북마크가 삭제된다.")
     @Test
     void givenBookmarkAndMemberId_whenDeleting_thenDeleteBookmark() {
@@ -249,9 +298,12 @@ class BookmarkServiceTest {
     }
 
     private Bookmark createBookmark(Member member, Place place) {
-        Bookmark bookmark = createNotSavedBookmarkDto().toEntity(member, place);
-        ReflectionTestUtils.setField(bookmark, "id", 3L);
+        return createBookmark(3L, member, place);
+    }
 
+    private Bookmark createBookmark(long bookmarkId, Member member, Place place) {
+        Bookmark bookmark = createNotSavedBookmarkDto().toEntity(member, place);
+        ReflectionTestUtils.setField(bookmark, "id", bookmarkId);
         return bookmark;
     }
 
