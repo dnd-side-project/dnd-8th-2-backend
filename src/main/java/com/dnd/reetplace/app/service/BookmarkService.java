@@ -4,12 +4,14 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
+import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
+import com.dnd.reetplace.app.type.BookmarkType;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
 import com.dnd.reetplace.global.exception.bookmark.BookmarkNotFoundByIdException;
@@ -19,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.dnd.reetplace.app.type.BookmarkSearchType.ALL;
 
@@ -53,9 +57,22 @@ public class BookmarkService {
         );
     }
 
-    private Bookmark findEntityById(Long bookmarkId) {
-        return bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BookmarkNotFoundByIdException(bookmarkId));
+    /**
+     * 북마크 개수를 조회한다.
+     *
+     * @param loginMemberId 북마크 개수를 조회하고자 하는 로그인한 회원
+     * @return 전체, "가보고싶어요", "다녀왔어요"로 표시한 북마크의 개수가 응답된다.
+     */
+    public NumOfBookmarksResponse getNumOfBookmarks(Long loginMemberId) {
+        List<Bookmark> bookmarks = bookmarkRepository.findAllByMember(loginMemberId);
+
+        int numOfAll = bookmarks.size();
+        int numOfWant = (int) bookmarks.stream()
+                .filter(bookmark -> bookmark.getType() == BookmarkType.WANT)
+                .count();
+        int numOfDone = numOfAll - numOfWant;
+
+        return new NumOfBookmarksResponse(numOfAll, numOfWant, numOfDone);
     }
 
     /**
@@ -83,13 +100,18 @@ public class BookmarkService {
      * 북마크 저장을 취소(삭제)한다.
      *
      * @param loginMemberId 북마크를 삭제하고자 하는 회원(로그인 회원)의 PK.
-     * @param bookmarkId 삭제하고자 하는 북마크
+     * @param bookmarkId    삭제하고자 하는 북마크
      */
     @Transactional
     public void delete(Long loginMemberId, Long bookmarkId) {
-        Bookmark bookmark = this.findEntityById(bookmarkId);
+        Bookmark bookmark = this.findById(bookmarkId);
         validateBookmarkDeletePermission(loginMemberId, bookmark);
         bookmarkRepository.delete(bookmark);
+    }
+
+    private Bookmark findById(Long bookmarkId) {
+        return bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new BookmarkNotFoundByIdException(bookmarkId));
     }
 
     /**
@@ -108,7 +130,7 @@ public class BookmarkService {
      * 이미 저장한 장소인지 검증한다.
      *
      * @param memberId PK of login member
-     * @param place 저장 여부를 확인할 장소
+     * @param place    저장 여부를 확인할 장소
      */
     private void validateAlreadyMarkedPlace(Long memberId, PlaceDto place) {
         String kakaoPid = place.getKakaoPid();
@@ -122,7 +144,7 @@ public class BookmarkService {
      * 북마크를 생성한 회원(소유자)만이 삭제가 가능하다.
      *
      * @param loginMemberId 북마크를 삭제하고자 하는 회원(로그인 회원)의 PK.
-     * @param bookmark 삭제하고자 하는 북마크
+     * @param bookmark      삭제하고자 하는 북마크
      */
     private void validateBookmarkDeletePermission(Long loginMemberId, Bookmark bookmark) {
         if (!bookmark.getMember().getId().equals(loginMemberId)) {

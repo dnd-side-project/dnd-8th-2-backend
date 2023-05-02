@@ -10,6 +10,7 @@ import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.domain.place.Point;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
+import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
@@ -37,7 +38,8 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -91,6 +93,29 @@ class BookmarkControllerTest {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(expectedBookmarkId));
+    }
+
+    @DisplayName("북마크 개수를 조회하면, 조회된 북마크 개수가 반환됩니다.")
+    @Test
+    void given_whenGettingNumOfBookmarks_thenReturnNumOfBookmarks() throws Exception {
+        // given
+        long memberId = 1L;
+        int expectedNumOfAll = 5;
+        int expectedNumOfWant = 3;
+        int expectedNumOfDone = 2;
+        NumOfBookmarksResponse expectedResult = new NumOfBookmarksResponse(expectedNumOfAll, expectedNumOfWant, expectedNumOfDone);
+        given(bookmarkService.getNumOfBookmarks(memberId))
+                .willReturn(expectedResult);
+
+        // when & then
+        mvc.perform(
+                        get("/api/bookmarks/counts")
+                                .with(csrf())
+                                .with(user(new MemberDetails(createMember())))
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.numOfAll").value(expectedNumOfAll))
+                .andExpect(jsonPath("$.numOfWant").value(expectedNumOfWant))
+                .andExpect(jsonPath("$.numOfDone").value(expectedNumOfDone));
     }
 
     @DisplayName("주어진 검색 정보/조건으로 검색을 하면 북마크 목록을 반환한다.")

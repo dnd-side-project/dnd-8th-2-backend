@@ -3,6 +3,7 @@ package com.dnd.reetplace.app.controller;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
 import com.dnd.reetplace.app.service.ScrapService;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
@@ -11,7 +12,6 @@ import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -51,6 +51,18 @@ public class BookmarkController {
         return ResponseEntity
                 .created(URI.create("/api/bookmarks/" + bookmarkDto.getId()))
                 .body(BookmarkResponse.from(bookmarkDto));
+    }
+
+    @Operation(
+            summary = "북마크 개수 조회",
+            description = "북마크 개수를 조회합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/counts")
+    public NumOfBookmarksResponse getNumOfBookmarks(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        return bookmarkService.getNumOfBookmarks(memberDetails.getId());
     }
 
     @Operation(
