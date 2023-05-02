@@ -82,6 +82,7 @@ public class AuthController {
                     "- LOW_USED : 사용 빈도가 낮아서<br>" +
                     "- USE_OTHER_SERVICE : 다른 서비스 사용 목적<br>" +
                     "- INCONVENIENCE_AND_ERRORS : 이용이 불편하고 장애가 많아서<br>" +
+                    "- CONTENT_DISSATISFACTION : 콘텐츠 불만<br>" +
                     "- OTHER : 기타 (해당 경우 description field 필수값)",
             security = @SecurityRequirement(name = "Authorization")
     )
