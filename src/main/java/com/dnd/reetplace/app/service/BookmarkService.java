@@ -67,10 +67,9 @@ public class BookmarkService {
         List<Bookmark> bookmarks = bookmarkRepository.findAllByMember(loginMemberId);
 
         int numOfAll = bookmarks.size();
-        int numOfWant = bookmarks.stream()
+        int numOfWant = (int) bookmarks.stream()
                 .filter(bookmark -> bookmark.getType() == BookmarkType.WANT)
-                .toList()
-                .size();
+                .count();
         int numOfDone = numOfAll - numOfWant;
 
         return new NumOfBookmarksResponse(numOfAll, numOfWant, numOfDone);
