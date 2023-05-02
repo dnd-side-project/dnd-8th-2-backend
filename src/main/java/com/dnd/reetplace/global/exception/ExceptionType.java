@@ -3,10 +3,12 @@ package com.dnd.reetplace.global.exception;
 import com.dnd.reetplace.app.domain.*;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
-import com.dnd.reetplace.global.exception.auth.JwtTokenEmptyUnauthorizedException;
-import com.dnd.reetplace.global.exception.auth.KakaoUnauthorizedException;
-import com.dnd.reetplace.global.exception.auth.RefreshTokenNotFoundException;
+import com.dnd.reetplace.global.exception.auth.*;
 import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkNotFoundByIdException;
+import com.dnd.reetplace.global.exception.bookmark.BookmarkUpdatePermissionDeniedException;
+import com.dnd.reetplace.global.exception.common.ScrapIOException;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import com.dnd.reetplace.global.exception.place.PlaceKakaoApiBadRequestException;
@@ -66,8 +68,11 @@ public enum ExceptionType {
      * Global/Normal Exception
      */
     UNHANDLED(1000, "알 수 없는 서버 에러가 발생했습니다.", null),
+    SCRAP_IO(1001, "Scrap Error. 장소 정보를 불러오던 중 에러가 발생했습니다.", ScrapIOException.class),
 
-    // 인증 관련 (15XX)
+    /**
+     * 인증 관련 (15XX)
+     */
     ACCESS_DENIED(1500, "접근 권한이 없습니다.", null),
     AUTHENTICATION_REQUIRED(1501, "인증이 필요한 요청입니다.", null),
     JWT_INVALID_SIGNATURE_EXCEPTION(1502, "Token의 서명이 잘못되었습니다.", SignatureException.class),
@@ -112,20 +117,24 @@ public enum ExceptionType {
     KAKAO_UNAUTHORIZED(2400, "카카오 로그인에 실패했습니다. 액세스 토큰이 유효한지 확인해주세요.", KakaoUnauthorizedException.class),
     REFRESH_TOKEN_NOT_FOUND(2401, "존재하지 않는 Refresh Token입니다.", RefreshTokenNotFoundException.class),
     JWT_TOKEN_EMPTY_UNAUTHORIZED(2402, "JWT Token이 포함되어 있지 않습니다.", JwtTokenEmptyUnauthorizedException.class),
+    APPLE_PUBLIC_KEY_NOT_FOUND(2403, "애플 Public Key가 유효하지 않습니다.", ApplePublicKeyNotFoundException.class),
+    APPLE_UNAUTHORIZED(2404, "애플 로그인에 실패했습니다. 아이덴티티 토큰이 유효한지 확인해주세요.", AppleUnauthorizedException.class),
 
     // Bookmark
     ALREADY_MARKED_PLACE_EXCEPTION(3000, "이미 북마크한 장소는 다시 북마크 할 수 없습니다.", AlreadyMarkedPlaceException.class),
+    BOOKMARK_NOT_FOUND_BY_ID(3001, "북마크 정보를 찾을 수 없습니다.", BookmarkNotFoundByIdException.class),
+    BOOKMARK_DELETE_PERMISSION_DENIED(3002, "북마크를 취소할 수 있는 권한이 없습니다.", BookmarkDeletePermissionDeniedException.class),
+    BOOKMARK_UPDATE_PERMISSION_DENIED(3003, "북마크를 수정할 수 있는 권한이 없습니다.", BookmarkUpdatePermissionDeniedException.class),
 
     // Place
     PLACE_KAKAO_PID_NOT_FOUND_EXCEPTION(3500, "장소를 찾을 수 없습니다.", PlaceKakaoPidNotFoundException.class),
-    PLACE_KAKAO_API_BAD_REQUEST_EXCEPTION(3501, "장소 조회에 실패했습니다. 올바른 파라미터를 입력했는지 확인해주세요.", PlaceKakaoApiBadRequestException.class)
-    ;
+    PLACE_KAKAO_API_BAD_REQUEST_EXCEPTION(3501, "장소 조회에 실패했습니다. 올바른 파라미터를 입력했는지 확인해주세요.", PlaceKakaoApiBadRequestException.class);
 
     private final Integer code;
     private final String message;
     private final Class<? extends Exception> type;
 
-    public static ExceptionType from(Class<? extends Exception> classType) {
+    public static Optional<ExceptionType> from(Class<? extends Exception> classType) {
         Optional<ExceptionType> exceptionType = Arrays.stream(values())
                 .filter(ex -> ex.getType() != null && ex.getType().equals(classType))
                 .findFirst();
@@ -134,6 +143,6 @@ public enum ExceptionType {
             log.error("[{}] 정의되지 않은 exception이 발생하였습니다. Type of exception={}", LogUtils.getLogTraceId(), classType);
         }
 
-        return exceptionType.orElse(UNHANDLED);
+        return exceptionType;
     }
 }

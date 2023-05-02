@@ -40,6 +40,20 @@ public class AuthController {
     }
 
     @Operation(
+            summary = "애플 로그인",
+            description = "애플 서버에서 받은 Identity Token을 통해 로그인을 진행합니다."
+    )
+    @PostMapping("/login/apple")
+    public ResponseEntity<LoginResponse> appleLogin(
+            @Parameter(name = "identity-token", description = "애플 서버에서 받은 Identity Token", example = "eyJraWQiO...")
+            @RequestHeader("identity-token") String token,
+            @Parameter(name = "nickname", description = "애플 서버에서 받은 사용자 이름", example = "홍길동")
+            @RequestParam("nickname") String nickname
+    ) {
+        return ResponseEntity.ok(oAuth2Service.appleLogin(token, nickname));
+    }
+
+    @Operation(
             summary = "토큰 재발급",
             description = "Refresh Token을 통해 Access Token, Refresh Token을 재발급합니다.",
             security = @SecurityRequirement(name = "Authorization")
@@ -75,10 +89,10 @@ public class AuthController {
     public ResponseEntity<Void> unlink(
             @Valid @RequestBody SurveyRequest surveyRequest,
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
-            @Parameter(name = "access-token", description = "카카오 서버에서 받은 Access Token", example = "29WryM8Px6...")
-            @RequestHeader(value = "access-token") String kakaoAccessToken
+            @Parameter(name = "identifier", description = "카카오 - Access Token / 애플 - Authorization Code", example = "29WryM8Px6...")
+            @RequestHeader(value = "identifier") String identifier
     ) {
-        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), kakaoAccessToken);
+        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), identifier);
         return ResponseEntity.noContent().build();
     }
 }

@@ -2,13 +2,20 @@ package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
+import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
+import com.dnd.reetplace.app.service.ScrapService;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +35,7 @@ import java.net.URI;
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
+    private final ScrapService scrapService;
 
     @Operation(
             summary = "북마크 생성",
@@ -39,11 +47,24 @@ public class BookmarkController {
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Valid @RequestBody BookmarkCreateRequest request
     ) {
-        BookmarkDto bookmarkDto = bookmarkService.save(memberDetails.getId(), request.toDto());
+        String placeThumbnailUrl = scrapService.getPlaceThumbnailUrl(request.getPlace().getKakaoPlaceId());
+        BookmarkDto bookmarkDto = bookmarkService.save(memberDetails.getId(), request.toDto(placeThumbnailUrl));
 
         return ResponseEntity
                 .created(URI.create("/api/bookmarks/" + bookmarkDto.getId()))
                 .body(BookmarkResponse.from(bookmarkDto));
+    }
+
+    @Operation(
+            summary = "북마크 개수 조회",
+            description = "북마크 개수를 조회합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/counts")
+    public NumOfBookmarksResponse getNumOfBookmarks(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        return bookmarkService.getNumOfBookmarks(memberDetails.getId());
     }
 
     @Operation(
@@ -90,5 +111,44 @@ public class BookmarkController {
         ).map(BookmarkResponse::from);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(
+            summary = "북마크 수정",
+            description = "북마크를 수정합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @ApiResponses({
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content(schema = @Schema(implementation = BookmarkResponse.class))),
+            @ApiResponse(description = "북마크를 수정할 수 있는 권한이 없는 경우", responseCode = "403", content = @Content)
+    })
+    @PutMapping("/{bookmarkId}")
+    public BookmarkResponse update(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Parameter(
+                    description = "수정하고자 하는 북마크의 id",
+                    example = "3"
+            ) @PathVariable Long bookmarkId,
+            @RequestBody BookmarkUpdateRequest updateRequest
+    ) {
+        BookmarkDto bookmarkDto = bookmarkService.update(memberDetails.getId(), bookmarkId, updateRequest);
+        return BookmarkResponse.from(bookmarkDto);
+    }
+
+    @Operation(
+            summary = "북마크 취소",
+            description = "북마크를 취소합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @ApiResponses({
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content),
+            @ApiResponse(description = "북마크 취소 권한이 없는 경우(내가 저장하지 않은 북마크를 삭제하려고 하는 경우).", responseCode = "403", content = @Content)
+    })
+    @DeleteMapping("/{bookmarkId}")
+    public void delete(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long bookmarkId
+    ) {
+        bookmarkService.delete(memberDetails.getId(), bookmarkId);
     }
 }

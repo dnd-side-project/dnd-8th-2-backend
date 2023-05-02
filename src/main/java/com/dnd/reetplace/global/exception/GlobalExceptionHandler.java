@@ -84,7 +84,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         log.error("[{}] Spring MVC Basic Exception: {}", getLogTraceId(), getExceptionStackTrace(ex));
 
-        ExceptionType exceptionType = ExceptionType.from(ex.getClass());
+        ExceptionType exceptionType = ExceptionType.from(ex.getClass()).orElse(ExceptionType.UNHANDLED);
         return ResponseEntity
                 .status(status)
                 .body(new ErrorResponse(exceptionType.getCode(), exceptionType.getMessage()));
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
                         ExceptionType.UNHANDLED.getCode(),
-                        ExceptionType.UNHANDLED.getMessage()
+                        ExceptionType.UNHANDLED.getMessage() + " " + ex.getMessage()
                 ));
     }
 

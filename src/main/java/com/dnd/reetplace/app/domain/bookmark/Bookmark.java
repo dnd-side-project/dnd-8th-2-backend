@@ -3,6 +3,7 @@ package com.dnd.reetplace.app.domain.bookmark;
 import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.common.BaseTimeEntity;
 import com.dnd.reetplace.app.domain.place.Place;
+import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
 import com.dnd.reetplace.app.type.BookmarkType;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,6 +34,8 @@ public class Bookmark extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BookmarkType type;
 
+    private String thumbnailUrl;
+
     @Column(nullable = false)
     private Short rate;
 
@@ -46,6 +49,7 @@ public class Bookmark extends BaseTimeEntity {
             Member member,
             Place place,
             BookmarkType type,
+            String thumbnailUrl,
             Short rate,
             String people,
             BookMarkRelLink relLinks
@@ -53,8 +57,16 @@ public class Bookmark extends BaseTimeEntity {
         this.member = member;
         this.place = place;
         this.type = type;
+        this.thumbnailUrl = thumbnailUrl;
         this.rate = rate;
         this.people = people;
         this.relLinks = relLinks;
+    }
+
+    public void update(BookmarkUpdateRequest updateInfo) {
+        this.type = updateInfo.getType();
+        this.rate = updateInfo.getRate();
+        this.people = updateInfo.getPeople();
+        this.relLinks = new BookMarkRelLink(updateInfo.getRelLink1(), updateInfo.getRelLink2(), updateInfo.getRelLink3());
     }
 }
