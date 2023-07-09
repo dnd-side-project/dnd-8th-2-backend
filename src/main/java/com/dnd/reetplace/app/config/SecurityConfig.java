@@ -27,6 +27,7 @@ public class SecurityConfig {
     private static final String BASE_URL = "/api";
     private static final String[] AUTH_WHITE_LIST = {
             "/auth/login/kakao",
+            "/auth/login/apple",
             "/auth/refresh",
             "/places",
             "/places/search"
