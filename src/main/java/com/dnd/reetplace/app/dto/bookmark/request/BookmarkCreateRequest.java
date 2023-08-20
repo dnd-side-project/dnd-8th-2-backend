@@ -5,14 +5,17 @@ import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
 import com.dnd.reetplace.app.type.BookmarkType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class BookmarkCreateRequest {
 
@@ -20,10 +23,10 @@ public class BookmarkCreateRequest {
     private PlaceRequest place;
 
     @Schema(description = "<p>북마크 종류. 목록은 다음과 같음</p>" +
-            "<ul>" +
-            "<li>WANT - 가보고 싶어요</li>" +
-            "<li>GONE - 다녀왔어요</li>" +
-            "</ul>",
+                          "<ul>" +
+                          "<li>WANT - 가보고 싶어요</li>" +
+                          "<li>GONE - 다녀왔어요</li>" +
+                          "</ul>",
             example = "WANT")
     @NotNull
     private BookmarkType type;
