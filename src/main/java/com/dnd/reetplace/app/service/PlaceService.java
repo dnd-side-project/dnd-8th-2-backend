@@ -33,6 +33,7 @@ public class PlaceService {
     private final BookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
     private final KakaoHttpRequestService kakaoHttpRequestService;
+    private final ScrapService scrapService;
 
     public static final String MEXICAN_KEYWORD = "멕시칸,브라질";
     public static final String ASIA_KEYWORD = "아시아음식";
@@ -140,7 +141,7 @@ public class PlaceService {
         Member loginMember = findLoginMember(httpServletRequest);
         if (loginMember == null) {
             return result.stream()
-                    .map(PlaceGetResponse::ofWithoutBookmark)
+                    .map(response -> PlaceGetResponse.ofWithoutBookmark(response, scrapService.getPlaceThumbnailUrl(response.getId())))
                     .toList();
         }
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByMember(loginMember.getId());
@@ -151,9 +152,10 @@ public class PlaceService {
                         .findFirst()
                         .map(bookmark -> PlaceGetResponse.of(
                                 place,
+                                bookmark.getThumbnailUrl(),
                                 bookmark.getType(),
                                 bookmark.getId()))
-                        .orElse(PlaceGetResponse.ofWithoutBookmark(place)))
+                        .orElse(PlaceGetResponse.ofWithoutBookmark(place, scrapService.getPlaceThumbnailUrl(place.getId()))))
                 .toList();
     }
 
@@ -170,7 +172,7 @@ public class PlaceService {
         Member loginMember = findLoginMember(httpServletRequest);
         if (loginMember == null) {
             return result.stream()
-                    .map(PlaceSearchResponse::ofWithoutBookmark)
+                    .map(response -> PlaceSearchResponse.ofWithoutBookmark(response, scrapService.getPlaceThumbnailUrl(response.getId())))
                     .filter(place -> place.getCategory() != null)
                     .toList();
         }
@@ -182,10 +184,11 @@ public class PlaceService {
                         .findFirst()
                         .map(bookmark -> PlaceSearchResponse.of(
                                 place,
+                                bookmark.getThumbnailUrl(),
                                 bookmark.getType(),
                                 bookmark.getId(),
                                 bookmark.getRate()))
-                        .orElse(PlaceSearchResponse.ofWithoutBookmark(place)))
+                        .orElse(PlaceSearchResponse.ofWithoutBookmark(place, scrapService.getPlaceThumbnailUrl(place.getId()))))
                 .filter(place -> place.getCategory() != null)
                 .toList();
     }

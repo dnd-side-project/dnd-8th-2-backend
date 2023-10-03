@@ -22,6 +22,9 @@ public class PlaceGetResponse {
     @Schema(description = "상세 페이지 URL", example = "http://place.map.kakao.com/1520672825")
     private String url;
 
+    @Schema(description = "썸네일 이미지 url", example = "https://t1.daumcdn.net/place/75B5CF9ACCF84162A7E13CB1FD4D5D43")
+    private String thumbnailImage;
+
     @Schema(description = "<p>카테고리 그룹 코드. 목록은 다음과 같음</p>" +
             "<ul>" +
             "<li>MT1 - 대형마트</li>" +
@@ -132,6 +135,7 @@ public class PlaceGetResponse {
 
     public static PlaceGetResponse of(
             KakaoPlaceGetResponse kakaoResponse,
+            String thumbnailImage,
             BookmarkType bookmarkType,
             Long bookmarkId
     ) {
@@ -145,6 +149,7 @@ public class PlaceGetResponse {
                 kakaoResponse.getId(),
                 kakaoResponse.getPlace_name(),
                 kakaoResponse.getPlace_url(),
+                thumbnailImage,
                 categoryGroupCode,
                 kakaoResponse.getCategory_name(),
                 kakaoResponse.getCategory(),
@@ -159,7 +164,7 @@ public class PlaceGetResponse {
         );
     }
 
-    public static PlaceGetResponse ofWithoutBookmark(KakaoPlaceGetResponse kakaoResponse) {
-        return of(kakaoResponse, null, null);
+    public static PlaceGetResponse ofWithoutBookmark(KakaoPlaceGetResponse kakaoResponse, String thumbnailImage) {
+        return of(kakaoResponse, thumbnailImage, null, null);
     }
 }
