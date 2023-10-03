@@ -14,6 +14,7 @@ public class LoginResponse {
     private String uid;
     private LoginType loginType;
     private String nickname;
+    private String email;
     private String accessToken;
     private String refreshToken;
 
@@ -27,6 +28,7 @@ public class LoginResponse {
                 memberDto.getUid(),
                 memberDto.getLoginType(),
                 memberDto.getNickname(),
+                memberDto.getEmail(),
                 accessToken,
                 refreshToken);
     }
