@@ -44,7 +44,7 @@ public class OAuth2Service {
         KakaoProfileResponse kakaoProfile = httpRequestService.getKakaoProfile(token);
 
         // 로그인 또는 회원가입 처리
-        Member member = loginOrSignup(kakaoProfile.getId().toString(), kakaoProfile.getNickname(), LoginType.KAKAO);
+        Member member = loginOrSignup(kakaoProfile.getId().toString(), kakaoProfile.getNickname(), kakaoProfile.getEmail(), LoginType.KAKAO);
         String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
         String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
         refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
@@ -65,7 +65,7 @@ public class OAuth2Service {
         String uid = httpRequestService.getAppleUid(token);
 
         // 로그인 또는 회원가입 처리
-        Member member = loginOrSignup(uid, nickname, LoginType.APPLE);
+        Member member = loginOrSignup(uid, nickname, null, LoginType.APPLE);
         String accessToken = tokenProvider.createAccessToken(member.getUid(), member.getLoginType());
         String refreshToken = tokenProvider.createRefreshToken(member.getUid(), member.getLoginType());
         refreshTokenRedisService.saveRefreshToken(member.getUid(), refreshToken);
@@ -80,13 +80,14 @@ public class OAuth2Service {
      * @param loginType 소셜 로그인 타입
      * @return 로그인 (또는 회원가입) 완료 후의 Member Entity
      */
-    private Member loginOrSignup(String uid, String nickname, LoginType loginType) {
+    private Member loginOrSignup(String uid, String nickname, String email, LoginType loginType) {
         return memberRepository.findByUidAndLoginTypeAndDeletedAtIsNull(uid, loginType)
                 .orElseGet(() -> {
                     Member newMember = Member.builder()
                             .uid(uid)
                             .loginType(loginType)
                             .nickname(nickname)
+                            .email(email)
                             .build();
                     memberRepository.save(newMember);
                     return newMember;

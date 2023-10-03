@@ -23,7 +23,10 @@ public class MemberResponse {
     @Schema(description = "사용자 닉네임", example = "홍길동")
     private String nickname;
 
+    @Schema(description = "사용자 이메일", example = "gildong1234@naver.com", nullable = true)
+    private String email;
+
     public static MemberResponse from(MemberDto dto) {
-        return new MemberResponse(dto.getId(), dto.getUid(), dto.getLoginType(), dto.getNickname());
+        return new MemberResponse(dto.getId(), dto.getUid(), dto.getLoginType(), dto.getNickname(), dto.getEmail());
     }
 }

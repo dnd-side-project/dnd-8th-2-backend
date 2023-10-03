@@ -14,9 +14,10 @@ public class MemberDto {
     private String uid;
     private LoginType loginType;
     private String nickname;
+    private String email;
 
-    public static MemberDto of(Long id, String uid, LoginType loginType, String nickname) {
-        return new MemberDto(id, uid, loginType, nickname);
+    public static MemberDto of(Long id, String uid, LoginType loginType, String nickname, String email) {
+        return new MemberDto(id, uid, loginType, nickname, email);
     }
 
     public static MemberDto from(Member member) {
@@ -24,7 +25,8 @@ public class MemberDto {
                 member.getId(),
                 member.getUid(),
                 member.getLoginType(),
-                member.getNickname()
+                member.getNickname(),
+                member.getEmail()
         );
     }
 }
