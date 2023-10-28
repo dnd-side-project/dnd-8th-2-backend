@@ -1,12 +1,15 @@
 package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.Member;
+import com.dnd.reetplace.app.domain.Survey;
 import com.dnd.reetplace.app.dto.auth.RefreshTokenDto;
 import com.dnd.reetplace.app.dto.auth.response.KakaoProfileResponse;
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
 import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.dto.survey.SurveyDto;
+import com.dnd.reetplace.app.dto.survey.request.SurveyListRequest;
+import com.dnd.reetplace.app.dto.survey.request.SurveyRequest;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.SurveyRepository;
 import com.dnd.reetplace.app.type.LoginType;
@@ -98,11 +101,11 @@ public class OAuth2Service {
      * 회원 탈퇴 및 탈퇴 설문을 등록한다.
      *
      * @param memberId   탈퇴할 회원의 id
-     * @param surveyDto  탈퇴 설문 관련 dto
+     * @param request  선택한 탈퇴 설문
      * @param identifier 카카오 - access token / 애플 - authorization code
      */
     @Transactional
-    public void unlink(Long memberId, SurveyDto surveyDto, String identifier) {
+    public void unlink(Long memberId, SurveyListRequest request, String identifier) {
         Member member = getMember(memberId);
 
         // 소셜 로그인 연결끊기
@@ -114,7 +117,7 @@ public class OAuth2Service {
 
         refreshTokenRedisService.deleteRefreshToken(member.getUid());
         memberRepository.delete(member);
-        surveyRepository.save(surveyDto.toEntity(member));
+        surveyRepository.saveAll(request.getData().stream().map(s -> s.toDto().toEntity(member)).toList());
     }
 
     /**
