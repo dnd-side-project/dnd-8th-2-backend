@@ -50,7 +50,7 @@ public class PlaceController {
                     "<li>로그인 한 사용자라면 Access Token을 포함하여 요청 시 각 장소 별 북마크 여부를 확인할 수 있습니다.</li>" +
                     "</ul>"
     )
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<PlaceSearchListResponse> searchPlace(
             HttpServletRequest httpServletRequest,
             @Valid @RequestBody PlaceSearchRequest request) {
