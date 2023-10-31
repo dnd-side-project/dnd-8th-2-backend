@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.auth.response.LoginResponse;
 import com.dnd.reetplace.app.dto.auth.response.TokenResponse;
+import com.dnd.reetplace.app.dto.survey.request.SurveyListRequest;
 import com.dnd.reetplace.app.dto.survey.request.SurveyRequest;
 import com.dnd.reetplace.app.service.OAuth2Service;
 import com.dnd.reetplace.app.service.RefreshTokenRedisService;
@@ -88,12 +89,12 @@ public class AuthController {
     )
     @PostMapping("/unlink")
     public ResponseEntity<Void> unlink(
-            @Valid @RequestBody SurveyRequest surveyRequest,
+            @Valid @RequestBody SurveyListRequest request,
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(name = "identifier", description = "카카오 - Access Token / 애플 - Authorization Code", example = "29WryM8Px6...")
             @RequestHeader(value = "identifier") String identifier
     ) {
-        oAuth2Service.unlink(memberDetails.getId(), surveyRequest.toDto(), identifier);
+        oAuth2Service.unlink(memberDetails.getId(), request, identifier);
         return ResponseEntity.noContent().build();
     }
 }
