@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
+import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.*;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
@@ -71,12 +72,11 @@ public class PlaceService {
      * 장소는 최대 15개까지 조회된다. (앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.)
      *
      * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
-     * @param query              검색하고자 하는 키워드
-     * @param page               결과 페이지
+     * @param request 검색 키워드, 사용자 위치(lat, lng), 페이지
      * @return 키워드에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
-    public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, String query, int page) {
-        List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(query, page);
+    public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, PlaceSearchRequest request) {
+        List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(request);
         List<PlaceSearchResponse> placeSearchWithBookmark = updateSearchPlaceIsBookmark(httpServletRequest, result);
         return PlaceSearchListResponse.of(placeSearchWithBookmark);
     }

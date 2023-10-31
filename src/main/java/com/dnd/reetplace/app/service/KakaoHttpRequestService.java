@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
+import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.KakaoPlaceGetListResponse;
 import com.dnd.reetplace.app.dto.place.response.KakaoPlaceGetResponse;
 import com.dnd.reetplace.app.dto.place.response.KakaoPlaceSearchListResponse;
@@ -121,7 +122,7 @@ public class KakaoHttpRequestService {
         }
     }
 
-    public List<KakaoPlaceSearchResponse> searchPlace(String query, int page) {
+    public List<KakaoPlaceSearchResponse> searchPlace(PlaceSearchRequest request) {
         try {
             // Header 추가
             HttpHeaders header = new HttpHeaders();
@@ -131,8 +132,11 @@ public class KakaoHttpRequestService {
             // request 구성
             UriComponents uriBuilder = UriComponentsBuilder
                     .fromUriString(GET_PLACE_KEYWORD_URL)
-                    .queryParam("query", query)
-                    .queryParam("page", page)
+                    .queryParam("query", request.getQuery())
+                    .queryParam("page", request.getPage())
+                    .queryParam("x", request.getLng())
+                    .queryParam("y", request.getLat())
+                    .queryParam("radius", 1000)
                     .build();
 
             HttpEntity<MultiValueMap<String, String>> httpRequest = new HttpEntity<>(header);
