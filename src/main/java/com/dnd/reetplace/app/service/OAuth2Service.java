@@ -125,14 +125,19 @@ public class OAuth2Service {
      */
     @Transactional
     public TokenResponse refresh(HttpServletRequest request) {
+        String token = validateToken(request);
+        LoginType loginType = tokenProvider.getLoginType(token);
+        String uid = refreshTokenRedisService.findRefreshToken(token).getUid();
+        String accessToken = tokenProvider.createAccessToken(uid, loginType);
+        String refreshToken = tokenProvider.createRefreshToken(uid, loginType);
+        refreshTokenRedisService.saveRefreshToken(uid, refreshToken);
+        return TokenResponse.of(accessToken, refreshToken);
+    }
+
+    private String validateToken(HttpServletRequest request) {
         String token = tokenProvider.getToken(request);
         tokenProvider.validateToken(token);
-        LoginType loginType = tokenProvider.getLoginType(token);
-        RefreshTokenDto refreshTokenDto = refreshTokenRedisService.findRefreshToken(token);
-        String accessToken = tokenProvider.createAccessToken(refreshTokenDto.getUid(), loginType);
-        String refreshToken = tokenProvider.createRefreshToken(refreshTokenDto.getUid(), loginType);
-        refreshTokenRedisService.saveRefreshToken(refreshTokenDto.getUid(), refreshToken);
-        return TokenResponse.of(accessToken, refreshToken);
+        return token;
     }
 
     /**
