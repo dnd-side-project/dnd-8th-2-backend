@@ -134,6 +134,14 @@ public class OAuth2Service {
         return TokenResponse.of(accessToken, refreshToken);
     }
 
+    /**
+     * HttpServletRequest에서 Token을 꺼내고 이를 검증한다.
+     * 검증되지 않은 Token인 경우, Exception을 반환한다.
+     * 검증되었을 경우, Token을 반환한다.
+     *
+     * @param request Http Request
+     * @return request에서 검증이 완료된 JWT Token
+     */
     private String validateToken(HttpServletRequest request) {
         String token = tokenProvider.getToken(request);
         tokenProvider.validateToken(token);
