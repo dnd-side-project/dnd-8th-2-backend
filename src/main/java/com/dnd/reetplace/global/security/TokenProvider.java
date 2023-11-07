@@ -38,8 +38,8 @@ public class TokenProvider {
     public static final long DAY = 24 * HOUR;
     public static final long MONTH = 30 * DAY;
 
-    public static final long AT_EXP_TIME = 12 * HOUR; // Access Token 만료시간 : 12시간
-    public static final long RT_EXP_TIME = 14 * DAY; // Refresh Token 만료시간 : 2주
+    public static final long AT_EXP_TIME = 24 * HOUR; // Access Token 만료시간 : 24시간
+    public static final long RT_EXP_TIME = 2 * MONTH; // Refresh Token 만료시간 : 2개월
 
     // JWT Secret
     @Value("${jwt.secret:reet_place_jwt_secret_local_sec_e32}")
