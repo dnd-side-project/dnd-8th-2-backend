@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @Tag(name = "장소 북마크", description = "장소 북마크 관련 API입니다.")
 @RequiredArgsConstructor
@@ -77,11 +78,11 @@ public class BookmarkController {
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
                     description = "<p>북마크 검색 종류. 목록은 다음과 같음</p>" +
-                            "<ul>" +
-                            "<li>ALL - 전체 조회</li>" +
-                            "<li>WANT - 가보고 싶어요</li>" +
-                            "<li>GONE - 다녀왔어요</li>" +
-                            "</ul>",
+                                  "<ul>" +
+                                  "<li>ALL - 전체 조회</li>" +
+                                  "<li>WANT - 가보고 싶어요</li>" +
+                                  "<li>GONE - 다녀왔어요</li>" +
+                                  "</ul>",
                     example = "ALL"
             ) @RequestParam BookmarkSearchType searchType,
             @Parameter(
@@ -94,11 +95,11 @@ public class BookmarkController {
             ) @RequestParam(required = false, defaultValue = "20") int size,
             @Parameter(
                     description = "<p>북마크 검색 정렬 기준. 목록은 다음과 같음</p>" +
-                            "<p>현재 인기순 정렬은 구현이 되지 않은 상태. 최신순 정렬로만 검색 가능</p>" +
-                            "<ul>" +
-                            "<li>LATEST - 최신순</li>" +
-                            "<li>POPULARITY - 인기순</li>" +
-                            "</ul>",
+                                  "<p>현재 인기순 정렬은 구현이 되지 않은 상태. 최신순 정렬로만 검색 가능</p>" +
+                                  "<ul>" +
+                                  "<li>LATEST - 최신순</li>" +
+                                  "<li>POPULARITY - 인기순</li>" +
+                                  "</ul>",
                     example = "ALL"
             )
             @RequestParam(required = false, defaultValue = "LATEST") BookmarkSearchSort sort
@@ -111,6 +112,35 @@ public class BookmarkController {
         ).map(BookmarkResponse::from);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(
+            summary = "전체 북마크 간략 정보 조회",
+            description = """
+                    <p>전체 북마크들의 간략 정보를 조회합니다.
+                    <p>정렬 기준은 최신순입니다.
+                    """,
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/all/summaries")
+    public List<BookmarkResponse> searchAllBookmarkSummaries(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Parameter(
+                    description = """
+                            <p>북마크 검색 종류. 목록은 다음과 같음</p>
+                            <ul>
+                                <li>ALL - 전체 조회</li>
+                                <li>WANT - 가보고 싶어요</li>
+                                <li>GONE - 다녀왔어요</li>
+                            </ul>
+                            """,
+                    example = "ALL"
+            ) @RequestParam BookmarkSearchType searchType
+    ) {
+        List<BookmarkDto> bookmarkDtos = bookmarkService.searchAllBookmarks(memberDetails.getId(), searchType);
+        return bookmarkDtos.stream()
+                .map(BookmarkResponse::from)
+                .toList();
     }
 
     @Operation(

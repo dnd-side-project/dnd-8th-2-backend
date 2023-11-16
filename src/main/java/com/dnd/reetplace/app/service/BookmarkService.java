@@ -78,6 +78,25 @@ public class BookmarkService {
     }
 
     /**
+     * 전체 북마크 리스트를 검색한다.
+     *
+     * @param memberId   북마크 리스트를 검색하고자 하는 로그인 회원
+     * @param searchType 검색하고자 하는 북마크 리스트의 종류 (전체, 가고 싶어요, 갔다 왔어요)
+     * @return 북마크 정보가 담긴 {@link Slice} 객체
+     */
+    public List<BookmarkDto> searchAllBookmarks(Long memberId, BookmarkSearchType searchType) {
+        List<Bookmark> searchResult;
+        if (searchType.equals(ALL)) {
+            searchResult = bookmarkRepository.findAllByMember_IdOrderByCreatedAtDesc(memberId);
+        } else {
+            searchResult = bookmarkRepository.findAllByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId);
+        }
+        return searchResult.stream()
+                .map(BookmarkDto::from)
+                .toList();
+    }
+
+    /**
      * 북마크 리스트를 검색한다.
      *
      * @param memberId   북마크 리스트를 검색하고자 하는 로그인 회원
@@ -156,6 +175,7 @@ public class BookmarkService {
             throw new AlreadyMarkedPlaceException(memberId, kakaoPid);
         }
     }
+
     /**
      * 북마크 수정 권한을 확인한다.
      * 북마크를 생성한 회원(소유자)만이 수정이 가능하다.
