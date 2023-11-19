@@ -182,7 +182,7 @@ class BookmarkControllerTest {
         mvc.perform(delete("/api/bookmarks/" + bookmarkId)
                 .with(csrf())
                 .with(user(new MemberDetails(createMember(1L))))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isNoContent());
     }
 
     private Member createMember(Long memberId) {
