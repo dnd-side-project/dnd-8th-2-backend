@@ -148,6 +148,41 @@ class BookmarkServiceTest {
         assertThat(numOfBookmarksResponse.getNumOfDone()).isEqualTo(0);
     }
 
+    @DisplayName("회원 id와 검색할 북마크 종류가 전체 북마크로 주어지고, 전체 북마크를 검색하면, 검색 결과가 반환된다.")
+    @Test
+    void givenMemberIdAndSearchTypeAll_whenSearchAllBookmarks_thenReturnResult() {
+        // given
+        Long memberId = 1L;
+        List<Bookmark> expectedResult = List.of(createBookmark(createMember(), createPlace()));
+        given(bookmarkRepository.findAllByMember_IdOrderByCreatedAtDesc(memberId)).willReturn(expectedResult);
+
+        // when
+        List<BookmarkDto> actualResult = sut.searchAllBookmarks(memberId, BookmarkSearchType.ALL);
+
+        // then
+        then(bookmarkRepository).should().findAllByMember_IdOrderByCreatedAtDesc(memberId);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(actualResult.size()).isEqualTo(expectedResult.size());
+    }
+
+    @DisplayName("회원 id와 검색할 북마크 종류가 '가고싶어요'로 주어지고, 전체 북마크를 검색하면, 검색 결과가 반환된다.")
+    @Test
+    void givenMemberIdAndSearchTypeWant_whenSearchAllBookmarks_thenReturnResult() {
+        // given
+        Long memberId = 1L;
+        BookmarkSearchType searchType = BookmarkSearchType.WANT;
+        List<Bookmark> expectedResult = List.of(createBookmark(createMember(), createPlace()));
+        given(bookmarkRepository.findAllByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId)).willReturn(expectedResult);
+
+        // when
+        List<BookmarkDto> actualResult = sut.searchAllBookmarks(memberId, searchType);
+
+        // then
+        then(bookmarkRepository).should().findAllByTypeAndMember_IdOrderByCreatedAtDesc(searchType.toBookmarkType(), memberId);
+        then(bookmarkRepository).shouldHaveNoMoreInteractions();
+        assertThat(actualResult.size()).isEqualTo(expectedResult.size());
+    }
+
     @DisplayName("북마크 전체 검색을 하면, 북마크 slice를 반환한다.")
     @Test
     void givenSearchTypeAll_whenSearchingBookmarks_thenReturnBookmarkSlice() {
