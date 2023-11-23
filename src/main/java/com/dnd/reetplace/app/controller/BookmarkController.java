@@ -171,14 +171,15 @@ public class BookmarkController {
             security = @SecurityRequirement(name = "Authorization")
     )
     @ApiResponses({
-            @ApiResponse(description = "OK", responseCode = "200", content = @Content),
+            @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
             @ApiResponse(description = "북마크 취소 권한이 없는 경우(내가 저장하지 않은 북마크를 삭제하려고 하는 경우).", responseCode = "403", content = @Content)
     })
     @DeleteMapping("/{bookmarkId}")
-    public void delete(
+    public ResponseEntity<Void> delete(
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long bookmarkId
     ) {
         bookmarkService.delete(memberDetails.getId(), bookmarkId);
+        return ResponseEntity.noContent().build();
     }
 }
