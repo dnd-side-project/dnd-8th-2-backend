@@ -1,6 +1,7 @@
 package com.dnd.reetplace.app.service;
 
 import com.dnd.reetplace.app.domain.Member;
+import com.dnd.reetplace.app.domain.Search;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
@@ -8,6 +9,7 @@ import com.dnd.reetplace.app.dto.place.response.*;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
+import com.dnd.reetplace.app.repository.SearchRepository;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
@@ -32,6 +34,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final BookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
+    private final SearchRepository searchRepository;
     private final KakaoHttpRequestService kakaoHttpRequestService;
     private final ScrapService scrapService;
 
@@ -39,6 +42,7 @@ public class PlaceService {
     public static final String ASIA_KEYWORD = "아시아음식";
     public static final String DEPARTMENT_CATEGORY_NAME = "가정,생활 > 백화점";
     public static final String MARKET_CATEGORY_NAME = "가정,생활 > 시장";
+    public static final int SEARCH_HISTORY_MAX_COUNT = 20;
 
     /**
      * sub category에 해당하는 장소 목록을 카카오 로컬 API를 사용하여 조회한다.
@@ -75,10 +79,36 @@ public class PlaceService {
      * @param page               결과 페이지
      * @return 키워드에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
+    @Transactional
     public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, String query, int page) {
         List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(query, page);
-        List<PlaceSearchResponse> placeSearchWithBookmark = updateSearchPlaceIsBookmark(httpServletRequest, result);
+        Member loginMember = findLoginMember(httpServletRequest);
+        List<PlaceSearchResponse> placeSearchWithBookmark = this.updateSearchPlaceIsBookmark(loginMember, result);
+        if (loginMember != null) {
+            this.updateSearchHistory(loginMember, query);
+        }
         return PlaceSearchListResponse.of(placeSearchWithBookmark);
+    }
+
+    /**
+     * 로그인한 사용자에 대해 검색기록을 저장한다.
+     * 검색기록 20개 초과 시 가장 오래된 검색기록을 삭제하고 검색기록을 저장한다.
+     *
+     * @param loginMember
+     * @param query
+     */
+    private void updateSearchHistory(Member loginMember, String query) {
+        int searchHistoryCount = searchRepository.countByMemberId(loginMember.getId());
+        // 검색기록 20개 초과 시 가장 오래된 검색기록 삭제
+        if (searchHistoryCount >= SEARCH_HISTORY_MAX_COUNT) {
+            searchRepository.deleteLatestSearchByMemberId(loginMember.getId());
+        }
+        // 검색기록 저장
+        Search search = Search.builder()
+                .member(loginMember)
+                .query(query)
+                .build();
+        searchRepository.save(search);
     }
 
     /**
@@ -164,12 +194,11 @@ public class PlaceService {
      * 또한, 카카오에서 제공하는 장소 정보 -> 앱 내에서 필요한 정보만 포함하는 Custom Response로 결과를 변환하여 반환한다.
      * 이 때, 앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.
      *
-     * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
+     * @param loginMember 로그인 사용자 객체 (비로그인 시 null)
      * @param result             카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
      * @return 북마크 여부, 북마크 id, 릿플점수가 업데이트 된 Custom Place Response List
      */
-    private List<PlaceSearchResponse> updateSearchPlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceSearchResponse> result) {
-        Member loginMember = findLoginMember(httpServletRequest);
+    private List<PlaceSearchResponse> updateSearchPlaceIsBookmark(Member loginMember, List<KakaoPlaceSearchResponse> result) {
         if (loginMember == null) {
             return result.stream()
                     .map(response -> PlaceSearchResponse.ofWithoutBookmark(response, scrapService.getPlaceThumbnailUrl(response.getId())))
