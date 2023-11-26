@@ -242,18 +242,4 @@ public class PlaceService {
         }
         return null;
     }
-
-    /**
-     * memberId에 해당하는 로그인 사용자의 검색 기록을 조회한다.
-     *
-     * @param memberId
-     * @return
-     */
-    public SearchHistoryListResponse getSearchHistory(Long memberId) {
-        List<SearchDto> searchDtoList = searchRepository.findByMemberIdAndDeletedAtIsNull(memberId)
-                .stream()
-                .map(SearchDto::from)
-                .toList();
-        return SearchHistoryListResponse.of(searchDtoList);
-    }
 }

@@ -3,16 +3,12 @@ package com.dnd.reetplace.app.controller;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceSearchListResponse;
-import com.dnd.reetplace.app.dto.search.response.SearchHistoryListResponse;
 import com.dnd.reetplace.app.service.PlaceService;
-import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,21 +62,5 @@ public class PlaceController {
             ) @RequestParam(required = false, defaultValue = "1") int page
     ) {
         return ResponseEntity.ok(placeService.searchPlace(httpServletRequest, query, page));
-    }
-
-    @Operation(
-            summary = "검색기록 조회",
-            description = "<p>로그인한 사용자의 검색기록을 조회합니다.</p>" +
-                    "<ul>" +
-                    "<li>사용자의 검색기록은 최신순으로 최대 20개까지만 저장됩니다.</li>" +
-                    "<li>사용자의 검색기록은 최신순으로 정렬되어 반환됩니다.</li>" +
-                    "</ul>",
-            security = @SecurityRequirement(name = "Authorization")
-    )
-    @GetMapping("/search/history")
-    public ResponseEntity<SearchHistoryListResponse> getSearchHistory(
-            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails
-    ) {
-        return ResponseEntity.ok(placeService.getSearchHistory(memberDetails.getId()));
     }
 }
