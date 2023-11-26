@@ -36,11 +36,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -142,6 +142,25 @@ class BookmarkControllerTest {
         ).andExpect(status().isOk());
     }
 
+    @DisplayName("주어진 검색 종류에 해당하는 전체 북마크의 간략 정보를 검색하면, 검색된 전체 북마크들의 간략 정보가 반환한다.")
+    @Test
+    void givenSearchType_whenSearchAllBookmarkSummaries_thenReturnResult() throws Exception {
+        // given
+        Long memberId = 1L;
+        BookmarkSearchType searchType = BookmarkSearchType.ALL;
+        given(bookmarkService.searchAllBookmarks(memberId, searchType)).willReturn(List.of());
+
+        // when & then
+        mvc.perform(
+                        get("/api/bookmarks/all/summaries")
+                                .param("searchType", "ALL")
+                                .with(csrf())
+                                .with(user(new MemberDetails(createMember(memberId))))
+                )
+                .andExpect(status().isOk());
+        then(bookmarkService).should().searchAllBookmarks(memberId, searchType);
+    }
+
     @DisplayName("수정할 정보가 주어지고, 북마크를 수정하면, 수정된 북마크 정보가 반환된다.")
     @Test
     void givenInfoToUpdate_whenUpdating_thenReturnUpdatedBookmark() throws Exception {
@@ -182,7 +201,7 @@ class BookmarkControllerTest {
         mvc.perform(delete("/api/bookmarks/" + bookmarkId)
                 .with(csrf())
                 .with(user(new MemberDetails(createMember(1L))))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isNoContent());
     }
 
     private Member createMember(Long memberId) {

@@ -1,6 +1,7 @@
 package com.dnd.reetplace.app.controller;
 
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
+import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceSearchListResponse;
 import com.dnd.reetplace.app.service.PlaceService;
@@ -49,18 +50,10 @@ public class PlaceController {
                     "<li>로그인 한 사용자라면 Access Token을 포함하여 요청 시 각 장소 별 북마크 여부를 확인할 수 있습니다.</li>" +
                     "</ul>"
     )
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<PlaceSearchListResponse> searchPlace(
             HttpServletRequest httpServletRequest,
-            @Parameter(
-                    description = "검색 키워드",
-                    example = "햄버거"
-            ) @RequestParam String query,
-            @Parameter(
-                    description = "페이지 번호 (1부터 시작합니다). 기본값은 1입니다.",
-                    example = "1"
-            ) @RequestParam(required = false, defaultValue = "1") int page
-    ) {
-        return ResponseEntity.ok(placeService.searchPlace(httpServletRequest, query, page));
+            @Valid @RequestBody PlaceSearchRequest request) {
+        return ResponseEntity.ok(placeService.searchPlace(httpServletRequest, request));
     }
 }

@@ -19,7 +19,7 @@ public class Survey extends BaseTimeEntity {
     @Column(name = "survey_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 

@@ -9,7 +9,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Getter
 public class SurveyRequest {
 
