@@ -6,6 +6,9 @@ import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.response.*;
+import com.dnd.reetplace.app.dto.search.SearchDto;
+import com.dnd.reetplace.app.dto.search.response.SearchHistoryListResponse;
+import com.dnd.reetplace.app.dto.search.response.SearchHistoryResponse;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
 import com.dnd.reetplace.app.repository.PlaceRepository;
@@ -22,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.dnd.reetplace.app.domain.place.PlaceCategory.REET_PLACE_POPULAR;
 
@@ -237,5 +241,19 @@ public class PlaceService {
                     .orElseThrow(() -> new MemberUidNotFoundException(uid));
         }
         return null;
+    }
+
+    /**
+     * memberId에 해당하는 로그인 사용자의 검색 기록을 조회한다.
+     *
+     * @param memberId
+     * @return
+     */
+    public SearchHistoryListResponse getSearchHistory(Long memberId) {
+        List<SearchDto> searchDtoList = searchRepository.findByMemberIdAndDeletedAtIsNull(memberId)
+                .stream()
+                .map(SearchDto::from)
+                .toList();
+        return SearchHistoryListResponse.of(searchDtoList);
     }
 }
