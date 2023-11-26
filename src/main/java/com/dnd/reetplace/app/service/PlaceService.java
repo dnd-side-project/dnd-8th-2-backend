@@ -84,12 +84,12 @@ public class PlaceService {
      * @return 키워드에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
     @Transactional
-    public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, String query, int page) {
-        List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(query, page);
+    public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, PlaceSearchRequest request) {
+        List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(request);
         Member loginMember = findLoginMember(httpServletRequest);
         List<PlaceSearchResponse> placeSearchWithBookmark = this.updateSearchPlaceIsBookmark(loginMember, result);
         if (loginMember != null) {
-            this.updateSearchHistory(loginMember, query);
+            this.updateSearchHistory(loginMember, request.getQuery());
         }
         return PlaceSearchListResponse.of(placeSearchWithBookmark);
     }
