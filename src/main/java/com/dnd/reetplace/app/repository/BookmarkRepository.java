@@ -10,14 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     boolean existsByMember_IdAndPlace_KakaoPid(Long memberId, String kakaoPid);
 
+    Optional<Bookmark> findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType type, Long memberId);
+
     @Query("select b from Bookmark b " +
-            "join fetch b.place p " +
-            "where b.member.id = :memberId")
+           "join fetch b.place p " +
+           "where b.member.id = :memberId")
     List<Bookmark> findAllByMember(@Param("memberId") Long memberId);
 
     @EntityGraph(attributePaths = {"member", "place"})
