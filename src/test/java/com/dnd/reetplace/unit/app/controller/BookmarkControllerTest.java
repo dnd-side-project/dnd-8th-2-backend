@@ -11,7 +11,7 @@ import com.dnd.reetplace.app.domain.place.Point;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
-import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.BookmarkTypeInformationResponse;
 import com.dnd.reetplace.app.dto.member.MemberDto;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.dto.place.request.PlaceRequest;
@@ -103,20 +103,32 @@ class BookmarkControllerTest {
         long memberId = 1L;
         int expectedNumOfAll = 5;
         int expectedNumOfWant = 3;
+        String expectedThumbnailImageUrlOfWant = "https://thumbnail-image-url-of-want";
         int expectedNumOfDone = 2;
-        NumOfBookmarksResponse expectedResult = new NumOfBookmarksResponse(expectedNumOfAll, expectedNumOfWant, expectedNumOfDone);
-        given(bookmarkService.getNumOfBookmarks(memberId))
+        String expectedThumbnailImageUrlOfDone = "https://thumbnail-image-url-of-done";
+        BookmarkTypeInformationResponse expectedResult = new BookmarkTypeInformationResponse(
+                expectedNumOfAll,
+                expectedNumOfWant,
+                expectedThumbnailImageUrlOfWant,
+                expectedNumOfDone,
+                expectedThumbnailImageUrlOfDone
+        );
+        given(bookmarkService.getBookmarkTypeInformation(memberId))
                 .willReturn(expectedResult);
 
         // when & then
         mvc.perform(
-                        get("/api/bookmarks/counts")
+                        get("/api/bookmarks/type-information")
                                 .with(csrf())
                                 .with(user(new MemberDetails(createMember(memberId))))
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.numOfAll").value(expectedNumOfAll))
                 .andExpect(jsonPath("$.numOfWant").value(expectedNumOfWant))
-                .andExpect(jsonPath("$.numOfDone").value(expectedNumOfDone));
+                .andExpect(jsonPath("$.thumbnailImageUrlOfWant").value(expectedThumbnailImageUrlOfWant))
+                .andExpect(jsonPath("$.numOfDone").value(expectedNumOfDone))
+                .andExpect(jsonPath("$.thumbnailImageUrlOfDone").value(expectedThumbnailImageUrlOfDone));
+        then(bookmarkService).should().getBookmarkTypeInformation(memberId);
+        then(bookmarkService).shouldHaveNoMoreInteractions();
     }
 
     @DisplayName("주어진 검색 정보/조건으로 검색을 하면 북마크 목록을 반환한다.")

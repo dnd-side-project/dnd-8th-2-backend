@@ -5,7 +5,7 @@ import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.*;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
-import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.BookmarkTypeInformationResponse;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
@@ -48,7 +48,7 @@ class BookmarkServiceTest {
     private BookmarkRepository bookmarkRepository;
 
     @DisplayName("회원 PK와 북마크 생성을 위한 정보가 주어지고 DB에 존재하는 장소에 대한 북마크를 생성하면 " +
-            "북마크 저장 후 저장된 북마크 정보를 반환한다.")
+                 "북마크 저장 후 저장된 북마크 정보를 반환한다.")
     @Test
     void givenMemberIdAndBookmarkInfo_whenMarkingPlace_thenSaveAndReturnBookmark() {
         // given
@@ -77,7 +77,7 @@ class BookmarkServiceTest {
     }
 
     @DisplayName("회원 PK와 북마크 생성을 위한 정보가 주어지고 DB에 존재하지 않는 장소에 대해 북마크를 생성하면 " +
-            "북마크 저장 후 저장된 북마크 정보를 반환한다.")
+                 "북마크 저장 후 저장된 북마크 정보를 반환한다.")
     @Test
     void givenMemberIdAndBookmarkInfo_whenMarkingNotExistentPlace_thenSaveBookmarkAndPlace() {
         // given
@@ -130,22 +130,27 @@ class BookmarkServiceTest {
         long memberId = 1L;
         Member dummyMember = createMember();
         Place dummyPlace = createPlace();
-        List<Bookmark> bookmarks = List.of(createBookmark(dummyMember, dummyPlace),
+        List<Bookmark> bookmarks = List.of(
                 createBookmark(dummyMember, dummyPlace),
-                createBookmark(dummyMember, dummyPlace));
+                createBookmark(dummyMember, dummyPlace),
+                createBookmark(dummyMember, dummyPlace)
+        );
         int numOfBookmarks = bookmarks.size();
-        given(bookmarkRepository.findAllByMember(memberId))
-                .willReturn(bookmarks);
+        given(bookmarkRepository.findAllByMember(memberId)).willReturn(bookmarks);
+        given(bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.WANT, memberId)).willReturn(Optional.of(createBookmark(dummyMember, dummyPlace)));
+        given(bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.DONE, memberId)).willReturn(Optional.of(createBookmark(dummyMember, dummyPlace)));
 
         // when
-        NumOfBookmarksResponse numOfBookmarksResponse = sut.getNumOfBookmarks(memberId);
+        BookmarkTypeInformationResponse bookmarkTypeInformationResponse = sut.getBookmarkTypeInformation(memberId);
 
         // then
         then(bookmarkRepository).should().findAllByMember(memberId);
+        then(bookmarkRepository).should().findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.WANT, memberId);
+        then(bookmarkRepository).should().findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.DONE, memberId);
         then(bookmarkRepository).shouldHaveNoMoreInteractions();
-        assertThat(numOfBookmarksResponse.getNumOfAll()).isEqualTo(numOfBookmarks);
-        assertThat(numOfBookmarksResponse.getNumOfWant()).isEqualTo(numOfBookmarks);
-        assertThat(numOfBookmarksResponse.getNumOfDone()).isEqualTo(0);
+        assertThat(bookmarkTypeInformationResponse.getNumOfAll()).isEqualTo(numOfBookmarks);
+        assertThat(bookmarkTypeInformationResponse.getNumOfWant()).isEqualTo(numOfBookmarks);
+        assertThat(bookmarkTypeInformationResponse.getNumOfDone()).isEqualTo(0);
     }
 
     @DisplayName("회원 id와 검색할 북마크 종류가 전체 북마크로 주어지고, 전체 북마크를 검색하면, 검색 결과가 반환된다.")
