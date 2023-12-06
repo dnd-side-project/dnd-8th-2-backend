@@ -12,7 +12,6 @@ import java.io.IOException;
 public class ScrapService {
 
     private static final String PRINT_PAGE_BASE_URL = "https://place.map.kakao.com/placePrint.daum?confirmid=";
-    private static final String DEFAULT_IMAGE_URL = "https://climate.onep.go.th/wp-content/uploads/2020/01/default-image.jpg";
 
     /**
      * kakaoPid에 해당하는 장소의 thumbnail image url을 반환한다.
@@ -29,6 +28,6 @@ public class ScrapService {
         }
 
         Element thumbnailImage = doc.selectFirst("div.kakaomap_popup div.popup_body div.thumb_info img.thumb_g");
-        return thumbnailImage != null ? thumbnailImage.absUrl("src") : DEFAULT_IMAGE_URL;
+        return thumbnailImage != null ? thumbnailImage.absUrl("src") : null;
     }
 }
