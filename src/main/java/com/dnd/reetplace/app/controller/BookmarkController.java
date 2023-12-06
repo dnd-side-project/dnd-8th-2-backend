@@ -4,7 +4,7 @@ import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkCreateRequest;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
 import com.dnd.reetplace.app.dto.bookmark.response.BookmarkResponse;
-import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.BookmarkTypeInformationResponse;
 import com.dnd.reetplace.app.service.BookmarkService;
 import com.dnd.reetplace.app.service.ScrapService;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
@@ -57,15 +57,15 @@ public class BookmarkController {
     }
 
     @Operation(
-            summary = "북마크 개수 조회",
-            description = "북마크 개수를 조회합니다.",
+            summary = "북마크 종류 별 정보 조회",
+            description = "각 북마크 종류 별 정보를 조회합니다.",
             security = @SecurityRequirement(name = "Authorization")
     )
-    @GetMapping("/counts")
-    public NumOfBookmarksResponse getNumOfBookmarks(
+    @GetMapping("/type-information")
+    public BookmarkTypeInformationResponse getBookmarkTypeInformation(
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails
     ) {
-        return bookmarkService.getNumOfBookmarks(memberDetails.getId());
+        return bookmarkService.getBookmarkTypeInformation(memberDetails.getId());
     }
 
     @Operation(

@@ -5,7 +5,7 @@ import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.Place;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.bookmark.request.BookmarkUpdateRequest;
-import com.dnd.reetplace.app.dto.bookmark.response.NumOfBookmarksResponse;
+import com.dnd.reetplace.app.dto.bookmark.response.BookmarkTypeInformationResponse;
 import com.dnd.reetplace.app.dto.place.PlaceDto;
 import com.dnd.reetplace.app.repository.BookmarkRepository;
 import com.dnd.reetplace.app.repository.MemberRepository;
@@ -13,10 +13,7 @@ import com.dnd.reetplace.app.repository.PlaceRepository;
 import com.dnd.reetplace.app.type.BookmarkSearchSort;
 import com.dnd.reetplace.app.type.BookmarkSearchType;
 import com.dnd.reetplace.app.type.BookmarkType;
-import com.dnd.reetplace.global.exception.bookmark.AlreadyMarkedPlaceException;
-import com.dnd.reetplace.global.exception.bookmark.BookmarkDeletePermissionDeniedException;
-import com.dnd.reetplace.global.exception.bookmark.BookmarkNotFoundByIdException;
-import com.dnd.reetplace.global.exception.bookmark.BookmarkUpdatePermissionDeniedException;
+import com.dnd.reetplace.global.exception.bookmark.*;
 import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -60,12 +57,15 @@ public class BookmarkService {
     }
 
     /**
-     * 북마크 개수를 조회한다.
+     * 북마크 종류별 정보를 조회한다.
+     * 조회하는 정보는 다음과 같다.
+     * - 북마크 종류별 개수
+     * - 북마크 종류별 대표 이미지
      *
-     * @param loginMemberId 북마크 개수를 조회하고자 하는 로그인한 회원
-     * @return 전체, "가보고싶어요", "다녀왔어요"로 표시한 북마크의 개수가 응답된다.
+     * @param loginMemberId 북마크 정보를 조회하고자 하는 로그인 회원
+     * @return 조회한 북마크 종류별 정보
      */
-    public NumOfBookmarksResponse getNumOfBookmarks(Long loginMemberId) {
+    public BookmarkTypeInformationResponse getBookmarkTypeInformation(Long loginMemberId) {
         List<Bookmark> bookmarks = bookmarkRepository.findAllByMember(loginMemberId);
 
         int numOfAll = bookmarks.size();
@@ -74,7 +74,10 @@ public class BookmarkService {
                 .count();
         int numOfDone = numOfAll - numOfWant;
 
-        return new NumOfBookmarksResponse(numOfAll, numOfWant, numOfDone);
+        String thumbnailUrlOfWant = getLatestBookmarkByTypeAndMemberId(BookmarkType.WANT, loginMemberId).getThumbnailUrl();
+        String thumbnailUrlOfDone = getLatestBookmarkByTypeAndMemberId(BookmarkType.DONE, loginMemberId).getThumbnailUrl();
+
+        return new BookmarkTypeInformationResponse(numOfAll, numOfWant, thumbnailUrlOfWant, numOfDone, thumbnailUrlOfDone);
     }
 
     /**
@@ -149,6 +152,11 @@ public class BookmarkService {
     private Bookmark findById(Long bookmarkId) {
         return bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkNotFoundByIdException(bookmarkId));
+    }
+
+    private Bookmark getLatestBookmarkByTypeAndMemberId(BookmarkType type, Long memberId) {
+        return bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(type, memberId)
+                .orElseThrow(BookmarkNotFoundException::new);
     }
 
     /**
