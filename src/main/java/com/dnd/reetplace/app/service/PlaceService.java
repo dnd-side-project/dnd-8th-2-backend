@@ -1,21 +1,18 @@
 package com.dnd.reetplace.app.service;
 
+import com.dnd.reetplace.app.domain.LikeCategory;
 import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.Search;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
+import com.dnd.reetplace.app.dto.category.request.LikeCategoryUpdateRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.*;
-import com.dnd.reetplace.app.dto.search.SearchDto;
-import com.dnd.reetplace.app.dto.search.response.SearchHistoryListResponse;
-import com.dnd.reetplace.app.dto.search.response.SearchHistoryResponse;
-import com.dnd.reetplace.app.repository.BookmarkRepository;
-import com.dnd.reetplace.app.repository.MemberRepository;
-import com.dnd.reetplace.app.repository.PlaceRepository;
-import com.dnd.reetplace.app.repository.SearchRepository;
+import com.dnd.reetplace.app.repository.*;
 import com.dnd.reetplace.app.type.LoginType;
 import com.dnd.reetplace.app.type.PlaceCategoryGroupCode;
+import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import com.dnd.reetplace.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import static com.dnd.reetplace.app.domain.place.PlaceCategory.REET_PLACE_POPULAR;
 
@@ -40,6 +37,7 @@ public class PlaceService {
     private final BookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;
     private final SearchRepository searchRepository;
+    private final LikeCategoryRepository likeCategoryRepository;
     private final KakaoHttpRequestService kakaoHttpRequestService;
     private final ScrapService scrapService;
 
@@ -80,7 +78,7 @@ public class PlaceService {
      * 장소는 최대 15개까지 조회된다. (앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.)
      *
      * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
-     * @param request 검색 키워드, 사용자 위치(lat, lng), 페이지
+     * @param request            검색 키워드, 사용자 위치(lat, lng), 페이지
      * @return 키워드에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
     @Transactional
@@ -92,6 +90,19 @@ public class PlaceService {
             this.updateSearchHistory(loginMember, request.getQuery());
         }
         return PlaceSearchListResponse.of(placeSearchWithBookmark);
+    }
+
+    @Transactional
+    public void updateLikeCategory(Long memberId, LikeCategoryUpdateRequest request) {
+        Member member = this.validateLoginMember(memberId);// 사용자 유효성 검사
+        request.getContents().forEach(r -> {
+            Optional<LikeCategory> likeCategory = likeCategoryRepository.findByMemberIdAndCategory(memberId, r.getCategory());
+            if (likeCategory.isPresent()) {
+                likeCategory.get().updateSubCategory(r.getSubCategory());
+            } else {
+                likeCategoryRepository.save(r.toEntity(member));
+            }
+        });
     }
 
     /**
@@ -199,7 +210,7 @@ public class PlaceService {
      * 이 때, 앱 내 카테고리로 분류되지 못하는 장소의 경우 결과에서 제외된다.
      *
      * @param loginMember 로그인 사용자 객체 (비로그인 시 null)
-     * @param result             카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
+     * @param result      카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
      * @return 북마크 여부, 북마크 id, 릿플점수가 업데이트 된 Custom Place Response List
      */
     private List<PlaceSearchResponse> updateSearchPlaceIsBookmark(Member loginMember, List<KakaoPlaceSearchResponse> result) {
@@ -241,5 +252,15 @@ public class PlaceService {
                     .orElseThrow(() -> new MemberUidNotFoundException(uid));
         }
         return null;
+    }
+
+    /**
+     * memberId를 통해 사용자 유효성을 검사한다.
+     *
+     * @param memberId 사용자 id
+     */
+    private Member validateLoginMember(Long memberId) {
+        return memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new MemberIdNotFoundException(memberId));
     }
 }

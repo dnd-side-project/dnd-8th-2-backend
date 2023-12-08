@@ -1,15 +1,19 @@
 package com.dnd.reetplace.app.controller;
 
+import com.dnd.reetplace.app.dto.category.request.LikeCategoryUpdateRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceSearchListResponse;
 import com.dnd.reetplace.app.service.PlaceService;
+import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,5 +59,18 @@ public class PlaceController {
             HttpServletRequest httpServletRequest,
             @Valid @RequestBody PlaceSearchRequest request) {
         return ResponseEntity.ok(placeService.searchPlace(httpServletRequest, request));
+    }
+
+    @Operation(
+            summary = "카테고리 필터 수정",
+            description = "로그인한 사용자의 카테고리 필터를 수정합니다. 상위 카테고리에 해당하는 하위 카테고리를 아무것도 선택하지 않았을 시 빈 배열을 넘깁니다. ex) subcategory: []",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @PutMapping("/category")
+    public ResponseEntity<Void> updateLikeCategory(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Valid @RequestBody LikeCategoryUpdateRequest request) {
+        placeService.updateLikeCategory(memberDetails.getId(), request);
+        return ResponseEntity.noContent().build();
     }
 }

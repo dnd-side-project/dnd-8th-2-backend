@@ -34,7 +34,7 @@ spring:
     password: ${REET_PLACE_LOCAL_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: none
     defer-datasource-initialization: true
   sql.init.mode: always
 

@@ -39,6 +39,7 @@ public class SearchService {
         return SearchHistoryListResponse.of(searchDtoList);
     }
 
+    @Transactional
     public void deleteSearchHistory(Long memberId, Long searchId) {
         // 사용자 유효성 검사
         this.validateLoginMember(memberId);
@@ -50,6 +51,7 @@ public class SearchService {
         searchRepository.delete(search);
     }
 
+    @Transactional
     public void deleteAllSearchHistory(Long memberId) {
         // 사용자 유효성 검사
         this.validateLoginMember(memberId);
