@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 @Getter
 public class SearchHistoryResponse {
 
+    @Schema(description = "검색기록 id", example = "1")
+    private Long id;
+
     @Schema(description = "검색 키워드", example = "어글리 베이커리")
     private String query;
 
@@ -19,6 +22,6 @@ public class SearchHistoryResponse {
     private LocalDateTime createdAt;
 
     public static SearchHistoryResponse of(SearchDto search) {
-        return new SearchHistoryResponse(search.getQuery(), search.getCreatedAt());
+        return new SearchHistoryResponse(search.getId(), search.getQuery(), search.getCreatedAt());
     }
 }
