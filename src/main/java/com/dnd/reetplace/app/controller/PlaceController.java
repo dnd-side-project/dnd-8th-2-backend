@@ -31,9 +31,10 @@ public class PlaceController {
             summary = "장소 목록 조회",
             description = "<p>사용자의 중심좌표를 기준으로 카테고리에 해당하는 장소목록을 조회합니다.</p>" +
                     "<ul>" +
-                    "<li>조회하고자 하는 카테고리를 모두 subCategory에 포함하여 요청합니다.</li>" +
                     "<li>로그인 한 사용자라면 Authorization 헤더에 Access Token을 포함하여 요청합니다.</li>" +
                     "<li>로그인 한 사용자라면 Access Token을 포함하여 요청 시 각 장소 별 북마크 여부를 확인할 수 있습니다.</li>" +
+                    "<li>로그인 한 사용자라면 subCategory를 포함하지 않습니다.</li>" +
+                    "<li>비로그인 사용자라면 조회하고자 하는 카테고리를 모두 subCategory에 포함하여 요청합니다.</li>" +
                     "</ul>"
     )
     @PostMapping

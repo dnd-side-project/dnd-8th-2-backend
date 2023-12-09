@@ -4,6 +4,7 @@ import com.dnd.reetplace.app.domain.LikeCategory;
 import com.dnd.reetplace.app.domain.Member;
 import com.dnd.reetplace.app.domain.Search;
 import com.dnd.reetplace.app.domain.bookmark.Bookmark;
+import com.dnd.reetplace.app.domain.place.PlaceCategory;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.category.request.LikeCategoryUpdateRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
@@ -20,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.dnd.reetplace.app.domain.place.PlaceCategory.REET_PLACE_POPULAR;
 
@@ -55,11 +53,13 @@ public class PlaceService {
      * @param request            조회하고자 하는 장소 및 현재 위치에 대한 정보가 담긴 Request Dto
      * @return 카테고리에 해당하는 장소 목록 (로그인 시 북마크 여부 포함)
      */
-    public PlaceGetListResponse getPlaceList(
-            HttpServletRequest httpServletRequest,
-            PlaceGetListRequest request) {
+    public PlaceGetListResponse getPlaceList(HttpServletRequest httpServletRequest, PlaceGetListRequest request) {
+        Member loginMember = findLoginMember(httpServletRequest);
 
-        List<PlaceSubCategory> subCategory = request.getSubCategory();
+        // 로그인 여부에 따른 subCategory 처리
+        List<PlaceSubCategory> subCategory = loginMember == null ?
+                request.getSubCategory() : this.getSubCategoryForLoginMember(loginMember.getId(), request.getCategory());
+
         long size = Math.round(15.0 / subCategory.size());
 
         // 카카오 서버에서 받아온 장소 목록 collect
@@ -69,7 +69,7 @@ public class PlaceService {
                         getPlaceListFromKakao(request, subCategory, size);
 
         // 북마크 여부 처리
-        List<PlaceGetResponse> placeListWithBookmark = updateGetPlaceIsBookmark(httpServletRequest, result);
+        List<PlaceGetResponse> placeListWithBookmark = updateGetPlaceIsBookmark(loginMember, result);
         return PlaceGetListResponse.of(placeListWithBookmark);
     }
 
@@ -178,12 +178,11 @@ public class PlaceService {
      * (로그인 시) 장소 목록 조회에서 각 장소 별 북마크 여부 및 북마크 id를 업데이트한다.
      * 또한, 카카오에서 제공하는 장소 정보 -> 앱 내에서 필요한 정보만 포함하는 Custom Response로 결과를 변환하여 반환한다.
      *
-     * @param httpServletRequest 로그인 여부를 판단하기 위한 HttpServletRequest 객체
-     * @param result             카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
+     * @param loginMember 로그인 한 사용자 엔티티 (비로그인 사용자 경우 null)
+     * @param result      카카오 로컬 API를 통해 받아온 카카오에서 제공하는 장소 정보 List
      * @return 북마크 여부 및 북마크 id가 업데이트 된 Custom Place Response List
      */
-    private List<PlaceGetResponse> updateGetPlaceIsBookmark(HttpServletRequest httpServletRequest, List<KakaoPlaceGetResponse> result) {
-        Member loginMember = findLoginMember(httpServletRequest);
+    private List<PlaceGetResponse> updateGetPlaceIsBookmark(Member loginMember, List<KakaoPlaceGetResponse> result) {
         if (loginMember == null) {
             return result.stream()
                     .map(response -> PlaceGetResponse.ofWithoutBookmark(response, scrapService.getPlaceThumbnailUrl(response.getId())))
@@ -262,5 +261,15 @@ public class PlaceService {
     private Member validateLoginMember(Long memberId) {
         return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new MemberIdNotFoundException(memberId));
+    }
+
+    private List<PlaceSubCategory> getSubCategoryForLoginMember(Long memberId, PlaceCategory category) {
+        Optional<LikeCategory> likeCategory = likeCategoryRepository.findByMemberIdAndCategory(memberId, category);
+        // likeCategory 존재할 경우 필터 설정 case로, 사용자 설정된 하위 카테고리 반환
+        if (likeCategory.isPresent() && !likeCategory.get().getSubCategory().isEmpty()) {
+            return likeCategory.get().getSubCategory();
+        }
+        // likeCategory 존재하지 않거나 subCategory 비어있을 경우 전체 선택 case로, 상위 카테고리에 해당하는 모든 하위 카테고리 반환
+        return Arrays.stream(PlaceSubCategory.values()).filter(c -> c.getMainCategory().equals(category)).toList();
     }
 }
