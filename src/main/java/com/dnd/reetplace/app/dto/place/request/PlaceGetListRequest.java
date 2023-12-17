@@ -77,6 +77,9 @@ public class PlaceGetListRequest {
             "<li>CONCERT - 공연장,연극극장</li>" +
             "</ul>",
             type = "list", example = "[\"ACTIVITY_PC\", \"ACTIVITY_KARAOKE\", \"ACTIVITY_PARK\"]")
-    @NotEmpty
     private List<PlaceSubCategory> subCategory;
+
+    public void updateSubCategoryForLoginMember(List<PlaceSubCategory> subCategory) {
+        this.subCategory = subCategory;
+    }
 }

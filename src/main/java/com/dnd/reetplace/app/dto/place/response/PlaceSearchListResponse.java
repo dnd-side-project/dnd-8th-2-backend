@@ -10,8 +10,9 @@ import java.util.List;
 @Getter
 public class PlaceSearchListResponse {
     private List<PlaceSearchResponse> contents;
+    private boolean lastPage;
 
-    public static PlaceSearchListResponse of(List<PlaceSearchResponse> contents) {
-        return new PlaceSearchListResponse(contents);
+    public static PlaceSearchListResponse of(List<PlaceSearchResponse> contents, boolean isEnd) {
+        return new PlaceSearchListResponse(contents, isEnd);
     }
 }

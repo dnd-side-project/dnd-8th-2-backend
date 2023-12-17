@@ -147,22 +147,22 @@ public class PlaceSearchResponse {
     ) {
         PlaceCategoryGroupCode categoryGroupCode;
         try {
-            categoryGroupCode = PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategory_group_code());
+            categoryGroupCode = PlaceCategoryGroupCode.valueOf(kakaoResponse.getCategoryGroupCode());
         } catch (IllegalArgumentException | NullPointerException e) {
             categoryGroupCode = null;
         }
 
         PlaceSubCategory subCategory;
         PlaceCategory category;
-        if (kakaoResponse.getCategory_name().contains("멕시칸") || kakaoResponse.getCategory_name().contains("아시아")) {
+        if (kakaoResponse.getCategoryName().contains("멕시칸") || kakaoResponse.getCategoryName().contains("아시아")) {
             subCategory = PlaceSubCategory.WORLD;
             category = PlaceCategory.FOOD;
-        } else if (kakaoResponse.getCategory_name().contains("치킨")) {
+        } else if (kakaoResponse.getCategoryName().contains("치킨")) {
             subCategory = PlaceSubCategory.COOKING_BAR;
             category = PlaceCategory.FOOD;
         } else {
             subCategory = Arrays.stream(PlaceSubCategory.values())
-                    .filter(sub -> kakaoResponse.getCategory_name().contains(sub.getDescription()))
+                    .filter(sub -> kakaoResponse.getCategoryName().contains(sub.getDescription()))
                     .findFirst()
                     .orElse(null);
             category = subCategory == null ? null : subCategory.getMainCategory();
@@ -170,16 +170,16 @@ public class PlaceSearchResponse {
 
         return new PlaceSearchResponse(
                 kakaoResponse.getId(),
-                kakaoResponse.getPlace_name(),
-                kakaoResponse.getPlace_url(),
+                kakaoResponse.getPlaceName(),
+                kakaoResponse.getPlaceUrl(),
                 thumbnailImage,
                 categoryGroupCode,
-                kakaoResponse.getCategory_name(),
+                kakaoResponse.getCategoryName(),
                 category,
                 subCategory,
                 kakaoResponse.getPhone(),
-                kakaoResponse.getAddress_name(),
-                kakaoResponse.getRoad_address_name(),
+                kakaoResponse.getAddressName(),
+                kakaoResponse.getRoadAddressName(),
                 kakaoResponse.getY(),
                 kakaoResponse.getX(),
                 bookmarkType,

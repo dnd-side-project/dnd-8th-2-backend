@@ -10,6 +10,8 @@ import com.dnd.reetplace.global.exception.member.MemberIdNotFoundException;
 import com.dnd.reetplace.global.exception.member.MemberUidNotFoundException;
 import com.dnd.reetplace.global.exception.place.PlaceKakaoApiBadRequestException;
 import com.dnd.reetplace.global.exception.place.PlaceKakaoPidNotFoundException;
+import com.dnd.reetplace.global.exception.search.SearchDeletePermissionDeniedException;
+import com.dnd.reetplace.global.exception.search.SearchIdNotFoundException;
 import com.dnd.reetplace.global.exception.type.ValidationErrorCode;
 import com.dnd.reetplace.global.log.LogUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -54,6 +56,7 @@ import java.util.Optional;
  *     <li>4000 ~ 4999: 파일 업로드({@link S3File}) 관련 예외</li>
  *     <li>5000 ~ 5499: 문의({@link Question}) 관련 예외</li>
  *     <li>5500 ~ 5999: 문의 답변({@link Answer}) 관련 예외</li>
+ *     <li>6000 ~ 6499: 검색기록({@link Search}) 관련 예외</li>
  * </ul>
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -126,7 +129,11 @@ public enum ExceptionType {
 
     // Place
     PLACE_KAKAO_PID_NOT_FOUND_EXCEPTION(3500, "장소를 찾을 수 없습니다.", PlaceKakaoPidNotFoundException.class),
-    PLACE_KAKAO_API_BAD_REQUEST_EXCEPTION(3501, "장소 조회에 실패했습니다. 올바른 파라미터를 입력했는지 확인해주세요.", PlaceKakaoApiBadRequestException.class);
+    PLACE_KAKAO_API_BAD_REQUEST_EXCEPTION(3501, "장소 조회에 실패했습니다. 올바른 파라미터를 입력했는지 확인해주세요.", PlaceKakaoApiBadRequestException.class),
+
+    // Search
+    SEARCH_ID_NOT_FOUND(6000, "ID에 해당하는 검색기록을 찾을 수 없습니다.", SearchIdNotFoundException.class),
+    SEARCH_DELETE_PERMISSION_DENIED(6001, "검색기록을 삭제할 수 있는 권한이 없습니다.", SearchDeletePermissionDeniedException.class);
 
     private final Integer code;
     private final String message;

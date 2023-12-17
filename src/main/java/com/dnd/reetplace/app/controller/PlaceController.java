@@ -1,15 +1,19 @@
 package com.dnd.reetplace.app.controller;
 
+import com.dnd.reetplace.app.dto.category.request.LikeCategoryUpdateRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceSearchListResponse;
 import com.dnd.reetplace.app.service.PlaceService;
+import com.dnd.reetplace.global.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +31,10 @@ public class PlaceController {
             summary = "장소 목록 조회",
             description = "<p>사용자의 중심좌표를 기준으로 카테고리에 해당하는 장소목록을 조회합니다.</p>" +
                     "<ul>" +
-                    "<li>조회하고자 하는 카테고리를 모두 subCategory에 포함하여 요청합니다.</li>" +
                     "<li>로그인 한 사용자라면 Authorization 헤더에 Access Token을 포함하여 요청합니다.</li>" +
                     "<li>로그인 한 사용자라면 Access Token을 포함하여 요청 시 각 장소 별 북마크 여부를 확인할 수 있습니다.</li>" +
+                    "<li>로그인 한 사용자라면 subCategory를 포함하지 않습니다.</li>" +
+                    "<li>비로그인 사용자라면 조회하고자 하는 카테고리를 모두 subCategory에 포함하여 요청합니다.</li>" +
                     "</ul>"
     )
     @PostMapping
@@ -55,5 +60,18 @@ public class PlaceController {
             HttpServletRequest httpServletRequest,
             @Valid @RequestBody PlaceSearchRequest request) {
         return ResponseEntity.ok(placeService.searchPlace(httpServletRequest, request));
+    }
+
+    @Operation(
+            summary = "카테고리 필터 수정",
+            description = "로그인한 사용자의 카테고리 필터를 수정합니다. 상위 카테고리에 해당하는 하위 카테고리를 아무것도 선택하지 않았을 시 빈 배열을 넘깁니다. ex) subcategory: []",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @PutMapping("/category")
+    public ResponseEntity<Void> updateLikeCategory(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Valid @RequestBody LikeCategoryUpdateRequest request) {
+        placeService.updateLikeCategory(memberDetails.getId(), request);
+        return ResponseEntity.noContent().build();
     }
 }
