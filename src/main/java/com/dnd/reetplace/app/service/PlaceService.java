@@ -83,13 +83,14 @@ public class PlaceService {
      */
     @Transactional
     public PlaceSearchListResponse searchPlace(HttpServletRequest httpServletRequest, PlaceSearchRequest request) {
-        List<KakaoPlaceSearchResponse> result = kakaoHttpRequestService.searchPlace(request);
+        KakaoPlaceSearchListResponse result = kakaoHttpRequestService.searchPlace(request);
+        List<KakaoPlaceSearchResponse> documents = result.getDocuments();
         Member loginMember = findLoginMember(httpServletRequest);
-        List<PlaceSearchResponse> placeSearchWithBookmark = this.updateSearchPlaceIsBookmark(loginMember, result);
+        List<PlaceSearchResponse> placeSearchWithBookmark = this.updateSearchPlaceIsBookmark(loginMember, documents);
         if (loginMember != null) {
             this.updateSearchHistory(loginMember, request.getQuery());
         }
-        return PlaceSearchListResponse.of(placeSearchWithBookmark);
+        return PlaceSearchListResponse.of(placeSearchWithBookmark, result.getMeta().getIsEnd());
     }
 
     @Transactional
