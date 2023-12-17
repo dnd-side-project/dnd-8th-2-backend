@@ -13,14 +13,15 @@ import java.time.LocalDateTime;
 public class SearchDto {
 
     private MemberDto member;
+    private Long id;
     private String query;
     private LocalDateTime createdAt;
 
     public static SearchDto from(Search entity) {
-        return of(MemberDto.from(entity.getMember()), entity.getQuery(), entity.getCreatedAt());
+        return of(MemberDto.from(entity.getMember()), entity.getId(), entity.getQuery(), entity.getCreatedAt());
     }
 
-    public static SearchDto of(MemberDto member, String query, LocalDateTime createdAt) {
-        return new SearchDto(member, query, createdAt);
+    public static SearchDto of(MemberDto member, Long id, String query, LocalDateTime createdAt) {
+        return new SearchDto(member, id, query, createdAt);
     }
 }

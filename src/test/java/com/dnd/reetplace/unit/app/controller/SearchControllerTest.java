@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,12 +67,11 @@ public class SearchControllerTest {
                 memberDetails.getMember().getNickname(),
                 memberDetails.getMember().getEmail()
         );
-        SearchDto search1 = SearchDto.of(memberDto, "test1", LocalDateTime.now());
-        SearchDto search2 = SearchDto.of(memberDto, "test2", LocalDateTime.now());
-        SearchDto search3 = SearchDto.of(memberDto, "test3", LocalDateTime.now());
+        SearchDto search1 = SearchDto.of(memberDto, 1L, "test1", LocalDateTime.now());
+        SearchDto search2 = SearchDto.of(memberDto, 2L, "test2", LocalDateTime.now());
+        SearchDto search3 = SearchDto.of(memberDto, 3L, "test3", LocalDateTime.now());
         SearchHistoryListResponse response = SearchHistoryListResponse.of(List.of(search1, search2, search3));
-        given(searchService.getSearchHistory(any()))
-                .willReturn(response);
+        given(searchService.getSearchHistory(any())).willReturn(response);
 
         // when & then
         mvc.perform(
@@ -85,6 +85,40 @@ public class SearchControllerTest {
                 .andExpect(jsonPath("$.contents[0].query").value(response.getContents().get(0).getQuery()))
                 .andExpect(jsonPath("$.contents[1].query").value(response.getContents().get(1).getQuery()))
                 .andExpect(jsonPath("$.contents[2].query").value(response.getContents().get(2).getQuery()));
+    }
+
+    @DisplayName("검색기록 삭제(단건)에 성공한다.")
+    @Test
+    void givenSearchId_whenDeleteSearchHistory_thenSuccess() throws Exception {
+        // given
+        MemberDetails memberDetails = new MemberDetails(createMockMember(1L));
+        ReflectionTestUtils.setField(memberDetails.getMember(), "id", 1L);
+
+        // when & then
+        mvc.perform(
+                        delete("/api/search/history/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
+                                .with(user(memberDetails))
+                )
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("검색기록 삭제(전체)에 성공한다.")
+    @Test
+    void whenDeleteAllSearchHistory_thenSuccess() throws Exception {
+        // given
+        MemberDetails memberDetails = new MemberDetails(createMockMember(1L));
+        ReflectionTestUtils.setField(memberDetails.getMember(), "id", 1L);
+
+        // when & then
+        mvc.perform(
+                        delete("/api/search/history")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
+                                .with(user(memberDetails))
+                )
+                .andExpect(status().isNoContent());
     }
 
     private Member createMockMember(Long id) {

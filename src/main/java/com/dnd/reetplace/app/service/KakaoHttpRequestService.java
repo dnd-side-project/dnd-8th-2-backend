@@ -122,7 +122,7 @@ public class KakaoHttpRequestService {
         }
     }
 
-    public List<KakaoPlaceSearchResponse> searchPlace(PlaceSearchRequest request) {
+    public KakaoPlaceSearchListResponse searchPlace(PlaceSearchRequest request) {
         try {
             // Header 추가
             HttpHeaders header = new HttpHeaders();
@@ -150,7 +150,7 @@ public class KakaoHttpRequestService {
                     httpRequest,
                     KakaoPlaceSearchListResponse.class
             );
-            return response.getBody().getDocuments();
+            return response.getBody();
         } catch (Exception e) {
             log.error("[{}] KakaoHttpRequestService.searchPlace() ex={}", LogUtils.getLogTraceId(), String.valueOf(e));
             throw new PlaceKakaoApiBadRequestException();
