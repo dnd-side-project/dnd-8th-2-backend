@@ -7,6 +7,7 @@ import com.dnd.reetplace.app.domain.bookmark.Bookmark;
 import com.dnd.reetplace.app.domain.place.PlaceCategory;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
 import com.dnd.reetplace.app.dto.category.request.LikeCategoryUpdateRequest;
+import com.dnd.reetplace.app.dto.category.response.LikeCategoryResponse;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.*;
@@ -91,6 +92,17 @@ public class PlaceService {
             this.updateSearchHistory(loginMember, request.getQuery());
         }
         return PlaceSearchListResponse.of(placeSearchWithBookmark, result.getMeta().getIsEnd());
+    }
+
+    public LikeCategoryResponse getLikeCategory(Long memberId, PlaceCategory category) {
+        this.validateLoginMember(memberId);// 사용자 유효성 검사
+        Optional<LikeCategory> likeCategory = likeCategoryRepository.findByMemberIdAndCategory(memberId, category);
+        if (likeCategory.isPresent()) {
+            return new LikeCategoryResponse(likeCategory.get().getSubCategory());
+        }
+        // LikeCategory 테이블에 없는 경우 전체선택으로 판단, 카테고리에 해당하는 모든 하위 카테고리 반환
+        List<PlaceSubCategory> subCategoryList = Arrays.stream(PlaceSubCategory.values()).filter(c -> c.getMainCategory().equals(category)).toList();
+        return new LikeCategoryResponse(subCategoryList);
     }
 
     @Transactional

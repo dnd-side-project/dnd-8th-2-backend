@@ -1,6 +1,8 @@
 package com.dnd.reetplace.app.controller;
 
+import com.dnd.reetplace.app.domain.place.PlaceCategory;
 import com.dnd.reetplace.app.dto.category.request.LikeCategoryUpdateRequest;
+import com.dnd.reetplace.app.dto.category.response.LikeCategoryResponse;
 import com.dnd.reetplace.app.dto.place.request.PlaceGetListRequest;
 import com.dnd.reetplace.app.dto.place.request.PlaceSearchRequest;
 import com.dnd.reetplace.app.dto.place.response.PlaceGetListResponse;
@@ -63,8 +65,23 @@ public class PlaceController {
     }
 
     @Operation(
+            summary = "카테고리 필터 조회",
+            description = "로그인한 사용자의 상위 카테고리에 해당하는 카테고리 필터를 조회합니다.",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/category")
+    public ResponseEntity<LikeCategoryResponse> getLikeCategory(
+            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
+            @Parameter(
+                    description = "조회하고자 하는 상위 카테고리",
+                    example = "ACTIVITY"
+            ) @RequestParam PlaceCategory category) {
+        return ResponseEntity.ok(placeService.getLikeCategory(memberDetails.getId(), category));
+    }
+
+    @Operation(
             summary = "카테고리 필터 수정",
-            description = "로그인한 사용자의 카테고리 필터를 수정합니다. 상위 카테고리에 해당하는 하위 카테고리를 아무것도 선택하지 않았을 시 빈 배열을 넘깁니다. ex) subcategory: []",
+            description = "로그인한 사용자의 카테고리 필터를 수정합니다.",
             security = @SecurityRequirement(name = "Authorization")
     )
     @PutMapping("/category")
