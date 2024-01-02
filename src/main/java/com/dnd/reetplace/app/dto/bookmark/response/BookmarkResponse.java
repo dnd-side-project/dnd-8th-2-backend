@@ -1,5 +1,6 @@
 package com.dnd.reetplace.app.dto.bookmark.response;
 
+import com.dnd.reetplace.app.domain.bookmark.BookMarkRelLink;
 import com.dnd.reetplace.app.dto.bookmark.BookmarkDto;
 import com.dnd.reetplace.app.dto.member.response.MemberResponse;
 import com.dnd.reetplace.app.dto.place.response.PlaceResponse;
@@ -22,11 +23,13 @@ public class BookmarkResponse {
     @Schema(description = "북마크 한 장소 정보")
     private PlaceResponse place;
 
-    @Schema(description = "<p>북마크 종류. 목록은 다음과 같음</p>" +
-            "<ul>" +
-            "<li>WANT - 가보고 싶어요</li>" +
-            "<li>GONE - 다녀왔어요</li>" +
-            "</ul>",
+    @Schema(description = """
+            <p>북마크 종류. 목록은 다음과 같음</p>
+            <ul>
+            <li>WANT - 가보고 싶어요</li>
+            <li>GONE - 다녀왔어요</li>
+            </ul>
+            """,
             example = "WANT")
     private BookmarkType type;
 
@@ -49,6 +52,7 @@ public class BookmarkResponse {
     private String relLink3;
 
     public static BookmarkResponse from(BookmarkDto bookmarkDto) {
+        BookMarkRelLink relLinks = bookmarkDto.getRelLinks();
         return new BookmarkResponse(
                 bookmarkDto.getId(),
                 MemberResponse.from(bookmarkDto.getMember()),
@@ -57,9 +61,9 @@ public class BookmarkResponse {
                 bookmarkDto.getThumbnailUrl(),
                 bookmarkDto.getRate(),
                 bookmarkDto.getPeople(),
-                bookmarkDto.getRelLinks().getRelLink1(),
-                bookmarkDto.getRelLinks().getRelLink2(),
-                bookmarkDto.getRelLinks().getRelLink3()
+                relLinks != null ? relLinks.getRelLink1() : null,
+                relLinks != null ? relLinks.getRelLink2() : null,
+                relLinks != null ? relLinks.getRelLink3() : null
         );
     }
 }

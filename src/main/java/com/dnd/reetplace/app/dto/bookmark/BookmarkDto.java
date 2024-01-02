@@ -10,6 +10,7 @@ import com.dnd.reetplace.app.type.BookmarkType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class BookmarkDto {
     private String thumbnailUrl;
     private Short rate;
     private String people;
+    @Nullable
     private BookMarkRelLink relLinks;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

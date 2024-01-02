@@ -155,7 +155,7 @@ public class BookmarkService {
     }
 
     private Bookmark getLatestBookmarkByTypeAndMemberId(BookmarkType type, Long memberId) {
-        return bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(type, memberId)
+        return bookmarkRepository.findTop1ByTypeAndMember_IdOrderByCreatedAtDesc(type, memberId)
                 .orElseThrow(BookmarkNotFoundException::new);
     }
 
