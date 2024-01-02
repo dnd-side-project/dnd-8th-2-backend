@@ -16,7 +16,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     boolean existsByMember_IdAndPlace_KakaoPid(Long memberId, String kakaoPid);
 
-    Optional<Bookmark> findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType type, Long memberId);
+    Optional<Bookmark> findTop1ByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType type, Long memberId);
 
     @Query("select b from Bookmark b " +
            "join fetch b.place p " +

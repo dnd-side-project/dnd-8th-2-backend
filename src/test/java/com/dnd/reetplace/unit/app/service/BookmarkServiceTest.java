@@ -137,16 +137,16 @@ class BookmarkServiceTest {
         );
         int numOfBookmarks = bookmarks.size();
         given(bookmarkRepository.findAllByMember(memberId)).willReturn(bookmarks);
-        given(bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.WANT, memberId)).willReturn(Optional.of(createBookmark(dummyMember, dummyPlace)));
-        given(bookmarkRepository.findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.DONE, memberId)).willReturn(Optional.of(createBookmark(dummyMember, dummyPlace)));
+        given(bookmarkRepository.findTop1ByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.WANT, memberId)).willReturn(Optional.of(createBookmark(dummyMember, dummyPlace)));
+        given(bookmarkRepository.findTop1ByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.DONE, memberId)).willReturn(Optional.of(createBookmark(dummyMember, dummyPlace)));
 
         // when
         BookmarkTypeInformationResponse bookmarkTypeInformationResponse = sut.getBookmarkTypeInformation(memberId);
 
         // then
         then(bookmarkRepository).should().findAllByMember(memberId);
-        then(bookmarkRepository).should().findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.WANT, memberId);
-        then(bookmarkRepository).should().findByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.DONE, memberId);
+        then(bookmarkRepository).should().findTop1ByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.WANT, memberId);
+        then(bookmarkRepository).should().findTop1ByTypeAndMember_IdOrderByCreatedAtDesc(BookmarkType.DONE, memberId);
         then(bookmarkRepository).shouldHaveNoMoreInteractions();
         assertThat(bookmarkTypeInformationResponse.getNumOfAll()).isEqualTo(numOfBookmarks);
         assertThat(bookmarkTypeInformationResponse.getNumOfWant()).isEqualTo(numOfBookmarks);
