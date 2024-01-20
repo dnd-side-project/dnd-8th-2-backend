@@ -76,15 +76,7 @@ public class BookmarkController {
     @GetMapping
     public ResponseEntity<Slice<BookmarkResponse>> searchBookmarks(
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
-            @Parameter(
-                    description = "<p>북마크 검색 종류. 목록은 다음과 같음</p>" +
-                                  "<ul>" +
-                                  "<li>ALL - 전체 조회</li>" +
-                                  "<li>WANT - 가보고 싶어요</li>" +
-                                  "<li>GONE - 다녀왔어요</li>" +
-                                  "</ul>",
-                    example = "ALL"
-            ) @RequestParam BookmarkSearchType searchType,
+            @Parameter(description = "조회할 북마크 종류") @RequestParam BookmarkSearchType searchType,
             @Parameter(
                     description = "페이지 번호 (0부터 시작합니다). 기본값은 0입니다.",
                     example = "0"
@@ -125,17 +117,7 @@ public class BookmarkController {
     @GetMapping("/all/summaries")
     public List<BookmarkResponse> searchAllBookmarkSummaries(
             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails,
-            @Parameter(
-                    description = """
-                            <p>북마크 검색 종류. 목록은 다음과 같음</p>
-                            <ul>
-                                <li>ALL - 전체 조회</li>
-                                <li>WANT - 가보고 싶어요</li>
-                                <li>GONE - 다녀왔어요</li>
-                            </ul>
-                            """,
-                    example = "ALL"
-            ) @RequestParam BookmarkSearchType searchType
+            @Parameter(description = "검색할 북마크 종류") @RequestParam BookmarkSearchType searchType
     ) {
         List<BookmarkDto> bookmarkDtos = bookmarkService.searchAllBookmarks(memberDetails.getId(), searchType);
         return bookmarkDtos.stream()
