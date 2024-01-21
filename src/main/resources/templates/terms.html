@@ -1,0 +1,677 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>이용 약관</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="fdbb5946-fc79-40a6-a4cf-8610431c1a25" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">✅</span></div><h1 class="page-title">이용 약관</h1><p class="page-description"></p></header><div class="page-body"><hr id="ea3bb6d6-9394-4fdc-b67b-99999a303acf"/><h3 id="e36c37b7-47c4-44e7-ae6a-b54731319480" class="">제 1장 총 칙</h3><h3 id="dc4875b1-4cbd-4960-a7d2-65996eca9eae" class="">제 1조(목적)</h3><p id="1bb809b4-2711-47f5-a885-2b1998a046f9" class=""><br/>본 약관은 회원(”릿플” 서비스 약관에 동의한 자를 말합니다. 이하 “회원”이라고 합니다.) <br/>이 릿플이 제공하는 릿플 서비스(이하 “서비스”라고 합니다.)를 이용함에 있어 릿플과 회원의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.<br/></p><h3 id="96648ec3-edd3-4a2b-9c33-58363e081ff7" class="">제 2 조 (이용약관의 효력 및 변경)</h3><p id="da733368-7185-4d4b-a17a-1926cd74ce55" class="">① 본 약관은 서비스를 신청한 고객 또는 개인위치정보주체가 본 약관에 동의하고 릿플이 정한 소정의 절차에 따라 서비스의 이용자로 등록함으로써 효력이 발생합니다.</p><p id="058cb4bd-ce2b-490a-b0bb-62dec353b05d" class="">② 회원이 온라인에서 본 약관의 &quot;동의하기&quot; 버튼을 클릭하였을 경우 본 약관의 내용을 모두 읽고 이를 충분히 이해하였으며, 그 적용에 동의한 것으로 봅니다.</p><p id="026b03e4-8739-456e-a5c2-1f6e79d987b6" class="">③ 릿플이 필요한 경우 본 약관을 변경할 수 있으며, 릿플이 약관을 개정할 경우에는 기존약관과 개정약관 및 개정약관의 적용일자와 개정사유를 명시하여 현행약관과 함께 그 적용일자 10일 전부터 적용일 이후 상당한 기간 동안 공지합니다. 다만, 개정 내용이 회원에게 불리한 경우에는 그 적용일자 30일 전부터 적용일 이후 상당한 기간 동안 각각 이를 서비스 홈페이지에 게시하거나 회원에게 전자적 형태(전자우편, SMS 등)로 약관 개정 사실을 발송하여 고지합니다.</p><p id="0a6e6360-5836-4984-bf9d-2479f5f20558" class="">④ 릿플 전항에 따라 회원에게 공지 또는 통지하면서 공지 또는 통지∙고지일로부터 개정약관 시행일 7일 후까지 거부의사를 표시하지 아니하면 이용약관에 승인한 것으로 본다는 뜻을 고지하였음에도 불구하고 거부의 의사가 없는 경우에는 변경된 이용약관에 승인한 것으로 봅니다. 회원이 개정약관에 동의하지 않을 경우 회원은 이용계약을 해지할 수 있습니다.</p><h3 id="f13906d5-2fe3-46e8-a1b0-4a31d4a28fb4" class="">제 3 조 (관계법령의 적용)</h3><p id="a707dea8-ec42-4cfe-91bf-ad12e495aca6" class="">본 약관은 신의성실의 원칙에 따라 공정하게 적용하며, 본 약관에 명시되지 아니한 사항에 대하여는 관계법령 또는 상관례에 따릅니다.</p><h3 id="3d78e81c-722f-4da9-b4bc-9536753015e8" class="">제 4 조 (서비스의 내용)</h3><p id="76583120-6955-4054-ac9b-e3275b79f6b1" class="">릿플이 제공하는 서비스는 아래와 같습니다.</p><table id="c5e3486c-0f57-4d18-aaae-e0d92a2513e7" class="simple-table"><thead class="simple-table-header"><tr id="6bbbd2da-d3be-481b-9867-9854f331e025"><th id="Ghyb" class="simple-table-header-color simple-table-header"><strong>서비스명</strong></th><th id="N]m{" class="simple-table-header-color simple-table-header"><strong>서비스 내용</strong></th></tr></thead><tbody><tr id="9f2763ae-d1a7-485a-ab34-89ff351de922"><td id="Ghyb" class="">릿플레이스<br/>(Reet-Place)<br/></td><td id="N]m{" class="">- 위치 정보를 활용하여 사용자 인근의 카테고리별 장소를 확인할 수 있도록 함.</td></tr></tbody></table><h3 id="9e88b772-0ad8-4d1e-86a0-eda94cf077b0" class="">제 5 조 (서비스 이용요금)</h3><p id="4f33ebc0-500f-40fe-ad04-aef0c6f8a43a" class="">① 릿플이 제공하는 서비스는 기본적으로 무료입니다. 단, 별도의 유료 서비스의 경우 해당 서비스에 명시된 요금을 지불하여야 사용 가능합니다.</p><p id="77b1f14e-7b33-49cf-be1a-cce2bc3f9c4a" class="">② 릿플은 유료 서비스 이용요금을 릿플이 계약한 전자지불업체에서 정한 방법에 의하거나 릿플이 정한 청구서에 합산하여 청구할 수 있습니다.</p><p id="94778cd4-2635-43a8-aba8-8d4368f27c5f" class="">③ 유료서비스 이용을 통하여 결제된 대금에 대한 취소 및 환불은 릿플의 결제 이용약관 등 관계법에 따릅니다.</p><p id="5c3ee5ba-c725-46d3-8beb-6741231da906" class="">④ 회원의 개인정보도용 및 결제사기로 인한 환불요청 또는 결제자의 개인정보 요구는 법률이 정한 경우 외에는 거절될 수 있습니다.</p><p id="97827cbf-4fb4-4ba5-9da2-1a261ffa35da" class="">⑤ 무선 서비스 이용 시 발생하는 데이터 통신료는 별도이며 가입한 각 이동통신사의 정책에 따릅니다.</p><p id="11a65ca2-4844-4dfc-ba5b-6678b2f90a0d" class="">⑥ MMS 등으로 게시물을 등록할 경우 발생하는 요금은 이동통신사의 정책에 따릅니다.</p><h3 id="f03ff37b-96bb-4762-a2dc-67f3775aeed8" class="">제 6 조 (위치정보 수집방법)</h3><p id="7554b82c-4476-4520-a329-fe8755590a0a" class="">① 릿플은 아래에 기재된 방법으로 개인위치정보를 수집합니다.</p><table id="0585847e-8d48-4749-9f93-3b83fed53421" class="simple-table"><thead class="simple-table-header"><tr id="2efc61de-cb9a-46f1-8d5a-d6e6de61d634"><th id="El{P" class="simple-table-header-color simple-table-header"><strong>구분</strong></th><th id="xVyB" class="simple-table-header-color simple-table-header" style="width:427px"><strong>수집 및 제공 과정</strong></th></tr></thead><tbody><tr id="a07a63a7-938f-4fd5-9157-a6d2d228b4ad"><td id="El{P" class="">개인위치정보</td><td id="xVyB" class="" style="width:427px">① 위치정보 수집- 휴대폰 단말기를 이용한 기지국 기반 (Cell ID 방식)의 실시간 위치 정보 및 GPS 감도 수집- GPS칩이 내장된 전용 단말기를 통해 수집되는 GPS 정보를 통한 위치정보 및 GPS 감도 수집- Wi-Fi칩이 내장된 전용 단말기를 통해 수집되는 Wi-Fi 정보를 통한 위치정보 수집<br/>② 수집한 위치정보를 서버에 전송하면, 서버에서 이에 해당하는 기록 및 위치 정보를 요청한 해당 서비스 또는 사용자에게 제공.<br/>③ 제1항에서 정한 개인위치정보의 수집방법이 변경될 때에는 회사는 미리 홈페이지 등에 공지하거나 이용자에게 별도 통지합니다. 다만, 회사가 통제할 수 없는 사유가 발생하여 사전 통지가 불가능할 때에는 사후에 통지합니다.<br/></td></tr></tbody></table><h3 id="255b3f2c-ab1b-43f0-bfe2-4f695ad0f0ce" class="">제 7조 (서비스 내용)</h3><p id="f726490c-dd36-4c18-b2c3-7450ede5c4a0" class="">① 릿플이 서비스 내용을 변경하거나 종료하는 경우 회사는 회원의 등록된 전자우편 주소로 이메일을 통하여 서비스 내용의 변경 사항 또는 종료를 통지할 수 있습니다.</p><p id="79d5e35f-641a-44e5-ae48-5f497913c750" class="">② ①항의 경우 불특정 다수인을 상대로 통지를 함에 있어서는 웹사이트 등 기타 릿플의 공지사항을 통하여 회원들에게 통지할 수 있습니다.</p><h3 id="ac7fb339-7026-4178-adfa-a9ba40f72562" class="">제 8 조 (서비스이용의 제한 및 중지)</h3><p id="68c08cd5-8d44-44f6-942c-3189d2373c72" class="">① 릿플은 아래 각 호의 1에 해당하는 사유가 발생한 경우에는 회원의 서비스 이용을 제한하거나 중지시킬 수 있습니다.</p><p id="78ece8c0-8df0-44d6-9d98-2209666385df" class="">1. 회원이 회사 서비스의 운영을 고의 또는 중과실로 방해하는 경우</p><p id="b3734023-c332-4639-b7cf-ad75f457a591" class="">2. 서비스용 설비 점검, 보수 또는 공사로 인하여 부득이한 경우</p><p id="4f34f13c-3cda-4564-b7cb-4fbb12b38a3c" class="">3. 전기통신사업법에 규정된 기간통신사업자가 전기통신 서비스를 중지했을 경우</p><p id="8e4814c6-f135-4ab0-9f2c-0bf9931fa804" class="">4. 국가비상사태, 서비스 설비의 장애 또는 서비스 이용의 폭주 등으로 서비스 이용에 지장이 있는 때</p><p id="16a645d2-ee70-4026-b3f8-8d35427fc7ea" class="">5. 기타 중대한 사유로 인하여 회사가 서비스 제공을 지속하는 것이 부적당하다고 인정하는 경우</p><p id="ad8bf768-ede9-4c58-932c-f5cc7a39dded" class="">②릿플은 전항의 규정에 의하여 서비스의 이용을 제한하거나 중지한 때에는 그 사유 및 제한기간 등을 회원에게 알려야 합니다.</p><h3 id="0b60f2bf-32aa-4c83-8a75-99de356620f7" class="">제 9 조 (개인위치정보의 이용 또는 제공)</h3><p id="2cc0a606-05c9-40c0-a61c-044b653bda4a" class="">① 릿플은 개인위치정보를 이용하여 서비스를 제공하고자 하는 경우에는 미리 이용약관에 명시한 후 개인위치정보주체의 동의를 얻어야 합니다.</p><p id="56cba885-73b5-49bf-9c37-7b2c57da7406" class="">② 회원 및 법정대리인의 권리와 그 행사방법은 제소 당시의 이용자의 주소에 의하며, 주소가 없는 경우에는 거소를 관할하는 지방법원의 전속관할로 합니다. 다만, 제소 당시 이용자의 주소 또는 거소가 분명하지 않거나 외국 거주자의 경우에는 민사소송법상의 관할법원에 제기합니다.</p><p id="3e196360-e5ea-4066-b133-8642c0ca6446" class="">③ 릿플 타사업자 또는 이용 고객과의 요금정산 및 민원처리를 위해 위치정보 이용·제공․사실 확인자료를 자동 기록·보존하며, 해당 자료는 6개월 간 보관합니다.</p><p id="eb6a115c-3a2c-48fe-9fc7-0340390b9681" class="">④ 릿플은 개인위치정보를 회원이 지정하는 제3자에게 제공하는 경우에는 개인위치정보를 수집한 당해 통신 단말장치로 매회 회원에게 제공받는 자, 제공일시 및 제공목적을 즉시 통보합니다. 단, 아래 각 호의 1에 해당하는 경우에는 회원이 미리 특정하여 지정한 통신 단말장치 또는 전자우편주소로 통보합니다.</p><p id="022686c2-dd84-4ca7-8cf3-63ddf6ef4fce" class="">1. 개인위치정보를 수집한 당해 통신단말장치가 문자, 음성 또는 영상의 수신기능을 갖추지 아니한 경우</p><p id="c48b55b4-c0fa-4568-a3f7-6fc19e4e986d" class="">2. 회원이 온라인 게시 등의 방법으로 통보할 것을 미리 요청한 경우</p><h3 id="7d8f698d-e4ba-419c-9aec-33fd4ece2977" class="">제 10 조 (개인위치정보주체의 권리)</h3><p id="75a07399-628a-4561-aa68-4460f5eada68" class="">① 회원은 릿플에 대하여 언제든지 개인위치정보를 이용한 위치기반서비스 제공 및 개인위치정보의 제3자 제공에 대한 동의의 전부 또는 일부를 철회할 수 있습니다. 이 경우 릿플은 수집한 개인위치정보 및 위치정보 이용, 제공사실 확인자료를 파기합니다.</p><p id="ec65db92-5951-4fcc-ba17-053314a16b86" class="">② 회원은 릿플에 대하여 언제든지 개인위치정보의 수집, 이용 또는 제공의 일시적인 중지를 요구할 수 있으며, 릿플은 이를 거절할 수 없고 이를 위한 기술적 수단을 갖추고 있습니다.</p><p id="af844f0b-e016-4d2f-babf-8d1b2dd85d32" class="">③ 회원은 릿플에 대하여 아래 각 호의 자료에 대한 열람 또는 고지를 요구할 수 있고, 당해 자료에 오류가 있는 경우에는 그 정정을 요구할 수 있습니다. 이 경우 릿플은 정당한 사유 없이 회원의 요구를 거절할 수 없습니다.</p><p id="a6dfb039-5cea-451a-b9c0-f83f572b62cb" class="">1. 본인에 대한 위치정보 수집, 이용, 제공사실 확인자료</p><p id="21779012-b115-45db-a066-bbda7028ceb2" class="">2. 본인의 개인위치정보가 위치정보의 보호 및 이용 등에 관한 법률 또는 다른 법률 규정에 의하여 제3자에게 제공된 이유 및 내용</p><p id="54d38914-06b1-4913-9ff7-6494b89be602" class="">④ 회원은 제1항 내지 제3항의 권리행사를 위해 회사의 소정의 절차를 통해 요구할 수 있습니다.</p><h3 id="8c9dbd78-e5fc-47fd-b9a4-d4f66616ebe8" class="">제 11 조 (법정대리인의 권리)</h3><p id="ba0c9608-e682-4da8-a968-415adaf468ef" class="">① 릿플은 14세 미만의 회원에 대해서는 개인위치정보를 이용한 위치기반서비스 제공 및 개인위치정보의 제3자 제공에 대한 동의를 당해 회원과 당해 회원의 법정대리인으로부터 동의를 받아야 합니다. 이 경우 법정대리인은 제9조에 의한 회원의 권리를 모두 가집니다.</p><p id="47bdaf5a-95eb-4226-a656-251b2c80f09d" class="">② 릿플은 14세 미만의 아동의 개인위치정보 또는 위치정보 이용․제공사실 확인자료를 이용약관에 명시 또는 고지한 범위를 넘어 이용하거나 제3자에게 제공하고자 하는 경우에는 14세미만의 아동과 그 법정대리인의 동의를 받아야 합니다. 단, 아래의 경우는 제외합니다.</p><p id="e9ffd0eb-6359-473d-b975-659307f6d27c" class="">1. 위치정보 및 위치기반서비스 제공에 따른 요금정산을 위하여 위치정보 이용, 제공사실 확인자료가 필요한 경우</p><p id="22463947-158f-40a1-af20-bd50f21c8e60" class="">2. 통계작성, 학술연구 또는 시장조사를 위하여 특정 개인을 알아볼 수 없는 형태로 가공하여 제공하는 경우</p><h3 id="be7b85b8-4912-4a3a-9be1-e49307e7647d" class="">제 12 조 (8세 이하의 아동 등의 보호의무자의 권리)</h3><p id="9c74bfa7-0e8d-417e-8441-7823d47574e5" class="">① 릿플은 아래의 경우에 해당하는 자(이하 “8세 이하의 아동”등이라 한다)의 보호의무자가 8세 이하의 아동 등의 생명 또는 신체보호를 위하여 개인위치정보의 이용 또는 제공에 동의하는 경우에는 본인의 동의가 있는 것으로 봅니다.</p><p id="8f543378-3e4d-4473-ab96-1e006564c0c5" class="">1. 8세 이하의 아동</p><p id="7f6e7ba6-6184-42e7-a80e-39e0d8a92548" class="">2. 피성년후견인</p><p id="b80c03cc-ffe9-43b5-8319-ec8a26333298" class="">3. 장애인복지법제2조제2항제2호의 규정에 의한 정신적 장애를 가진 자로서 장애인고용촉진및직업재활법 제2조제2호의 규정에 의한 중증장애인에 해당하는 자(장애인복지법 제32조의 규정에 의하여 장애인등록을 한 자에 한한다)</p><p id="a0a69aa8-fe14-42d1-b014-849e3cdff637" class="">② 8세 이하의 아동 등의 생명 또는 신체의 보호를 위하여 개인위치정보의 이용 또는 제공에 동의를 하고자 하는 보호의무자는 서면동의서에 보호의무자임을 증명하는 서면을 첨부하여 릿플에 제출하여야 합니다.</p><p id="a451ce4d-a476-4187-8df4-c2f5fa552d50" class="">③ 보호의무자는 8세 이하의 아동 등의 개인위치정보 이용 또는 제공에 동의하는 경우 개인위치정보주체 권리의 전부를 행사할 수 있습니다.</p><h3 id="c20de26d-98fe-445b-9f86-0b59c27faad2" class="">제 13 조 (위치정보관리책임자의 지정)</h3><p id="f0cadcd8-4236-4782-b8a6-fc242c7a93b1" class="">① 릿플은 위치정보를 적절히 관리․보호하고 개인위치정보주체의 불만을 원활히 처리할 수 있도록 실질적인 책임을 질 수 있는 지위에 있는 자를 위치정보관리책임자로 지정해 운영합니다.</p><p id="d7d481d1-e90d-4d3f-8557-a2f0e272ceb4" class="">② 위치정보관리책임자의 성명과 연락처는 아래와 같습니다.</p><ul id="c1c28150-836d-4736-a8a7-c3b070145074" class="bulleted-list"><li style="list-style-type:disc"><span style="border-bottom:0.05em solid">릿플레이스(Reet Place) 위치정보 보호 책임자</span></li></ul><p id="0393385f-1ada-4b11-8a15-0a4aa99e9a2a" class=""><span style="border-bottom:0.05em solid">ㆍ성 명: 박훈성</span></p><p id="191dadad-52c7-45ac-a1e3-f80dd9c4f2a6" class=""><span style="border-bottom:0.05em solid">ㆍ소 속: 릿플레이스</span></p><p id="b997943e-8fe7-427d-9643-6aeb6c6d67dc" class=""><span style="border-bottom:0.05em solid">ㆍ전 화: 010-3789-9173</span></p><p id="6b076e84-10d7-43f3-a05b-54fa99097a3e" class=""><span style="border-bottom:0.05em solid">ㆍE-mail: reetplace@gmail.com</span></p><h3 id="4b49b0f0-4983-4950-896e-0a1cdab44d73" class="">제 14 조 (손해배상)</h3><p id="c401cdc5-decf-484e-a336-193e8362917f" class="">① 릿플이 위치정보의 보호 및 이용 등에 관한 법률 제15조 내지 제26조의 규정을 위반한 행위로 회원에게 손해가 발생한 경우 회원은 릿플에 대하여 손해배상 청구를 할 수 있습니다. 이 경우 릿플은 고의, 과실이 없음을 입증하지 못하는 경우 책임을 면할 수 없습니다.</p><p id="3218079c-7b19-46c8-9e1a-94ed94b94e3f" class="">② 릿플이 본 약관의 규정을 위반하여 릿플에 손해가 발생한 경우 릿플은 회원에 대하여 손해배상을 청구할 수 있습니다. 이 경우 회원은 고의, 과실이 없음을 입증하지 못하는 경우 책임을 면할 수 없습니다.</p><h3 id="5a06cde8-4f77-4e11-b84b-e85ffcdd9bad" class="">제 15 조 (면책)</h3><p id="20f036c6-578e-48f6-95e7-657a9565b10d" class="">① 릿플은 다음 각 호의 경우로 서비스를 제공할 수 없는 경우 이로 인하여 회원에게 발생한 손해에 대해서는 책임을 부담하지 않습니다.</p><p id="40c7ea34-41b4-462c-ad0c-867e8e0d0b8d" class="">1. 천재지변 또는 이에 준하는 불가항력의 상태가 있는 경우</p><p id="b5c4bf90-604a-4521-bb1e-eccae708cc33" class="">2. 서비스 제공을 위하여 회사와 서비스 제휴계약을 체결한 제3자의 고의적인 서비스 방해가 있는 경우</p><p id="d0038fde-dceb-4c5a-aa22-660cad005c27" class="">3. 회원의 귀책사유로 서비스 이용에 장애가 있는 경우</p><p id="3a17989e-56b1-4006-93da-b86bb0d1cf11" class="">4. 제1호 내지 제3호를 제외한 기타 회사의 고의∙과실이 없는 사유로 인한 경우</p><p id="23106a12-7452-47cc-b0e5-91e77e065f72" class="">② 릿플은 서비스 및 서비스에 게재된 정보, 자료, 사실의 신뢰도, 정확성 등에 대해서는 보증을 하지 않으며 이로 인해 발생한 회원의 손해에 대하여는 책임을 부담하지 아니합니다.</p><h3 id="ba0ce652-dc9c-4967-b1be-6a0157d414e0" class="">제 16 조 (규정의 준용)</h3><p id="40adedff-41ec-43dc-b174-2497f82d7443" class="">①본 약관은 대한민국법령에 의하여 규정되고 이행됩니다.</p><p id="d441c6cd-718b-4cf4-8930-02deb994f845" class="">②본 약관에 규정되지 않은 사항에 대해서는 관련법령 및 상관습에 의합니다.</p><h3 id="bf9cd924-e272-4f13-a053-8b3f6275481e" class="">제 17 조 (분쟁의 조정 및 기타)</h3><p id="b0931072-13e3-4322-8d26-82249e646f78" class="">① 릿플은 위치정보와 관련된 분쟁에 대해 당사자간 협의가 이루어지지 아니하거나 협의를 할 수 없는 경우에는 위치정보의 보호 및 이용 등에 관한 법률 제28조의 규정에 의한 방송통신위원회에 재정을 신청할 수 있습니다.</p><p id="975b76fb-524c-4a62-92eb-714857362334" class="">② 릿플 또는 고객은 위치정보와 관련된 분쟁에 대해 당사자간 협의가 이루어지지 아니하거나 협의를 할 수 없는 경우에는 개인정보보호법 제43조의 규정에 의한 개인정보분쟁조정위원회에 조정을 신청할 수 있습니다.</p><h3 id="5b4a1e60-7fed-41fd-bf0d-9a37ca311fa3" class="">제 18 조 (REEP-PLACE <strong>처</strong>)</h3><p id="ced19978-db95-47bf-849e-c49e186970b0" class="">릿플은 별도의 회사가 아니며, 그로 인해 별도의 상호와 주소, 전화번호는 없습니다.</p><p id="64ac52da-b984-4522-9b25-084a34323e08" class="">연락처는 이메일로 대체합니다.</p><p id="1299ad77-16f0-465a-9b84-73ebc42c5980" class="">연락처: reetplace@gmail.com</p><p id="7c62c9fb-ed7a-4c77-a80c-8f5443bd5f22" class="">
+</p><p id="f0824daa-b07e-4d70-92ed-954148666826" class="">부 칙</p><p id="21dce3d2-479c-436e-b7d7-bd97908dd12c" class="">제1조 (시행일) 이 약관은 n년 0n월 nn일부터 시행한다.</p><ul id="8fd7d2b8-c334-437d-bf72-60aaca06670f" class="block-color-gray bulleted-list"><li style="list-style-type:disc">출시일 기준으로 진행</li></ul></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
