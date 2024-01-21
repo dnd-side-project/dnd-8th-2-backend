@@ -106,6 +106,9 @@ dependencies {
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
 
