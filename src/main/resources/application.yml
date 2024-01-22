@@ -41,7 +41,6 @@ spring:
 kakao:
   rest-api-key: ${REET_PLACE_LOCAL_KAKAO_API_KEY}
 
-jwt.secret: reet-place_sec_jwt_ret_ke_y_ace4p23_s32pices3_q23r1sfees_3ke
 ---
 # Settings for production(dev-server)
 logging:
