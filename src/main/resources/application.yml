@@ -14,7 +14,7 @@ spring:
         default_batch_fetch_size: 100
 
 apple:
-  client_id: com.dnd.reetplace
+  client_id: ac.dnd.Reet-Place
   key_id: ${REET_PLACE_APPLE_KEY_ID:none}
   team_id: ${REET_PLACE_APPLE_TEAM_ID:none}
   private_key: ${REET_PLACE_APPLE_PRIVATE_KEY:none}
