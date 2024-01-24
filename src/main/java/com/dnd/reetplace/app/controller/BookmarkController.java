@@ -92,7 +92,7 @@ public class BookmarkController {
                                   "<li>LATEST - 최신순</li>" +
                                   "<li>POPULARITY - 인기순</li>" +
                                   "</ul>",
-                    example = "ALL"
+                    example = "LATEST"
             )
             @RequestParam(required = false, defaultValue = "LATEST") BookmarkSearchSort sort
     ) {
