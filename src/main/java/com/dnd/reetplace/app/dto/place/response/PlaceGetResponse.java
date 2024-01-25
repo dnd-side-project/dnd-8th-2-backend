@@ -121,13 +121,7 @@ public class PlaceGetResponse {
     @Schema(description = "경도", example = "126.93713158887188")
     private String lng;
 
-    @Schema(description = "<p>북마크 종류. 목록은 다음과 같음</p>" +
-            "<ul>" +
-            "<li>WANT - 가보고 싶어요</li>" +
-            "<li>GONE - 다녀왔어요</li>" +
-            "<li>북마크가 없을 시 null</li>" +
-            "</ul>",
-            example = "WANT")
+    @Schema(description = "북마크 종류")
     private BookmarkType type;
 
     @Schema(description = "북마크 고유 id값 (북마크 없을 시 null)", example = "1")

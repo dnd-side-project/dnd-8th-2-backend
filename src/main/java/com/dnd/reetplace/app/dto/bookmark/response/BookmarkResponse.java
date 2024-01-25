@@ -23,14 +23,7 @@ public class BookmarkResponse {
     @Schema(description = "북마크 한 장소 정보")
     private PlaceResponse place;
 
-    @Schema(description = """
-            <p>북마크 종류. 목록은 다음과 같음</p>
-            <ul>
-            <li>WANT - 가보고 싶어요</li>
-            <li>GONE - 다녀왔어요</li>
-            </ul>
-            """,
-            example = "WANT")
+    @Schema(description = "북마크 종류")
     private BookmarkType type;
 
     @Schema(description = "썸네일 이미지 url", example = "https://t1.daumcdn.net/place/75B5CF9ACCF84162A7E13CB1FD4D5D43")
