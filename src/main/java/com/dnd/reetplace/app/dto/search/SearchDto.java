@@ -18,7 +18,7 @@ public class SearchDto {
     private LocalDateTime createdAt;
 
     public static SearchDto from(Search entity) {
-        return of(MemberDto.from(entity.getMember()), entity.getId(), entity.getQuery(), entity.getCreatedAt());
+        return of(MemberDto.from(entity.getMember()), entity.getId(), entity.getQuery(), entity.getUpdatedAt());
     }
 
     public static SearchDto of(MemberDto member, Long id, String query, LocalDateTime createdAt) {

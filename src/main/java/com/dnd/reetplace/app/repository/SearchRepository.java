@@ -13,7 +13,7 @@ public interface SearchRepository extends JpaRepository<Search, Long>, SearchRep
     @Query("select count(s.id) from Search s where s.member.id = :memberId and s.deletedAt is null")
     int countByMemberId(Long memberId);
 
-    @Query("select s from Search s join fetch s.member m where s.member.id = :memberId and s.deletedAt is null")
+    @Query("select s from Search s join fetch s.member m where s.member.id = :memberId and s.deletedAt is null order by s.updatedAt desc")
     List<Search> findByMemberIdAndDeletedAtIsNull(Long memberId);
 
     @Query("select s from Search s join fetch s.member m where s.id = :searchId and s.deletedAt is null")
@@ -22,4 +22,6 @@ public interface SearchRepository extends JpaRepository<Search, Long>, SearchRep
     @Modifying
     @Query("delete from Search s where s.member.id = :memberId and s.deletedAt is null")
     void deleteAllByMemberId(Long memberId);
+
+    Optional<Search> findByMemberIdAndQueryAndDeletedAtIsNull(Long memberId, String query);
 }

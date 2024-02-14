@@ -89,7 +89,7 @@ public class PlaceService {
         Member loginMember = findLoginMember(httpServletRequest);
         List<PlaceSearchResponse> placeSearchWithBookmark = this.updateSearchPlaceIsBookmark(loginMember, documents);
         if (loginMember != null) {
-            this.updateSearchHistory(loginMember, request.getQuery());
+            this.updateSearchHistory(loginMember, request.getQuery().trim());
         }
         return PlaceSearchListResponse.of(placeSearchWithBookmark, result.getMeta().getIsEnd());
     }
@@ -126,6 +126,11 @@ public class PlaceService {
      * @param query
      */
     private void updateSearchHistory(Member loginMember, String query) {
+        Optional<Search> history = searchRepository.findByMemberIdAndQueryAndDeletedAtIsNull(loginMember.getId(), query);
+        if (history.isPresent()) {
+            history.get().modifyUpdateAt();
+            return;
+        }
         int searchHistoryCount = searchRepository.countByMemberId(loginMember.getId());
         // 검색기록 20개 초과 시 가장 오래된 검색기록 삭제
         if (searchHistoryCount >= SEARCH_HISTORY_MAX_COUNT) {
