@@ -22,12 +22,7 @@ public class BookmarkCreateRequest {
     @Schema(description = "장소 정보")
     private PlaceRequest place;
 
-    @Schema(description = "<p>북마크 종류. 목록은 다음과 같음</p>" +
-                          "<ul>" +
-                          "<li>WANT - 가보고 싶어요</li>" +
-                          "<li>GONE - 다녀왔어요</li>" +
-                          "</ul>",
-            example = "WANT")
+    @Schema(description = "북마크 종류")
     @NotNull
     private BookmarkType type;
 

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum BookmarkSearchType {
-    ALL, WANT, GONE;
+    ALL, WANT, DONE;
 
     public BookmarkType toBookmarkType() {
         return BookmarkType.valueOf(this.name());
