@@ -22,7 +22,7 @@ public class Search extends BaseTimeEntity {
     @Column(name = "search_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String query;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,5 +35,9 @@ public class Search extends BaseTimeEntity {
     private Search(String query, Member member) {
         this.query = query;
         this.member = member;
+    }
+
+    public void modifyUpdateAt() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
