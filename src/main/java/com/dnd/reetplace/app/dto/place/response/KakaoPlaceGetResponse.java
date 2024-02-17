@@ -2,6 +2,7 @@ package com.dnd.reetplace.app.dto.place.response;
 
 import com.dnd.reetplace.app.domain.place.PlaceCategory;
 import com.dnd.reetplace.app.domain.place.PlaceSubCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,12 @@ public class KakaoPlaceGetResponse {
     private PlaceCategory category;
     private PlaceSubCategory subCategory;
 
+    // 내부 주소 파싱용 데이터
+    @JsonIgnore
+    private String sido;
+    @JsonIgnore
+    private String sgg;
+
     // Native Query 파싱을 위한 생성자 (JpaResultMapper)
     public KakaoPlaceGetResponse(
             String address_name,
@@ -36,6 +43,8 @@ public class KakaoPlaceGetResponse {
             String place_name,
             String place_url,
             String road_address_name,
+            String sido,
+            String sgg,
             String x,
             String y,
             String category,
@@ -51,6 +60,8 @@ public class KakaoPlaceGetResponse {
         this.place_name = place_name;
         this.place_url = place_url;
         this.road_address_name = road_address_name;
+        this.sido = sido;
+        this.sgg = sgg;
         this.x = x;
         this.y = y;
         this.category = PlaceCategory.valueOf(category);
@@ -90,5 +101,18 @@ public class KakaoPlaceGetResponse {
     public void updateCategory(PlaceCategory category, PlaceSubCategory subCategory) {
         this.category = category;
         this.subCategory = subCategory;
+    }
+
+    // DB 내 시도 / 시군구 단위 파싱되어 있는 주소체계 카카오 응답과 맞줌
+    public void parseAddress() {
+        if (sgg.isEmpty()) return;
+        int sggLength = sgg.split(" ").length;
+        if (sggLength == 1) {
+            if (sgg.charAt(sgg.length() - 1) == '구') {
+                this.road_address_name = sido + sgg + this.road_address_name;
+            } else {
+                this.road_address_name = sgg + this.road_address_name;
+            }
+        }
     }
 }
