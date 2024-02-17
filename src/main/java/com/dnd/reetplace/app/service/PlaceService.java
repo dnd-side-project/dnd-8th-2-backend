@@ -66,7 +66,7 @@ public class PlaceService {
         // 카카오 서버에서 받아온 장소 목록 collect
         List<KakaoPlaceGetResponse> result =
                 request.getCategory().equals(REET_PLACE_POPULAR) ?
-                        placeRepository.getReetPlacePopularPlaceList(request.getLat(), request.getLng()) :
+                        placeRepository.getReetPlacePopularPlaceList(request.getLat(), request.getLng()).stream().peek(KakaoPlaceGetResponse::parseAddress).toList() :
                         getPlaceListFromKakao(request, subCategory, size);
 
         // 북마크 여부 처리
