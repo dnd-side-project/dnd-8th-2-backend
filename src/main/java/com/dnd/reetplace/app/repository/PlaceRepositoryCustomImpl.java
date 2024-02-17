@@ -37,7 +37,7 @@ public class PlaceRepositoryCustomImpl implements PlaceRepositoryCustom {
                 "p.url, " +
                 "p.road_address, " +
                 "p.sido, " +
-                "p.sgg " +
+                "p.sgg, " +
                 "p.lng, " +
                 "p.lat, " +
                 "p.category, " +

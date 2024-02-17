@@ -78,6 +78,8 @@ public class KakaoPlaceGetResponse {
             String place_name,
             String place_url,
             String road_address_name,
+            String sido,
+            String sgg,
             String x,
             String y,
             String category,
@@ -92,6 +94,8 @@ public class KakaoPlaceGetResponse {
         this.place_name = place_name;
         this.place_url = place_url;
         this.road_address_name = road_address_name;
+        this.sido = sido;
+        this.sgg = sgg;
         this.x = x;
         this.y = y;
         this.category = PlaceCategory.valueOf(category);
@@ -105,14 +109,20 @@ public class KakaoPlaceGetResponse {
 
     // DB 내 시도 / 시군구 단위 파싱되어 있는 주소체계 카카오 응답과 맞줌
     public void parseAddress() {
+        StringBuilder roadAddressName = new StringBuilder();
+        StringBuilder addressName = new StringBuilder();
         if (sgg.isEmpty()) return;
         int sggLength = sgg.split(" ").length;
         if (sggLength == 1) {
             if (sgg.charAt(sgg.length() - 1) == '구') {
-                this.road_address_name = sido + sgg + this.road_address_name;
+                roadAddressName.append(sido).append(" ").append(sgg).append(" ").append(this.road_address_name);
+                addressName.append(sido).append(" ").append(sgg).append(" ").append(this.address_name);
             } else {
-                this.road_address_name = sgg + this.road_address_name;
+                roadAddressName.append(sgg).append(this.road_address_name);
+                addressName.append(sgg).append(this.address_name);
             }
+            this.road_address_name = roadAddressName.toString();
+            this.address_name = addressName.toString();
         }
     }
 }
