@@ -118,8 +118,8 @@ public class KakaoPlaceGetResponse {
                 roadAddressName.append(sido).append(" ").append(sgg).append(" ").append(this.road_address_name);
                 addressName.append(sido).append(" ").append(sgg).append(" ").append(this.address_name);
             } else {
-                roadAddressName.append(sgg).append(this.road_address_name);
-                addressName.append(sgg).append(this.address_name);
+                roadAddressName.append(sgg).append(" ").append(this.road_address_name);
+                addressName.append(sgg).append(" ").append(this.address_name);
             }
             this.road_address_name = roadAddressName.toString();
             this.address_name = addressName.toString();
