@@ -114,15 +114,10 @@ public class KakaoPlaceGetResponse {
         if (sgg.isEmpty()) return;
         int sggLength = sgg.split(" ").length;
         if (sggLength == 1) {
-            if (sgg.charAt(sgg.length() - 1) == '구') {
                 roadAddressName.append(sido).append(" ").append(sgg).append(" ").append(this.road_address_name);
                 addressName.append(sido).append(" ").append(sgg).append(" ").append(this.address_name);
-            } else {
-                roadAddressName.append(sgg).append(" ").append(this.road_address_name);
-                addressName.append(sgg).append(" ").append(this.address_name);
-            }
-            this.road_address_name = roadAddressName.toString();
-            this.address_name = addressName.toString();
+                this.road_address_name = roadAddressName.toString();
+                this.address_name = addressName.toString();
         }
     }
 }
