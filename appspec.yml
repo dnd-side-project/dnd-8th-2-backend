@@ -4,6 +4,7 @@ files:
   - source: /
     destination: /home/ubuntu/reetplace/
     overwrite: yes
+file_exists_behavior: OVERWRITE
 
 permissions:
   - object: /
